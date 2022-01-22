@@ -1,0 +1,41 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{blindtext}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{wasysym}
+\usepackage{circuitikz}
+\usepackage{float}
+\usetikzlibrary{arrows,shapes,calc,positioning}
+
+\newcommand{\myscope}[2]
+{\draw[thick,rotate=#2] (#1) circle (12pt)
+(#1) ++(-0.35,-0.1) --++ (0.3,0.3) --++ (0,-0.3) --++(0.3,0.3) --++(0,-0.3);}
+
+\begin{document}
+
+\title{CSCE 221 \\ Checkpoint 8 Revision}
+
+\author{Jacob~Purcell,~\IEEEmember{Texas~A\&M,~Student}}
+
+\maketitle
+\section{}
+\subsection*{C)}
+The calculation was made in haste and an incorrect closed form was solved. 
+Using the previously derived summation;
+
+\begin{equation}
+    S_N = \Sigma_1^N (2n-1)^2
+\end{equation}
+
+counting upwards
+$$1, 10, 35, 84, 165, 286, 455, 680, 969, 1330, 1771, 2300$$
+$$\boxed{\therefore 12}$$
+\end{document}

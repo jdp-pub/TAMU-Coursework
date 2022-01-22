@@ -1,0 +1,64 @@
+\documentclass{article}
+
+\begin{document}
+
+\section*{1.1}
+\begin{equation}
+    \frac{dN}{dt} = R(T) = \Gamma N(t) - \beta N(t)^2
+\end{equation}
+
+$$N_0 = 1E5 = 100000$$
+
+\subsection*{A:}
+Taking $\beta$ to be 0,
+
+\begin{equation}
+    \frac{dN}{dt} = \Gamma N(t)
+\end{equation}
+
+$$\int \frac{dN}{ N(t)} = \int \Gamma dt$$
+
+$$N(t) = Ce^{\Gamma t}$$
+
+Using the baoundary condition $N(0) = N_0, C = N_0$
+
+\begin{equation}
+     N(t) = N_0e^{\Gamma t} = N_0e^{\frac{t}{\tau}}
+\end{equation}
+
+Finding halflife $N(T_{1/2}) = 2N_0$
+
+$$2N_0 = N_0e^{\frac{T_{1/2}}{\tau}}$$
+$$ln(2) = \frac{T_{1/2}}{\tau}$$
+
+The relation between halflife and lifetime then becomes
+
+\begin{equation}
+    \fbox{$T_{1/2} = \tau ln(2)$}
+\end{equation}
+
+\subsection*{B:}
+\subsection*{C:}
+\subsection*{D:}
+Starting at $Eq. 1$
+
+$$\int \frac{dN}{\Gamma N(t) - \beta N(t)^2} = \int dt$$
+$$ln(\frac{\Gamma}{\Gamma - \beta N}) + ln(\frac{\Gamma - \beta N}{\Gamma} - 1) = \Gamma t + C$$
+Solve for $N$,
+$$ln(1 - \frac{\Gamma}{\Gamma - \beta N}) = \Gamma t + C$$
+
+$$N(t) = \frac{\Gamma  C e^{\Gamma t}}{\beta C e^{\Gamma t} - \beta}$$
+
+Again using the boundary condition that $N(0) = N_0,$ $C = \frac{N_0 \beta}{N_0 \beta - \Gamma}$
+
+\begin{equation}
+    N(t) = \frac{\Gamma  \frac{N_0 \beta}{N_0 \beta + \Gamma} e^{\Gamma t}}{\beta \frac{N_0 \beta}{N_0 \beta + \Gamma} e^{\Gamma t} - \beta}
+\end{equation}
+
+Where $\beta = 4E-8.$ The equation for the asymptote is $R(t) = 0$ or
+
+\begin{equation}
+    N(t) = \frac{\Gamma}{\beta}
+\end{equation}
+
+\end{document}

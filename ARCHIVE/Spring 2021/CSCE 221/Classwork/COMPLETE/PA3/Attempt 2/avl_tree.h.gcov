@@ -1,0 +1,416 @@
+        -:    0:Source:avl_tree.h
+        -:    0:Graph:avl_tree_tests.gcno
+        -:    0:Data:avl_tree_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef AVL_TREE_H
+        -:    2:#define AVL_TREE_H
+        -:    3:
+        -:    4:
+        -:    5:
+        -:    6:#include <iostream>
+        -:    7:using std::cout, std::endl;
+    20007:    8:void nla() {cout << endl; }
+    20939:    9:void ssa() {cout << "~~~~~~~~~~~~~~~" << endl;}
+        4:   10:void TestHeaderA(std::string name, size_t& number){
+        4:   11:    cout << "~~~BEGIN TEST SEQUENCE " << number << " : " << name << "~~~" << endl;
+        4:   12:    ++number;
+        4:   13:    nla();
+        4:   14:}
+        -:   15:
+    #####:   16:int log2(int num) {
+    #####:   17:    int iteration = -1;
+    #####:   18:    while (num) {
+    #####:   19:        iteration++;
+    #####:   20:        num >>= 1;//right bitshift assigment operator  
+        -:   21:        // divides num by 2 (2^1) until it is assigned zero with integer division
+        -:   22:        // the logarithm comes from number of times 2 can be wholly taken from num
+        -:   23:    }
+    #####:   24:    return iteration;
+        -:   25:}
+        -:   26:
+        4:   27:void TestFooterA(){ cout << "~~~SEQUENCE COMPLETE~~~" << endl; }
+        -:   28:
+        -:   29:template<typename Comparable>
+    20000:   30:void testA(Comparable expected, Comparable testing, std::string name, std::string file, size_t line) {
+    40000:   31:    std::string RESULT;
+    20000:   32:    if(expected == testing) { RESULT = "PASS"; }
+    #####:   33:    else{ RESULT = "FAIL"; }
+    40000:   34:    cout << name << " : " << file << " line " << line << " : " << RESULT << endl
+    20000:   35:         << "EXPECTED " << expected << " : ACTUAL " << testing << endl;
+    20000:   36:         ssa();
+    20000:   37:         nla();
+        -:   38:
+    20000:   39:}
+        -:   40:
+        -:   41:template<typename Comparable>
+ 47925956:   42:Comparable max(Comparable lhs, Comparable rhs) {
+ 47925956:   43:    return (lhs >= rhs) ? lhs : rhs;
+        -:   44:}
+        -:   45:
+        -:   46:template <typename Comparable>
+        -:   47:class NodeA {
+        -:   48:    Comparable datum = {};
+        -:   49:    int height = 0;
+        -:   50:    int subnodes = 0;
+        -:   51:
+        -:   52:    NodeA* leftChild = nullptr;
+        -:   53:    NodeA* rightChild = nullptr;
+        -:   54:
+        -:   55:    public:
+    13849:   56:    NodeA() {}
+        -:   57:    NodeA(Comparable x) {datum = x;}
+        -:   58:    NodeA(Comparable& x) {datum = x;}
+        -:   59:    NodeA(Comparable&& x) {datum = x;}
+        -:   60:    NodeA(const NodeA& x) {datum = x.getDatum();}
+    13849:   61:    ~NodeA(){}
+        -:   62:
+        -:   63:    NodeA& operator=(const NodeA& x){datum = x.getDatum(); return *this;}
+        -:   64:
+    23476:   65:    void setRight(NodeA* right){ rightChild = right; }
+    23023:   66:    void setLeft(NodeA* left){ leftChild = left; }
+    13950:   67:    void setDatum(const Comparable x){ datum = x; }
+        -:   68:
+ 97358471:   69:    NodeA* getRight() {return rightChild;}
+ 96938709:   70:    NodeA* getLeft() {return leftChild;}
+        -:   71:    Comparable getDatum() const {return datum;}
+  3721170:   72:    Comparable& getDatum() {return datum;}
+        -:   73:    int getSubnodes() {return subnodes;}
+        -:   74:    void addSubnodes(int x){subnodes += x;}
+ 23211639:   75:    std::string children() {
+ 23211639:   76:        std::string num = "none";
+ 23211639:   77:        if(leftChild != nullptr && rightChild == nullptr){num = "left";}
+ 23211639:   78:        if(leftChild == nullptr && rightChild != nullptr){num = "right";}
+ 23211639:   79:        if(leftChild != nullptr && rightChild != nullptr){num = "both";}
+        -:   80:
+ 23211639:   81:        return num;
+        -:   82:    }
+        -:   83:    void resetHeight(){ height =  (int)(log2(subnodes+1)-1);}
+ 23974421:   84:    void setHeight(int x){ height = x;}
+ 23209888:   85:    int getHeight() const{ return height; }
+        -:   86:};
+        -:   87:
+        -:   88:template <typename Comparable>
+        -:   89:class AVLTree {
+        -:   90:    NodeA<Comparable>* root = nullptr;
+        -:   91:
+        -:   92:    public:
+        -:   93:    // TODO(student): implement AVLTree
+        -:   94:    AVLTree();//C - makes an empty tree
+        -:   95:    AVLTree(const AVLTree&);//C - constructs a copy of the given tree
+        -:   96:    ~AVLTree();//C - destructs this tree
+        -:   97:    AVLTree& operator=(const AVLTree&);//C - assigns a copy of the given tree
+        -:   98:    bool contains(const Comparable&) const;//C - returns Boolean true if the specified value is in the tree
+        -:   99:    void insert(const Comparable&);//C - insert the given value into the tree
+        -:  100:    void remove(const Comparable&);//C - remove the specified value from the tree (use minimum of right child tree when value has two children)
+        -:  101:    const Comparable& find_min() const;// - return the minimum value in the tree or throw std::invalid_argument if the tree is empty
+        -:  102:    const Comparable& find_max() const;// - return the maximum value in the tree or throw std::invalid_argument if the tree is empty
+        -:  103:    void print_tree(std::ostream& os) const;//C - pretty print the tree (rotated 90 degrees to the left, two spaces per level; see example below) to the specified output stream (default std::cout).  Print “<empty>\n” if the tree is empty.
+        -:  104:    void print_tree() const;
+        -:  105:
+        -:  106:    //Optional
+        -:  107:    //AVLTree(AVLTree&&);// - move constructs a copy of the given (rvalue) tree
+        -:  108:    //AVLTree& operator=(AVLTree&&);// - move assigns a copy of the given (rvalue) tree
+        -:  109:    bool is_empty() const;// - returns Boolean true if the tree is empty
+        -:  110:    void insert(Comparable&&);// - insert the given rvalue into the tree using move semantics
+        -:  111:    void make_empty();// - remove all values from the tree
+        -:  112:
+        -:  113:    //helpers
+        -:  114:    NodeA<Comparable>* getRoot() const; //returns tree location
+        -:  115:    NodeA<Comparable>* find(const Comparable&) const; //finds a value or the closest thing to it
+        -:  116:    void reverse_inorder(std::ostream&, NodeA<Comparable>*, size_t) const; //recursive reverse inorder NodeA traversal
+        -:  117:    void empty(NodeA<Comparable>*); //recursive NodeA deletion
+        -:  118:    void init_copy(NodeA<Comparable>*, NodeA<Comparable>*); //recursive initialization
+        -:  119:    void rebalance_insert(NodeA<Comparable>*); //rotates necessary values to create a balanced tree
+        -:  120:    void LL(NodeA<Comparable>*); //left rotation
+        -:  121:    void RR(NodeA<Comparable>*); // right rotation
+        -:  122:    void LR(NodeA<Comparable>*);
+        -:  123:    void RL(NodeA<Comparable>*);
+        -:  124:    int updateSubtreeHeight(NodeA<Comparable>*); //recounts all of the heights of all of the nodes in the tree
+        -:  125:    int getBalance(NodeA<Comparable>*);
+        -:  126:};
+        -:  127:
+        -:  128:    template <typename Comparable>
+        8:  129:    AVLTree<Comparable>::AVLTree(){}
+        -:  130:    template <typename Comparable>
+        4:  131:    AVLTree<Comparable>::AVLTree(const AVLTree& other){ //O(N)
+        4:  132:        if(other.getRoot() == nullptr){ make_empty();}
+        -:  133:        else{
+        4:  134:            make_empty();
+        4:  135:            root = new NodeA<Comparable>;
+        4:  136:            root->setDatum(other.getRoot()->getDatum());
+        4:  137:            init_copy(root, other.getRoot());
+        -:  138:        }
+        4:  139:    }
+        -:  140:    template <typename Comparable>
+       12:  141:    AVLTree<Comparable>::~AVLTree(){ if(root != nullptr) {empty(root);}} //O(N)
+        -:  142:    template <typename Comparable>
+    81175:  143:    bool AVLTree<Comparable>::contains(const Comparable& val) const{
+    81175:  144:        if(root == nullptr){return false;}
+    81053:  145:        Comparable test = find(val)->getDatum();
+    81053:  146:        return (val == test);
+        -:  147:    }
+        -:  148:    template <typename Comparable>
+        6:  149:    AVLTree<Comparable>& AVLTree<Comparable>::operator=(const AVLTree& other){//2O(N)
+        6:  150:        if(other.getRoot() == root){return *this;}//O(1)
+        2:  151:        if(!is_empty()){empty(root);}//O(N)
+        2:  152:        if(other.is_empty()){empty(root); return *this;}//O(N)
+        1:  153:        this->root = new NodeA<Comparable>;
+        1:  154:        root->setDatum(other.getRoot()->getDatum());
+        1:  155:        init_copy(root, other.getRoot());//O(N)
+        1:  156:        return *this;
+        -:  157:    }
+        -:  158:    template <typename Comparable>
+    40629:  159:    void AVLTree<Comparable>::insert(const Comparable& val){//O(N)
+    40629:  160:        if(contains(val)){ return; }//O(log N)
+        -:  161:
+     6999:  162:        NodeA<Comparable>* newNodeA = new NodeA<Comparable>;
+     6999:  163:        newNodeA->setDatum(val);
+     6999:  164:        if(root == nullptr) {root = newNodeA; return;}
+        -:  165:        
+     6990:  166:        NodeA<Comparable>* cursor = find(val);//O(log N)
+     6990:  167:        if(cursor->getDatum() < val) { cursor->setRight(newNodeA); }
+     3358:  168:        else if(cursor->getDatum() > val) { cursor->setLeft(newNodeA); }
+     6990:  169:        root->setHeight(updateSubtreeHeight(root));
+     6990:  170:        rebalance_insert(root);//O(N)
+     6990:  171:        return;
+        -:  172:    }
+        -:  173:    template <typename Comparable>
+      542:  174:    void AVLTree<Comparable>::remove(const Comparable& val){//O(N) due to rebalance function
+        -:  175:    
+      542:  176:        if(!contains(val)){return;}//O(log N)
+      216:  177:        NodeA<Comparable>* cursor = root;
+      216:  178:        NodeA<Comparable>* parent = root;
+      216:  179:        NodeA<Comparable>* pin = find(val);//O(log N)
+        -:  180:
+      216:  181:        cursor = find(val);//O(log N)
+        -:  182:
+      216:  183:        if(cursor->children() == "both") {
+      101:  184:            cursor = bottomLeft(cursor->getRight());
+      101:  185:            parent = findParent(cursor, root);
+      101:  186:            if(parent->getLeft() == cursor){parent->setLeft(cursor->getRight());}
+      101:  187:            if(parent->getRight() == cursor){parent->setRight(cursor->getRight());}
+        -:  188:
+      101:  189:            pin->setDatum(cursor->getDatum());
+      101:  190:            delete cursor;
+      101:  191:            root->setHeight(updateSubtreeHeight(root));
+      101:  192:            rebalance_insert(root);
+        -:  193:
+      101:  194:            return;
+        -:  195:        }
+      115:  196:        else if(cursor->children() == "none") { 
+        -:  197:            
+       92:  198:            if(val == root->getDatum()) { empty(root); return;}
+       89:  199:            parent = findParent(cursor, root);
+       89:  200:            if(parent != nullptr) {
+       89:  201:                if(parent->getLeft() == cursor){parent->setLeft(cursor->getLeft());}
+       89:  202:                if(parent->getRight() == cursor){parent->setRight(cursor->getLeft());}
+        -:  203:            }
+       89:  204:            delete cursor;
+       89:  205:            root->setHeight(updateSubtreeHeight(root));
+       89:  206:            rebalance_insert(root);
+       89:  207:            return;
+        -:  208:        }
+       23:  209:        else if(cursor->children() == "left") {
+       17:  210:            if(cursor == root) {root = cursor->getLeft(); delete cursor; return;}
+       16:  211:            parent = findParent(cursor, root);
+       16:  212:            if(parent != nullptr) {
+       16:  213:                if(parent->getLeft() == cursor){parent->setLeft(cursor->getLeft());}
+       16:  214:                if(parent->getRight() == cursor){parent->setRight(cursor->getLeft());}
+        -:  215:            }
+       16:  216:            delete cursor;
+       16:  217:            root->setHeight(updateSubtreeHeight(root));
+       16:  218:            rebalance_insert(root);
+       16:  219:            return;
+        -:  220:        }
+        6:  221:        else if(cursor->children() == "right") {
+        6:  222:            if(cursor == root) {root = cursor->getRight(); delete cursor; return;}
+        6:  223:            parent = findParent(cursor, root);
+        6:  224:            if(parent != nullptr) {
+        6:  225:                if(parent->getLeft() == cursor){parent->setLeft(cursor->getRight());}
+        6:  226:                if(parent->getRight() == cursor){parent->setRight(cursor->getRight());}
+        -:  227:            }
+        6:  228:            delete cursor;
+        6:  229:            root->setHeight(updateSubtreeHeight(root));
+        6:  230:            rebalance_insert(root);
+        6:  231:            return;
+        -:  232:        }
+        -:  233:        
+        -:  234:    }
+        -:  235:    template <typename Comparable>
+        3:  236:    const Comparable& AVLTree<Comparable>::find_min() const{//O(log N)
+        3:  237:        try{if(is_empty()){throw 1;}}
+        1:  238:        catch(int n){throw std::invalid_argument("find_min() of empty tree.");}
+        2:  239:        NodeA<Comparable>* cursor = root;
+        8:  240:        while(cursor->getLeft() != nullptr){cursor = cursor->getLeft();}
+        2:  241:        return cursor->getDatum();
+        -:  242:    }
+        -:  243:    template <typename Comparable>
+        3:  244:    const Comparable& AVLTree<Comparable>::find_max() const{//O(log N)
+        3:  245:        try{if(is_empty()){throw 1;}}
+        1:  246:        catch(int n){throw std::invalid_argument("find_max() of empty tree.");}
+        2:  247:        NodeA<Comparable>* cursor = root;
+        9:  248:        while(cursor->getRight() != nullptr){cursor = cursor->getRight();}
+        2:  249:        return cursor->getDatum();
+        -:  250:    }
+        -:  251:    template <typename Comparable>
+       94:  252:    void AVLTree<Comparable>::print_tree(std::ostream& os) const{//O(N)
+       94:  253:        if(root == nullptr) {os << "<empty>\n"; return;}
+       88:  254:        reverse_inorder(os, root, 0);
+        -:  255:    }
+        -:  256:    template <typename Comparable>
+       12:  257:    void AVLTree<Comparable>::print_tree() const{
+       12:  258:        if(root == nullptr) {cout << "<empty>\n"; return;}
+       10:  259:        reverse_inorder(cout, root, 0);
+        -:  260:    }
+        -:  261:    template <typename Comparable>
+    13647:  262:    bool AVLTree<Comparable>::is_empty() const{return !(root);}//O(1)
+        -:  263:    template <typename Comparable>
+       37:  264:    void AVLTree<Comparable>::insert(Comparable&& val){ Comparable temp = val; insert(temp);}
+        -:  265:    template <typename Comparable>
+        7:  266:    void AVLTree<Comparable>::make_empty() {if(root != nullptr) {empty(root);}}//O(N)
+        -:  267:    template <typename Comparable>
+       70:  268:    NodeA<Comparable>* AVLTree<Comparable>::getRoot() const{return root;}
+        -:  269:    template <typename Comparable>
+    88475:  270:    NodeA<Comparable>* AVLTree<Comparable>::find(const Comparable& val) const{//O(log N)
+    88475:  271:        if(root == nullptr){return nullptr;}
+    88475:  272:        NodeA<Comparable>* cursor = root;
+  1303423:  273:        while(cursor != nullptr) {
+   695949:  274:        if((cursor->getDatum() < val) && (cursor->getRight() != nullptr)) {cursor = cursor->getRight();}
+   695949:  275:        if((cursor->getDatum() > val) && (cursor->getLeft() != nullptr)) {cursor = cursor->getLeft();}
+   695949:  276:        if(cursor->getDatum() == val) {return cursor;}
+        -:  277:        
+   621670:  278:        if((cursor->getDatum() < val) && (cursor->getRight() == nullptr)) {return cursor;}
+   614261:  279:        if((cursor->getDatum() > val) && (cursor->getLeft() == nullptr)) {return cursor;}
+        -:  280:        }
+        -:  281:
+    #####:  282:        return cursor;
+        -:  283:    }
+        -:  284:    template <typename Comparable>
+    81759:  285:    void AVLTree<Comparable>::reverse_inorder(std::ostream& os, NodeA<Comparable>* cursor, size_t indent) const{
+    81759:  286:        if(cursor->getRight() != nullptr) {reverse_inorder(os, cursor->getRight(), indent + 2);}
+        -:  287:
+    81759:  288:        for(size_t i = 0; i < indent; ++i) { os << " "; }
+    81759:  289:        os << cursor->getDatum() << endl;
+        -:  290:
+    81759:  291:        if(cursor->getLeft() != nullptr) {reverse_inorder(os, cursor->getLeft(), indent + 2);}
+    81759:  292:    }
+        -:  293:    template <typename Comparable>
+    13637:  294:    void AVLTree<Comparable>::empty(NodeA<Comparable>* cursor){
+    13637:  295:        if(!is_empty()){
+    13636:  296:            if(cursor->getLeft() != nullptr){empty(cursor->getLeft());}
+    13636:  297:            if(cursor->getRight() != nullptr){empty(cursor->getRight());}
+    13636:  298:            if(cursor == root){root = nullptr;}
+    13636:  299:            delete cursor;
+        -:  300:        }
+        -:  301:        
+    13637:  302:    }
+        -:  303:    template <typename Comparable>
+     6850:  304:    void AVLTree<Comparable>::init_copy(NodeA<Comparable>* CursorSelf, NodeA<Comparable>* CursorOther) {
+     6850:  305:        if(CursorOther->getLeft() != nullptr) { 
+     3412:  306:            NodeA<Comparable>* temp = new NodeA<Comparable>;
+     3412:  307:            temp->setDatum(CursorOther->getLeft()->getDatum());
+     3412:  308:            CursorSelf->setLeft(temp);
+     3412:  309:            init_copy(temp, CursorOther->getLeft());
+        -:  310:        }
+     6850:  311:        if(CursorOther->getRight() != nullptr) { 
+     3433:  312:            NodeA<Comparable>* temp = new NodeA<Comparable>;
+     3433:  313:            temp->setDatum(CursorOther->getRight()->getDatum());
+     3433:  314:            CursorSelf->setRight(temp);
+     3433:  315:            init_copy(temp, CursorOther->getRight());
+        -:  316:        }
+        -:  317:
+     6850:  318:    }
+        -:  319:    template <typename Comparable>
+     5492:  320:    void AVLTree<Comparable>::LL(NodeA<Comparable>* pin){
+     5492:  321:        NodeA<Comparable>* cursor = pin->getRight();
+     5492:  322:        pin->setRight(cursor->getLeft());
+     5492:  323:        cursor->setLeft(pin);
+        -:  324:
+     5492:  325:        NodeA<Comparable>* parent = findParent(pin, root);
+     5492:  326:        if(pin == root) {root = cursor;}
+     5423:  327:        else if(pin == parent->getLeft()) {parent->setLeft(cursor);}
+     2397:  328:        else if(pin == parent->getRight()) {parent->setRight(cursor);}
+     5492:  329:    }
+        -:  330:    template <typename Comparable>
+     5375:  331:    void AVLTree<Comparable>::RR(NodeA<Comparable>* pin){
+     5375:  332:        NodeA<Comparable>* cursor = pin->getLeft();
+     5375:  333:        pin->setLeft(cursor->getRight());
+     5375:  334:        cursor->setRight(pin);
+        -:  335:
+     5375:  336:        NodeA<Comparable>* parent = findParent(pin, root);
+     5375:  337:        if(pin == root) {root = cursor;}
+     5295:  338:        else if(pin == parent->getLeft()) {parent->setLeft(cursor);}
+     3037:  339:        else if(pin == parent->getRight()) {parent->setRight(cursor);}
+     5375:  340:    }
+        -:  341:    template <typename Comparable>
+     1496:  342:    void AVLTree<Comparable>::RL(NodeA<Comparable>* pin){
+     1496:  343:        NodeA<Comparable>* cursor = pin->getLeft();
+     1496:  344:        LL(cursor);
+     1496:  345:        RR(pin);
+     1496:  346:    }
+        -:  347:    template <typename Comparable>
+     1529:  348:    void AVLTree<Comparable>::LR(NodeA<Comparable>* pin){
+     1529:  349:        NodeA<Comparable>* cursor = pin->getRight();
+     1529:  350:        RR(cursor);
+     1529:  351:        LL(pin);
+     1529:  352:        }
+        -:  353:    template <typename Comparable>
+ 23203398:  354:    void AVLTree<Comparable>::rebalance_insert(NodeA<Comparable>* cursor){
+ 23203398:  355:       if(cursor->getLeft() != nullptr) {rebalance_insert(cursor->getLeft());}
+ 23203398:  356:        if(cursor->getRight() != nullptr) {rebalance_insert(cursor->getRight());}
+        -:  357:        
+        -:  358:
+        -:  359:        
+ 23203398:  360:            int balance = getBalance(cursor);
+ 23203398:  361:            if(balance > 1){
+     3846:  362:                if(getBalance(cursor->getLeft()) < 0){ RL(cursor); cursor->setHeight(updateSubtreeHeight(cursor)); return;}
+     2350:  363:                else{ RR(cursor); cursor->setHeight(updateSubtreeHeight(cursor)); return;}
+        -:  364:            }
+ 23199552:  365:            else if(balance < -1){
+     3996:  366:                if(getBalance(cursor->getRight()) > 0){ LR(cursor); cursor->setHeight(updateSubtreeHeight(cursor)); return;}
+     2467:  367:                else{ LL(cursor); cursor->setHeight(updateSubtreeHeight(cursor)); return;}
+        -:  368:            }
+        -:  369:    }
+        -:  370:    template <typename Comparable>
+ 23966579:  371:    int AVLTree<Comparable>::updateSubtreeHeight(NodeA<Comparable>* cursor) {
+ 23966579:  372:        int lheight = 0;
+ 23966579:  373:        int rheight = 0;
+ 23966579:  374:        if(cursor->getLeft() != nullptr) {lheight = updateSubtreeHeight(cursor->getLeft());}
+ 23966579:  375:        if(cursor->getRight() != nullptr) {rheight = updateSubtreeHeight(cursor->getRight());}
+ 23966579:  376:        if(cursor != root){cursor->setHeight(max(lheight, rheight));}
+ 23966579:  377:        return max(lheight, rheight)+1;
+        -:  378:    }
+        -:  379:    template <typename Comparable>
+ 23211283:  380:    int AVLTree<Comparable>::getBalance(NodeA<Comparable>* cursor) {
+ 23211283:  381:        int balance = 0;
+ 23211283:  382:        if(cursor == nullptr){ return balance;}
+        -:  383:        
+ 23211279:  384:        if(cursor->children() == "none"){return balance;}
+ 13296062:  385:        if(cursor != nullptr) {
+ 13296062:  386:            int lh = -1;
+ 13296062:  387:            int rh = -1;
+ 13296062:  388:            if(cursor->getLeft() != nullptr) {lh = cursor->getLeft()->getHeight();}
+ 13296062:  389:            if(cursor->getRight() != nullptr) {rh = cursor->getRight()->getHeight();}
+        -:  390:            
+ 13296062:  391:            balance = lh - rh;
+        -:  392:        }
+ 13296062:  393:        return balance;
+        -:  394:    }
+        -:  395:    template <typename Comparable>
+    11079:  396:    NodeA<Comparable>* findParent(NodeA<Comparable>* pin, NodeA<Comparable>* head) {
+    11079:  397:        NodeA<Comparable>* parent = head;
+    11079:  398:        if(parent != pin){
+   155346:  399:            while((parent->getLeft() != pin) && (parent->getRight() != pin)){
+    72208:  400:                if(pin->getDatum() > parent->getDatum()) {parent = parent->getRight();}
+    36382:  401:                else if(pin->getDatum() < parent->getDatum()) {parent = parent->getLeft();}
+        -:  402:            }
+        -:  403:        }
+    11079:  404:        return parent;
+        -:  405:    }
+        -:  406:    template <typename Comparable>
+      183:  407:    NodeA<Comparable>* bottomLeft(NodeA<Comparable>* subtree) {
+      183:  408:        while(subtree->getLeft() != nullptr) { subtree = subtree->getLeft();}
+      101:  409:        return subtree;
+        -:  410:    }
+        -:  411:#endif

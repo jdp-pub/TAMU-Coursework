@@ -1,0 +1,116 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{blindtext}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{wasysym}
+\usepackage{circuitikz}
+\usepackage{float}
+\usetikzlibrary{arrows,shapes,calc,positioning}
+
+\newcommand{\myscope}[2]
+{\draw[thick,rotate=#2] (#1) circle (12pt)
+(#1) ++(-0.35,-0.1) --++ (0.3,0.3) --++ (0,-0.3) --++(0.3,0.3) --++(0,-0.3);}
+
+\begin{document}
+
+\title{CSCE 222 \\ Homework 5}
+
+\author{Jacob~Purcell,~\IEEEmember{Texas~A\&M,~Student}}
+
+\maketitle
+\section*{6.1}
+
+\subsection*{26}
+\subsubsection*{A)}
+$$\frac{10!}{6!}$$
+$$\boxed{5040}$$
+
+\subsubsection*{B)}
+$$10*10*10*5$$
+$$\boxed{5000}$$
+
+\subsubsection*{C)}
+$$4*9$$
+$$\boxed{36}$$
+
+\subsection*{34}
+Using 
+$$n^m$$
+where $m=10$
+\subsubsection*{A)}
+$$n = 2$$
+$$2^10$$
+$$\boxed{1024}$$
+
+\subsubsection*{B)}
+$$n = 3$$
+$$3^10$$
+$$\boxed{59049}$$
+
+\subsection*{50}
+\subsubsection*{two zeroes}
+$$2^5$$
+$$\boxed{32}$$
+
+\subsubsection*{three ones}
+$$2^4$$
+$$\boxed{16}$$
+
+\section*{6.3}
+
+\subsection*{20}
+\subsection*{A)}
+$$\frac{10!}{3!7!}$$
+$$\boxed{120}$$
+
+\subsection*{B)}
+$$\Sigma_{n = 10}^6 C(10,n)$$
+$$\frac{10!}{10!0!} + \frac{10!}{9!1!} + \frac{10!}{8!2!} + \frac{10!}{7!3!} + \frac{10!}{6!4!}$$
+$$1 + 10 + 45 + 120 + 210$$
+$$\boxed{386}$$
+
+\subsection*{C)}
+$$\Sigma_{n = 10}^7 C(10,n)$$
+$$\frac{10!}{10!0!} + \frac{10!}{9!1!} + \frac{10!}{8!2!} + \frac{10!}{7!3!}$$
+$$1 + 10 + 45 + 120$$
+$$\boxed{176}$$
+
+\subsection*{D)}
+$$\Sigma_{n = 10}^3 C(10,n)$$
+$$386 + \frac{10!}{5!5!} + \frac{10!}{4!6!} + \frac{10!}{3!7!} $$
+$$386 + 252 + 210 + 120$$
+$$\boxed{968}$$
+
+\subsection*{28}|
+\subsubsection*{A)}
+$$C(13,10)$$
+$$\frac{13!}{10!3!}$$
+$$\boxed{286}$$
+
+\subsubsection*{B)}
+$$P(13,10)$$
+$$\frac{13!}{3!}$$
+$$\boxed{1037836800}$$
+
+\subsubsection*{C)}
+$$\frac{1037836800}{10!} - C(10,10)$$
+$$\boxed{285}$$
+
+\subsection*{32}
+\subsubsection*{A)}
+$$\frac{16!}{5!11!} - \frac{9!}{5!4!}$$
+$$\boxed{4242}$$
+
+\subsubsection*{B)}
+$$4242 - \frac{7!}{5!2!}$$
+$$\boxed{4221}$$
+
+\end{document}

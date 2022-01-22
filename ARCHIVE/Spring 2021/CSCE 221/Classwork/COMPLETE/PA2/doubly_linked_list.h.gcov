@@ -1,0 +1,269 @@
+        -:    0:Source:doubly_linked_list.h
+        -:    0:Graph:doubly_linked_list_tests.gcno
+        -:    0:Data:doubly_linked_list_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef DOUBLY_LINKED_LIST_H
+        -:    2:#define DOUBLY_LINKED_LIST_H
+        -:    3:
+        -:    4:template <typename Object>
+        -:    5:class Node {
+        -:    6:    Object datum = {};
+        -:    7:
+        -:    8:    Node* prev = nullptr;
+        -:    9:    Node* next = nullptr;
+        -:   10:
+        -:   11:
+        -:   12:    public:
+       25:   13:    Node() {}
+        -:   14:    Node(const Node&) {}
+        -:   15:    Node operator=(const Node&) {}
+       25:   16:    ~Node() {}
+        -:   17:
+       21:   18:    void setPrev(Node* newPrev) {prev = newPrev;}
+       20:   19:    void setNext(Node* newNext) {next = newNext;}
+        -:   20:
+      131:   21:    Node* getNext() {return next;}
+       11:   22:    Node* getPrev() {return prev;}
+        -:   23:
+       25:   24:    void setDatum(Object newDatum) { datum = newDatum; }
+       82:   25:    Object& getDatum() { return datum; }
+        -:   26:};
+        -:   27:
+        -:   28:template <typename Object>
+        -:   29:class DoublyLinkedList {
+        -:   30:    // TODO(student): implement DoublyLinkedList
+        -:   31:    Node<Object>* head = nullptr;
+        -:   32:    Node<Object>* cursor = nullptr;
+        -:   33:    Node<Object>* tail = nullptr;
+        -:   34:    Node<Object>* previous = nullptr;
+        -:   35:
+        -:   36:    size_t elements = 0;
+        -:   37:
+        -:   38:    public:
+        -:   39:    //COMPLETE
+        2:   40:    DoublyLinkedList() {} //- makes an empty list
+        -:   41:
+        -:   42:    //Rule of Three
+        -:   43:    //COMPLETE
+        1:   44:    DoublyLinkedList(const DoublyLinkedList& other) {
+        1:   45:        if(other.size() > 0) {
+        1:   46:            elements = other.size();
+        -:   47:
+        1:   48:            head = new Node<Object>;
+        1:   49:            head->setDatum(other.getHead()->getDatum());
+        1:   50:            previous = head;
+        -:   51:
+        6:   52:            for(size_t i = 1; i < elements; ++i) {
+        5:   53:                Node<Object>* iterate = other.getHead();
+       20:   54:                for(size_t j = 1; j <= i; ++j) {
+       15:   55:                    iterate = iterate->getNext();
+        -:   56:                }
+        5:   57:                cursor = new Node<Object>;
+        5:   58:                cursor->setDatum(iterate->getDatum());
+        5:   59:                cursor->setPrev(previous);
+        5:   60:                previous->setNext(cursor);
+        5:   61:                previous = cursor;
+        -:   62:            }
+        -:   63:
+        1:   64:            tail = cursor;
+        1:   65:            cursor = nullptr;
+        1:   66:            previous = nullptr;
+        -:   67:        }
+        1:   68:    }// - constructs a copy of the given list
+        -:   69:    //COMPLETE
+        3:   70:    ~DoublyLinkedList() {
+        3:   71:        if(head == nullptr) {}
+        -:   72:        else {
+        3:   73:        cursor = head->getNext();
+        3:   74:        previous = head;
+        3:   75:        tail = nullptr;
+        -:   76:
+       16:   77:        for(size_t i = 0; i < elements; ++i) { 
+       13:   78:            delete previous;
+       13:   79:            previous = cursor;
+       13:   80:            if(cursor != nullptr) {
+       10:   81:                cursor = cursor->getNext();
+        -:   82:            }
+        -:   83:            
+        -:   84:        }
+        -:   85:        
+        -:   86:        
+        -:   87:
+        3:   88:        previous = nullptr;
+        3:   89:        cursor = nullptr;
+        3:   90:        head = nullptr;
+        -:   91:        }
+        3:   92:    }// - destroys this list
+        -:   93:    
+        1:   94:    DoublyLinkedList& operator=(const DoublyLinkedList& other) {
+        1:   95:        if(head == nullptr) {}
+        -:   96:        else {
+    #####:   97:        cursor = head->getNext();
+    #####:   98:        previous = head;
+    #####:   99:        tail = nullptr;
+        -:  100:
+    #####:  101:        for(size_t i = 0; i < elements; ++i) { 
+    #####:  102:            delete previous;
+    #####:  103:            previous = cursor;
+    #####:  104:            if(cursor != nullptr) {
+    #####:  105:                cursor = cursor->getNext();
+        -:  106:            }
+        -:  107:            
+        -:  108:        }
+        -:  109:        
+        -:  110:        
+        -:  111:
+    #####:  112:        previous = nullptr;
+    #####:  113:        cursor = nullptr;
+    #####:  114:        head = nullptr;
+        -:  115:        }
+        -:  116:
+        1:  117:        if(other.size() > 0) {
+        1:  118:            elements = other.size();
+        -:  119:
+        1:  120:            head = new Node<Object>;
+        1:  121:            head->setDatum(other.getHead()->getDatum());
+        1:  122:            previous = head;
+        -:  123:
+        3:  124:            for(size_t i = 1; i < elements; ++i) {
+        2:  125:                Node<Object>* iterate = other.getHead();
+        5:  126:                for(size_t j = 1; j <= i; ++j) {
+        3:  127:                    iterate = iterate->getNext();
+        -:  128:                }
+        2:  129:                cursor = new Node<Object>;
+        2:  130:                cursor->setDatum(iterate->getDatum());
+        2:  131:                cursor->setPrev(previous);
+        2:  132:                previous->setNext(cursor);
+        2:  133:                previous = cursor;
+        -:  134:            }
+        -:  135:
+        1:  136:            tail = cursor;
+        1:  137:            cursor = nullptr;
+        1:  138:            previous = nullptr;
+        -:  139:        }
+        1:  140:        return *this;
+        -:  141:    }// - assigns a copy of the given list
+        -:  142:    //COMPLETE
+       19:  143:    size_t size() const { return elements; }// - returns the number of elements in the list
+       13:  144:    Object& operator[](size_t index) {
+       13:  145:        try{ if(index >= elements) {throw 1;} }
+        1:  146:        catch(int n) {throw std::out_of_range("insert() index request out of bounds.");}
+       12:  147:        Node<Object>* iterate = head;
+       42:  148:        for(size_t i = 1; i <= index; ++i) {
+       30:  149:            iterate = iterate->getNext();
+        -:  150:        }
+        -:  151:
+       12:  152:        return iterate->getDatum();        
+        -:  153:    }// - returns a reference to the element at the specified index or throws std::out_of_range if the index is out of bounds.
+        -:  154:   //COMPLETE
+       11:  155:    void insert(size_t index, const Object& item) {
+       11:  156:        try{ if(index > elements) {throw 1;} }
+        1:  157:        catch(int n) {throw std::out_of_range("insert() index request out of bounds.");}
+        -:  158:
+        -:  159:
+       10:  160:        if(elements == 0) {
+        2:  161:            Node<Object>* newnode = new Node<Object>;
+        2:  162:            head = newnode;
+        2:  163:            tail = newnode;
+        -:  164:
+        2:  165:            newnode->setDatum(item);
+        2:  166:            ++elements;
+        -:  167:        }
+        8:  168:        else if (index == 0) {
+        4:  169:            Node<Object>* newnode = new Node<Object>;
+        4:  170:            newnode->setNext(head);
+        4:  171:            head->setPrev(newnode);
+        -:  172:
+        4:  173:            head = newnode;
+        -:  174:
+        4:  175:            newnode->setDatum(item);
+        4:  176:            ++elements;
+        -:  177:        }
+        4:  178:        else if (index == elements) { //appends to end of list
+        2:  179:            Node<Object>* newnode = new Node<Object>;
+        2:  180:            newnode->setPrev(tail);
+        2:  181:            tail->setNext(newnode);
+        -:  182:            
+        2:  183:            tail = newnode;
+        -:  184:
+        2:  185:            newnode->setDatum(item);
+        2:  186:            ++elements;
+        -:  187:        }
+        -:  188:        else {
+        2:  189:            cursor = head;
+        2:  190:            for(size_t i = 0; i < index; ++i) {cursor = cursor->getNext();}
+        -:  191:
+        2:  192:            Node<Object>* newnode = new Node<Object>;
+        2:  193:            newnode->setDatum(item);
+        2:  194:            newnode->setNext(cursor);
+        2:  195:            newnode->setPrev(cursor->getPrev());
+        2:  196:            cursor->getPrev()->setNext(newnode);
+        2:  197:            cursor->setPrev(newnode);
+        -:  198:
+        2:  199:            cursor = nullptr;
+        2:  200:            ++elements;
+        -:  201:        }
+        -:  202:        
+        -:  203:            
+        -:  204:        
+       10:  205:    }// - insert the given object at the specified index or throws std::out_of_range if the index is out of bounds
+        -:  206:    //Complete
+        7:  207:    void remove(size_t index) {
+        7:  208:        try{ if(index >= elements || head == nullptr) {throw 1;}}
+        1:  209:        catch(int n) {throw std::out_of_range("remove() index requested out of bounds.");}
+        -:  210:
+        6:  211:        if (index == 0) {
+        3:  212:            if(elements == 1) {
+        1:  213:                delete head; 
+        1:  214:                head = nullptr; 
+        1:  215:                tail = nullptr; 
+        1:  216:                --elements;
+        -:  217:            }
+        -:  218:            else {
+        2:  219:            head = head->getNext();
+        2:  220:            delete head->getPrev();
+        2:  221:            head->setPrev(nullptr);
+        2:  222:            --elements;
+        -:  223:            }
+        -:  224:        }
+        3:  225:        else if (index == elements - 1) { //remove from end of list
+        1:  226:            tail = tail->getPrev();
+        1:  227:            delete tail->getNext();
+        1:  228:            tail->setNext(nullptr);
+        1:  229:            --elements;
+        -:  230:        }
+        -:  231:        else {
+        2:  232:            cursor = head->getNext();
+        2:  233:            previous = head;
+        2:  234:            for(size_t i = 0; i < index; ++i) {cursor = cursor->getNext(); previous = previous->getNext();}
+        -:  235:
+        2:  236:            cursor->setPrev(previous->getPrev());
+        2:  237:            previous->getPrev()->setNext(cursor);
+        2:  238:            delete previous;
+        -:  239:
+        2:  240:            cursor = nullptr;
+        2:  241:            previous = nullptr;
+        2:  242:            --elements;
+        -:  243:        }
+        6:  244:    }// - remove the object at the specified index or throws std::out_of_range if the index is out of bounds
+        -:  245:
+       15:  246:    void print() {
+       15:  247:        if(elements == 0) {std::cout << "this list is empty..." << std::endl;}
+        -:  248:        else{
+       15:  249:        cursor = head;
+        -:  250:
+       70:  251:        for(size_t i = 0; i < elements; ++i) {
+       55:  252:            std::cout << "Element at " << i << " " << cursor << " : " << cursor->getDatum() << std::endl;
+       55:  253:            cursor = cursor->getNext();
+        -:  254:        }
+       15:  255:        std::cout << std::endl;
+        -:  256:
+       15:  257:        cursor = nullptr;
+        -:  258:        }
+       15:  259:    }
+        -:  260:
+        9:  261:    Node<Object>* getHead() const { return head;}
+        -:  262:};
+        -:  263:
+        -:  264:#endif  // DOUBLY_LINKED_LIST_H

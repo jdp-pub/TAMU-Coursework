@@ -1,0 +1,320 @@
+        -:    0:Source:hashtable_open_addressing.h
+        -:    0:Graph:graph_tests.gcno
+        -:    0:Data:graph_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef HASHTABLE_OPEN_ADDRESSING_H
+        -:    2:#define HASHTABLE_OPEN_ADDRESSING_H
+        -:    3:
+        -:    4:#include <iostream> 
+        -:    5:#include <vector> 
+        -:    6:
+        -:    7:using std::cout, std::endl;
+        -:    8:template<class Comparable>
+        6:    9:void test( std::string file, std::string fctn, Comparable Expected, Comparable Actual, size_t line){
+       12:   10:       std::string result = "FAIL";
+        6:   11:       if(Expected == Actual){ result = "PASS"; }
+        -:   12:
+        6:   13:       cout << file << ":" << line << ": Function[" << fctn << "] || Expected[" << Expected << "] || Actual[" << Actual << "] || [" << result << "]" << endl;
+        6:   14:   }
+        -:   15:
+        -:   16:template <class Key, class Hash=std::hash<Key>>
+        -:   17:class HashTable {
+        -:   18:    // TODO(student): implement an open addressing hash table
+        -:   19:
+        -:   20:    /*
+        -:   21:    Constructors
+        -:   22:    HashTable() - makes an empty table with 11 cells
+        -:   23:    explicit HashTable(size_t) - makes an empty table with the specified number of cells
+        -:   24:    HashTable(const HashTable&) - constructs a copy of the given table
+        -:   25:    ~HashTable() - destructs this table
+        -:   26:    HashTable& operator=(const HashTable&) - assigns a copy of the given table
+        -:   27:
+        -:   28:    Iterators
+        -:   29:    Optional
+        -:   30:
+        -:   31:    Capacity
+        -:   32:    bool is_empty() const - returns true if the table is empty
+        -:   33:    size_t size() const - returns the number of active values in the table
+        -:   34:    size_t table_size() const - return the number of cells in the table
+        -:   35:
+        -:   36:    Modifiers
+        -:   37:    void make_empty() - remove all values from the table
+        -:   38:    bool insert(const Key&) - insert the given lvalue reference into the table, rehashing if the maximum load factor is exceeded, return true if insert was successful (false if item already exists)
+        -:   39:    size_t remove(const Key&) - remove the specified value from the table, return number of elements removed (0 or 1).
+        -:   40:
+        -:   41:    Lookup
+        -:   42:    bool contains(const Key&) const - returns Boolean true if the specified value is in the table
+        -:   43:
+        -:   44:    Position
+        -:   45:    size_t position(const Key&) const - return the index of the cell that would contain the specified value.  This method handles collision resolution.
+        -:   46:
+        -:   47:    Visualization
+        -:   48:    void print_table(std::ostream&=std::cout) const - pretty print the table.  Required to exist and produce reasonable output, the empty table should print “<empty>\n”, but the format of the output is not graded
+        -:   49:    
+        -:   50:    Optional
+        -:   51:    HashTable(HashTable&&) - move constructs a copy of the given (rvalue) table
+        -:   52:    HashTable& operator=(HashTable&&) - move assigns a copy of the given (rvalue) table
+        -:   53:    void insert(Key&&) - insert the given rvalue reference into the table using move semantics
+        -:   54:
+        -:   55:    */
+        -:   56:   public:
+       44:   57:    struct Node {// a little exra overhead than just a list of keys but allows for keyed objects with multiple data members
+        -:   58:      Key Keyval = {};
+        -:   59:      std::vector<std::pair<Key, double>> edgeList = {};
+        -:   60:
+        -:   61:      bool filled = false;
+        -:   62:      bool del = false;
+        -:   63:
+       44:   64:      Node(){}
+        -:   65:      Node(const Key& other) {
+        -:   66:          Keyval = other;
+        -:   67:          filled = other;
+        -:   68:      }
+    #####:   69:      Node& operator=(const Node& other){
+    #####:   70:        filled = other.hasKey();
+    #####:   71:        Keyval = other.getKey();
+    #####:   72:        del = other.isRemoved();
+    #####:   73:        edgeList = other.getEdgeList();
+    #####:   74:        return *this;
+        -:   75:      }
+       53:   76:      Key getKey() const { return Keyval; }
+        8:   77:      void setKey(Key& key) { 
+        8:   78:        Keyval = key;
+        8:   79:        filled = true; 
+        8:   80:        }
+        1:   81:      void setRemove() {del = true;}
+       52:   82:      bool hasKey() const{return filled;}
+       38:   83:      bool isRemoved() const {return del;}
+        1:   84:      void unDelete() {
+        1:   85:        edgeList.clear();
+        1:   86:        del = false;}
+        -:   87:
+        4:   88:      bool addEdge(Key vert, double weight) {
+        4:   89:        if(findEdge(vert) != edgeList.size()){ return false;}
+        -:   90:        
+        8:   91:        if(edgeList.empty()) {edgeList.push_back(std::make_pair(vert, weight)); return true;}
+        -:   92:        else{
+        -:   93:          
+        1:   94:          for(size_t i = 0; i < edgeList.size(); ++i){
+        1:   95:            if (edgeList.at(i).second >= weight){
+    #####:   96:              edgeList.insert(edgeList.begin() + i, std::make_pair(vert, weight));
+    #####:   97:              return true;
+        -:   98:            }
+        1:   99:            else if((i == edgeList.size() - 1) && (edgeList.at(i).second < weight)){
+        1:  100:              edgeList.push_back(std::make_pair(vert, weight)); 
+        1:  101:              return true;
+        -:  102:            }
+        -:  103:          }
+        -:  104:        }
+    #####:  105:        return false;
+        -:  106:      }
+    #####:  107:      void addBegin(Key vert, double weight) {
+    #####:  108:        edgeList.at(0) = std::make_pair(vert, weight);
+    #####:  109:      }
+        -:  110:      bool removeEdge(Key vert) {
+        -:  111:        if(findEdge(vert) == edgeList.size()){return false;}
+        -:  112:
+        -:  113:        typename std::vector<std::pair<Key, double>>::iterator it = edgeList.begin();
+        -:  114:        std::advance(it, findEdge(vert));
+        -:  115:        edgeList.erase(it);
+        -:  116:        return true;
+        -:  117:      }
+        4:  118:      size_t findEdge(const Key vert) {
+        -:  119:        
+        4:  120:        size_t index = 0;
+        -:  121:        
+        5:  122:        while((index < edgeList.size()) && (vert != edgeList.at(index).first)){ ++index; }
+        4:  123:        return index;
+        -:  124:      }
+       20:  125:      std::vector<std::pair<Key, double>> getEdgeList() const {return edgeList;}
+        -:  126:      void clearEdges() { edgeList = {}; }
+        -:  127:      Key closestVertex() {
+        -:  128:        if(edgeList.empty()){return NULL;}
+        -:  129:
+        -:  130:        double min = edgeList.at(0).second;
+        -:  131:        Key vertex = edgeList.at(0).first;
+        -:  132:
+        -:  133:        for(size_t i = 0; i < edgeList.size(); ++i){
+        -:  134:          if(min > edgeList.at(i).second){
+        -:  135:            min = edgeList.at(i).second;
+        -:  136:            vertex = edgeList.at(i).first;
+        -:  137:          }
+        -:  138:        }
+        -:  139:        
+        -:  140:        return vertex;
+        -:  141:      }
+        -:  142:   };
+        -:  143:   Node* buckets = {};
+        -:  144:   size_t bucketCap = 11;
+        -:  145:   size_t elements = 0;
+        -:  146:   size_t elementLoad = 0;
+        -:  147:   float lambda = 0.5f;
+        -:  148:
+        -:  149:  
+        -:  150:      // Constructors
+        4:  151:    HashTable(){buckets = new Node[bucketCap];}// - makes an empty table with 11 cells
+        -:  152:    explicit HashTable(size_t ns){ bucketCap = ns; buckets = new Node[bucketCap];}// - makes an empty table with the specified number of cells
+        -:  153:    HashTable(const HashTable& other){
+        -:  154:      bucketCap = other.table_size();
+        -:  155:      buckets = new Node[bucketCap];
+        -:  156:      for(size_t i = 0; i < other.table_size(); ++i){
+        -:  157:        buckets[i] = other.getNode(i);
+        -:  158:      }
+        -:  159:      bucketCap = other.table_size();
+        -:  160:      elements = other.size();
+        -:  161:      elementLoad = other.totalElements();
+        -:  162:    }// - constructs a copy of the given table
+        4:  163:    ~HashTable(){delete[] buckets; }// - destructs this table
+        -:  164:    HashTable& operator=(const HashTable& other){
+        -:  165:      if(buckets == other.getRoot()){ return *this;}
+        -:  166:
+        -:  167:      bucketCap = other.table_size();
+        -:  168:      delete[] buckets;
+        -:  169:      buckets = new Node[bucketCap];
+        -:  170:      for(size_t i = 0; i < other.table_size(); ++i){
+        -:  171:        buckets[i] = other.getNode(i);
+        -:  172:      }
+        -:  173:      bucketCap = other.table_size();
+        -:  174:      elements = other.size();
+        -:  175:      elementLoad = other.totalElements();
+        -:  176:      return *this;
+        -:  177:    }// - assigns a copy of the given table
+        -:  178:
+        -:  179:    //Iterators
+        -:  180:    //Optional
+        -:  181:
+        -:  182:    //Capacity
+        2:  183:    bool is_empty() const{return !(elements);}// - returns true if the table is empty
+        -:  184:    size_t size() const{return elements;}// - returns the number of active values in the table
+        -:  185:    size_t table_size() const{return bucketCap;}// - return the number of cells in the table
+        -:  186:
+        -:  187:    //Modifiers
+        2:  188:    void make_empty(){
+        2:  189:      if(is_empty()){return;} 
+        -:  190:      
+       12:  191:      for(size_t i =0; i < bucketCap; ++i){
+       11:  192:        if(buckets[i].hasKey()){buckets[i].setRemove();}
+        -:  193:      }
+        1:  194:      elements = 0;
+        -:  195:    }// - remove all values from the table
+        9:  196:    bool insert(const Key& query) {
+        9:  197:      size_t index = Hash{}(query);
+        9:  198:      index = index % bucketCap;
+        9:  199:      size_t fb = 10;//decrement in loop for force break
+        9:  200:      while(fb){
+        9:  201:        if((!buckets[index].hasKey()) || ((buckets[index].getKey() == query) && buckets[index].isRemoved())){break;}
+    #####:  202:        else if((buckets[index].getKey() == query) && !buckets[index].isRemoved()){return false;}
+    #####:  203:        else{index = (index + 1) % bucketCap;}
+        -:  204:        //--fb;
+        -:  205:      }
+        9:  206:      if((buckets[index].getKey() == query) && buckets[index].isRemoved()){++elements; buckets[index].unDelete(); return true;}
+        8:  207:      Key temp = query;
+        8:  208:      buckets[index].setKey(temp);
+        -:  209:
+        8:  210:      ++elements;
+        8:  211:      ++elementLoad;
+        8:  212:      while(((float)(elementLoad) / (float)(bucketCap)) >= lambda){
+    #####:  213:        size_t tempS = bucketCap;
+    #####:  214:        bucketCap *= 2;
+    #####:  215:        while(!is_prime(bucketCap)){++bucketCap;} //finds next prime number after doubling
+    #####:  216:        Node* newBuckets = new Node[bucketCap];
+        -:  217:        
+    #####:  218:        for(size_t i = 0; i < tempS; ++i) {
+    #####:  219:          if(buckets[i].hasKey() && !buckets[i].isRemoved()){
+    #####:  220:            index = Hash{}(buckets[i].getKey());
+    #####:  221:            index = index % bucketCap;
+        -:  222:            while(1){
+    #####:  223:              if(!newBuckets[index].hasKey()){break;}
+    #####:  224:              else{index = (index + 1) % bucketCap;}
+        -:  225:            }
+    #####:  226:            Node temp = buckets[i];
+    #####:  227:            newBuckets[index] = temp;
+        -:  228:          }
+        -:  229:        }
+    #####:  230:        delete[] buckets;
+    #####:  231:        buckets = newBuckets;
+    #####:  232:        elementLoad = elements;
+        -:  233:      }
+        8:  234:      return true;
+        -:  235:    }//- insert the given lvalue reference into the table, rehashing if the maximum load factor is exceeded, return true if insert was successful (false if item already exists)
+        -:  236:    size_t remove(const Key& query) {
+        -:  237:      size_t index = Hash{}(query);
+        -:  238:        index = index % bucketCap;
+        -:  239:        while(1){
+        -:  240:          if(!buckets[index].hasKey() || (buckets[index].getKey() == query && !buckets[index].isRemoved())){break;}
+        -:  241:          else{index = (index + 1) % bucketCap;}
+        -:  242:        }
+        -:  243:        if(query == buckets[index].getKey()){--elements; buckets[index].setRemove(); return 1;}
+        -:  244:        else{return 0;}
+        -:  245:    }//- remove the specified value from the table, return number of elements removed (0 or 1).
+        -:  246:
+        -:  247:    //Lookup
+       20:  248:    bool contains(const Key& query) const{
+       20:  249:      size_t index = Hash{}(query);
+       20:  250:      index = index % bucketCap;
+        -:  251:      while(1){
+       22:  252:        if(!buckets[index].hasKey()){return false;}
+       13:  253:        if((buckets[index].getKey() == query) && !buckets[index].isRemoved()){break;}
+        1:  254:        else{index = (index + 1) % bucketCap;}
+        -:  255:      }
+       12:  256:      return true;
+        -:  257:    }// - returns Boolean true if the specified value is in the table
+        -:  258:
+        -:  259:    //Position
+       11:  260:    size_t position(const Key& query) const{
+       11:  261:        size_t index = Hash{}(query);
+       11:  262:        index = index % bucketCap;
+        -:  263:        
+        -:  264:        while(1){
+       11:  265:          if((!buckets[index].hasKey()) || ((buckets[index].getKey() == query) && buckets[index].isRemoved())){break;}
+       11:  266:        else if((buckets[index].getKey() == query) && !buckets[index].isRemoved()){break;}
+    #####:  267:        else{index = (index + 1) % bucketCap;}
+        -:  268:        }
+       11:  269:        return index;
+        -:  270:    }// - return the index of the cell that would contain the specified value.  This method handles collision resolution.
+       11:  271:    Node& getNode(size_t i) const {return buckets[i];}
+       11:  272:    Node& findNode(const Key& i) const {return getNode(position(i));}
+        -:  273:    size_t totalElements() const {return elementLoad;}
+        -:  274:    Node* getRoot() const {return buckets;} 
+        -:  275:    //Visualization
+        -:  276:    void print_table(std::ostream& os=std::cout) const{
+        -:  277:      if(is_empty()){os << "<empty>\n"; return;}
+        -:  278:      size_t  out = 0;
+        -:  279:      for(size_t i = 0; i < bucketCap; ++i) {
+        -:  280:        if(buckets[i].hasKey() && !buckets[i].isRemoved()){
+        -:  281:            ++out; os << i << ": [" << buckets[i].getKey();
+        -:  282:              for(size_t j = 0; j < buckets[i].getEdgeList().size(); ++j){
+        -:  283:                os << "->{" << buckets[i].getEdgeList().at(j).second << "}" << buckets[i].getEdgeList().at(j).first;
+        -:  284:                if(j != buckets[i].getEdgeList().size() - 1) {os << ", ";}
+        -:  285:              }
+        -:  286:              cout << "] " <<  endl;
+        -:  287:          }
+        -:  288:      }
+        -:  289:      os << endl;
+        -:  290:    }// - pretty print the table.  Required to exist and produce reasonable output, the empty table should print “<empty>\n”, but the format of the output is not graded
+        -:  291:  
+    #####:  292:    bool is_prime(size_t i){
+    #####:  293:      size_t count = 2;
+    #####:  294:      while(count != i){
+    #####:  295:        if(i % count == 0){ return false;}
+    #####:  296:        if(count == i / 2){break;}
+    #####:  297:        count++;
+        -:  298:      }
+    #####:  299:      return true;
+        -:  300:    }
+        -:  301:    void table_info(){
+        -:  302:      cout << "Elements: " << size() << endl
+        -:  303:           << "Occupied Buckets: " << elementLoad << endl
+        -:  304:           << "Buckets: " << table_size() << endl
+        -:  305:           << "Empty?: " << std::boolalpha << is_empty() << endl
+        -:  306:           << "Max Load: " << std::to_string(lambda) << endl
+        -:  307:           << "Load: " << std::to_string((float)(elementLoad) / (float)(bucketCap)) << endl
+        -:  308:           << "~~~~~~~~~~~~~~~~~~~~~" << endl; 
+        -:  309:    }
+        -:  310:    //Optional
+        5:  311:    void insert(Key&& other) {Key temp = other; insert(temp);}//- insert the given rvalue reference into the table using move semantics
+        -:  312:
+        -:  313:};
+        -:  314:
+        -:  315:#endif  // HASHTABLE_OPEN_ADDRESSING_H

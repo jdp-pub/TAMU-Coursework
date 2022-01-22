@@ -1,0 +1,432 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{blindtext}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{wasysym}
+\usepackage{circuitikz}
+\usepackage{float}
+\usetikzlibrary{arrows,shapes,calc,positioning}
+
+\newcommand{\myscope}[2]
+{\draw[thick,rotate=#2] (#1) circle (12pt)
+(#1) ++(-0.35,-0.1) --++ (0.3,0.3) --++ (0,-0.3) --++(0.3,0.3) --++(0,-0.3);}
+
+\begin{document}
+
+\title{CSCE 222 \\ Homework 3}
+
+\author{Jacob~Purcell,~\IEEEmember{Texas~A\&M,~Student}}
+
+\maketitle
+\section*{2.3}
+\subsection*{12}
+    For a function to be one-one, the following condition must hold;
+    \begin{equation}
+    f(n_1) = f(n_2)
+    \end{equation}
+    $$\therefore n_1 = n_2$$
+    \subsubsection*{a)}
+        \begin{equation}
+            f(n) = n - 1
+        \end{equation}
+        \begin{equation}
+            n_1 - 1 = n_2 - 1
+        \end{equation}
+        
+        Add 1 to both sizes;
+        \begin{equation}
+            n_1 = n_2
+        \end{equation}
+        $$\boxed{\therefore one-one}$$
+
+    \subsubsection*{b)}
+        \begin{equation}
+            f(n) = n^2 + 1
+        \end{equation}
+        \begin{equation}
+            n_1^2 + 1 = n_2^2 + 1
+        \end{equation}
+
+        Subtract 1 from both sides;
+        \begin{equation}
+            n_1^2 = n_2^2
+        \end{equation}
+
+        Square root both sides;
+        \begin{equation}
+            \pm n_1 = \pm n_2
+        \end{equation}
+
+        This creates the situation that 
+        \begin{equation}
+            n_1 = \pm n_2
+        \end{equation}
+
+        Where two inputs are mapped to one output,
+        \begin{equation}
+            \boxed{\therefore not~one-one}
+        \end{equation}
+
+    \subsubsection*{c)}
+        \begin{equation}
+            f(n) = n^3
+        \end{equation}
+        \begin{equation}
+            n_1^3 = n_2^3
+        \end{equation}
+        Take the cube root,
+        \begin{equation}
+            n_1 = n_2
+        \end{equation}
+        \begin{equation}
+            \boxed{\therefore one-one}
+        \end{equation}
+
+    \subsubsection*{d)}
+        \begin{equation}
+            f(n) = \frac{n}{2}
+        \end{equation}
+        \begin{equation}
+            \frac{n_1}{2} = \frac{n_2}{2}
+        \end{equation}
+        Multiply each side by 2,
+        \begin{equation}
+            \boxed{\therefore one-one}
+        \end{equation}
+
+\subsection*{14}
+        To check whether the functions are surjective, an inverse will be found 
+        for each function, then plugged back into the original equation to verify 
+        freedom from contradiction. The condition that $f(m,n) = y$ is understood.
+    \subsubsection*{a)}
+        \begin{equation}
+            y = 2m - n
+        \end{equation}
+        Solve for $n$,
+        \begin{equation}
+            n = 2m - y
+        \end{equation}
+        Plug in $n$,
+        \begin{equation}
+            y = 2m - (2m - y)
+        \end{equation}
+        Remove parenthases and distribute negation,
+        \begin{equation}
+            y = 2m - 2m + y
+        \end{equation}
+        Add like terms
+        \begin{equation}
+            y = y
+        \end{equation}
+        \begin{equation}
+            \boxed{\therefore surjective}
+        \end{equation}
+
+    \subsubsection*{b)}
+        \begin{equation}
+            y = m^2 - n^2
+        \end{equation}
+        Solve for $n$,
+        \begin{equation}
+            n = \pm \sqrt{m^2 - y}
+        \end{equation}
+        From here, it is apparent that part of the domain lies within  $\mathbb{I}$ outside of $\mathbb{Z}$ in 
+        the case that $y > m^2$.
+        \begin{equation}
+            \boxed{\therefore not~surjective}
+        \end{equation}
+
+    \subsubsection*{c)}
+        \begin{equation}
+            y = m + n + 1
+        \end{equation}
+        Solve for $n$,
+        \begin{equation}
+            n = y - m - 1
+        \end{equation}
+        Plug in $n$,
+        \begin{equation}
+            y = m + y - m - 1 + 1
+        \end{equation}
+        Combine like terms,
+        \begin{equation}
+            y = y
+        \end{equation}
+        \begin{equation}
+            \boxed{\therefore surjective}
+        \end{equation}
+
+    \subsubsection*{d)}
+        \begin{equation}
+            y = \mid m \mid - \mid n \mid
+        \end{equation}
+        This creates the situation that $(m > n) \exists \mathbb{Z}^+$,
+        \begin{equation}
+            y^+ = m - n
+        \end{equation}
+        or $(m < n) \exists \mathbb{Z}^-$
+        \begin{equation}
+            y^- = n - m
+        \end{equation}
+        Solving for $n$,
+        \begin{equation}
+            n = m-y^+,~ \\
+            n = m+y^-
+        \end{equation}
+        Plug in $n$,
+        \begin{equation}
+            y^+ = m - m + y^+,~ \\
+            y^- = m + y^- - m
+        \end{equation}
+        Combine like terms,
+        \begin{equation}
+            y^+ = y^+,~ \\
+            y^- = y^-
+        \end{equation}
+
+        Where $y^+ \exists \mathbb{Z}^+$ and $y^- \exists \mathbb{Z}^-$. The solution $f(0,0) = 0$ is understood.
+        This creates a situation where $y$ can be any element of $\mathbb{Z}$. 
+
+        \begin{equation}
+            \boxed{\therefore surjective}
+        \end{equation}
+
+    \subsubsection*{e)}
+        \begin{equation}
+            y = m^2 - 4
+        \end{equation}
+        Solve for m,
+        \begin{equation}
+            m = \pm \sqrt{y+4}
+        \end{equation}
+        If $y < -4, m\exists \mathbb{I}$ which is outside of the domain of $\mathbb{Z}$.
+        \begin{equation}
+            \boxed{\therefore not~surjective}
+        \end{equation}
+
+\subsection*{20}
+    \subsubsection*{a)}
+        Injective but not surjective,
+        \begin{equation}
+            \boxed{f(x) = \frac{1}{x}}
+        \end{equation}
+        Every input has one output, however, $y=0$ is not mapped by an input.
+
+    \subsubsection*{b)}
+    Surjective not injective,
+    \begin{equation}
+        \boxed{f(x,z) = x^2 - z^2}
+    \end{equation}
+    This covers the entire domain from $N-N$ however certain values are mapped to multiple times($e.g.~x = \pm N, z = 0$).
+    
+    \subsubsection*{c)}
+    Bijective,
+    \begin{equation}
+        \boxed{f(x) = x}
+    \end{equation}
+    In this case, every output corresponds to one output, and every output is mapped.
+
+    \subsubsection*{d)}
+    General function,
+    \begin{equation}
+        \boxed{f(x) = x^2}
+    \end{equation}
+    Two inputs correspond to one output and negative outputs are not covered in the domain $x \exists \mathbb{R}$.
+
+\subsection*{22}
+    For bijection, a function must be injective and surjective.
+    The following proofs will reuse methods from previous parts.
+    \subsubsection*{a)}
+    \begin{equation}
+        f(x) = -3x + 4
+    \end{equation}
+        Injective: $f(y) = f(x)$
+        \begin{equation}
+            -3x + 4 = -3y + 4
+        \end{equation}
+        After adding $4$ and dividing by $-3$, the expession becomes
+        \begin{equation}
+            x = y
+        \end{equation}
+        $$\therefore injective$$
+
+        Surjective: $f(f^{-1}(x)) \exists R, y = f(x)$
+        \begin{equation}
+            y = -3x + 4
+        \end{equation}
+        Solve for $x$,
+        \begin{equation}
+            x = \frac{4-y}{3}
+        \end{equation}
+        Plug $x$ into original function,
+        \begin{equation}
+            y = -3(\frac{4-y}{3}) + 4
+        \end{equation}
+        Distribute 3,
+        \begin{equation}
+            y = -(4-y) + 4
+        \end{equation}
+        Distribute negative and combine like terms,
+        \begin{equation}
+            y = y
+        \end{equation}
+        $$\therefore surjective$$
+        This function is surjective and injective,
+        $$\boxed{\therefore bijective}$$
+
+    \subsubsection*{b)}
+        \begin{equation}
+            f(x) = -3x^2 + 7
+        \end{equation}
+        Injective: $f(y) = f(x)$
+        \begin{equation}
+            -3x^2 + 7 = -3y^2 + 7
+        \end{equation}
+        Subtract $7$ from both sides and divide $-3$,
+        \begin{equation}
+            x^2 = y^2
+        \end{equation}
+        take root $2$ of both sides,
+        \begin{equation}
+            \pm x = \pm y
+        \end{equation}
+        \begin{equation}
+            x = \pm y
+        \end{equation}
+        Since two inputs map to the same output, this function is not injective.
+        $$\boxed{\therefore not~bijective}$$
+
+
+    \subsubsection*{c)}
+        \begin{equation}
+            f(x) = \frac{x-1}{x+2}
+        \end{equation}
+        Surjective: $f(f^{-1}(x)) \exists R, y = f(x)$
+        \begin{equation}
+            y = \frac{x-1}{x+2}
+        \end{equation}
+        Solving for $x$, multiply by $x+2$
+        \begin{equation}
+            (x+2)y = x-1
+        \end{equation}
+        Distribute $y$,
+        \begin{equation}
+            xy+2y = x-1
+        \end{equation}
+        Collect like variables,
+        \begin{equation}
+            xy-x = -2y-1
+        \end{equation}
+        Factor $x$, divide $y+1$
+        \begin{equation}
+            x = \frac{-2y-1}{y-1}
+        \end{equation}
+        There is a discontinuity at $y = 1$, and therefore does not have an input mapping
+        and is not an element of $\mathbb{R}$, making this function not surjective.
+        $$\boxed{\therefore not~bijective}$$
+
+
+    \subsubsection*{d)}
+        \begin{equation}
+            f(x) = x^5 + 1
+        \end{equation}
+        Injective: $f(y) = f(x)$
+        \begin{equation}
+            y^5 + 1 = x^5 + 1
+        \end{equation}
+        subtract 1, take root $5$,
+        \begin{equation}
+            y = x
+        \end{equation}
+        $$\therefore injective$$
+        
+        Surjective: $f(f^{-1}(x)) \exists R, y = f(x)$
+        \begin{equation}
+            y = x^5 + 1
+        \end{equation}
+        Solve for y,
+        \begin{equation}
+            x = (y-1)^{\frac{1}{5}}
+        \end{equation}
+        plug x into original function,
+        \begin{equation}
+            y = ((y-1)^{\frac{1}{5}})^5 + 1
+        \end{equation}
+        Multiply explonential terms per rules of exponents,
+        \begin{equation}
+            y = y-1 + 1
+        \end{equation}
+        Add constants,
+        \begin{equation}
+            y = y
+        \end{equation}
+        $$\therefore surjective$$
+        Both injective and surjective,
+        $$\boxed{\therefore bijective}$$
+        
+\subsection*{60}
+        There are $8$ bits per byte, dimensional analysis says that the total number
+        of bits divided by the equivalent corresponding number of bytes
+        (as determined by how many bytes are in a bit) is 1, which gives rise to the equation
+        \begin{equation}
+            \frac{x~bits}{8y~bytes} = 1, ~this~says~that~if~we~have~8~bits,~we~have~1~byte
+        \end{equation}
+        We want a form that outputs a number of bytes given a number of bits,
+        multiplying both sides by number of bytes yields
+        \begin{equation}
+            x~bits = 8y~bytes
+        \end{equation}
+        It is noted that $y$ is a function of $x$ and $x$ is a function of $y$,
+        which means that we can attain a bit count for any number of bytes or 
+        a byte count for any number of bits. For this excersize we will consider only the following case,
+        \begin{equation}
+            y(x) = \frac{x}{8}
+        \end{equation}
+        Since bytes are discrete packages of 8 bits, any decimal greater than $0$ will result in a new byte.
+
+        \subsubsection*{a)}
+        \begin{equation}
+            y(4) = \frac{4}{8}
+        \end{equation}
+        divide,
+        \begin{equation}
+            y = \frac{1}{2} = 0.5 \approx \boxed{1}
+        \end{equation}
+
+        \subsubsection*{b)}
+        \begin{equation}
+            y(10) = \frac{10}{8}
+        \end{equation}
+        divide,
+        \begin{equation}
+            y = \frac{5}{4} = 1.25 \approx \boxed{2}
+        \end{equation}
+
+        \subsubsection*{c)}
+        \begin{equation}
+            y(500) = \frac{500}{8}
+        \end{equation}
+        divide,
+        \begin{equation}
+            y = \frac{125}{2} = 62.5 \approx \boxed{63}
+        \end{equation}
+
+        \subsubsection*{d)}
+        \begin{equation}
+            y(x) = \frac{3000}{8}
+        \end{equation}
+        divide,
+        \begin{equation}
+            y = \boxed{375}
+        \end{equation}
+
+
+\end{document}

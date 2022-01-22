@@ -1,0 +1,787 @@
+        -:    0:Source:hashtable_separate_chaining_tests.cpp
+        -:    0:Graph:hashtable_separate_chaining_tests.gcno
+        -:    0:Data:hashtable_separate_chaining_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "hashtable_separate_chaining.h"
+        -:    2:
+        -:    3:using std::string;
+        -:    4:
+        1:    5:int main() {
+        -:    6:    // TODO(student): write at least 1000 lines of test
+        1:    7:    size_t n = 0;
+        -:    8:
+        -:    9:    /*
+        -:   10:    Constructors
+        -:   11:    HashTable() - COMPLETE
+        -:   12:    explicit HashTable(size_t) COMEPLTE
+        -:   13:    HashTable(const HashTable&) COMPLETE
+        -:   14:    ~HashTable() - COMPLETE
+        -:   15:    HashTable& operator=(const HashTable&) COMPLETE
+        -:   16:
+        -:   17:    Iterators
+        -:   18:    Optional
+        -:   19:
+        -:   20:    Capacity
+        -:   21:    bool is_empty() COMPLETE 
+        -:   22:    size_t size() cOMPLETE
+        -:   23:
+        -:   24:    Modifiers
+        -:   25:    void make_empty() COMPLETE
+        -:   26:    bool insert(const Key&) - insert the given lvalue reference into the table, rehashing if the maximum load factor is exceeded, return true if insert was successful (false if item already exists)
+        -:   27:    size_t remove(const Key&) - remove the specified value from the table, return number of elements removed (0 or 1).
+        -:   28:
+        -:   29:    Lookup
+        -:   30:    bool contains(const Key&) COMPLETE
+        -:   31:
+        -:   32:    Bucket Interface
+        -:   33:    size_t bucket_count() COMPLETE
+        -:   34:    size_t bucket_size(size_t) COMPLETE
+        -:   35:    size_t bucket(const key_type&) COMPLETE
+        -:   36:
+        -:   37:    Hash Policy
+        -:   38:    float load_factor() COMPLETE
+        -:   39:    float max_load_factor() const COMPLETE
+        -:   40:    void max_load_factor(float) COMPLETE
+        -:   41:    void rehash(size_type) COMPLETE
+        -:   42:    void print_table(std::ostream&=std::cout) COMPLETE
+        -:   43:    
+        -:   44:    Optional
+        -:   45:    HashTable(HashTable&&) - move constructs a copy of the given (rvalue) table
+        -:   46:    HashTable& operator=(HashTable&&) - move assigns a copy of the given (rvalue) table
+        -:   47:    void insert(Key&&) - insert the given rvalue reference into the table using move semantics
+        -:   48:    */
+        -:   49:   
+        -:   50:   {//basic functionality
+        2:   51:        HashTable<std::string, std::hash<std::string>> e;
+       11:   52:        for(size_t i = 0; i < 10; ++i){
+       20:   53:            std::string f = std::to_string(i*i + i);
+       10:   54:            e.insert(f);
+        -:   55:        }
+        1:   56:        e.print_table(cout);
+        -:   57:
+        1:   58:        cout << "testing e.contains(0): " << e.contains("0") << endl; //true
+        1:   59:        cout << "testing e.contains(90): " << e.contains("90") << endl; //true
+        1:   60:        cout << "testing e.contains(42): " << e.contains("42") << endl; //true
+        1:   61:        cout << "testing e.contains(30): " << e.contains("30") << endl; //true
+        1:   62:        cout << "testing e.contains(4fff0): " << e.contains("4fff0") << endl; //false
+        1:   63:        cout << "testing e.contains(9df0): " << e.contains("9df0") << endl; //false
+        1:   64:        cout << "testing e.contains(42rtr): " << e.contains("42rtr") << endl; //false
+        1:   65:        cout << "testing e.contains(30xcvdfg): " << e.contains("30xcvdfg") << endl; //false
+        -:   66:
+        1:   67:        cout << "testing is_empty() [expect false]: " << e.is_empty() << endl; 
+        1:   68:        cout << "testing size() [expect 10]: " << e.size() << endl; 
+        1:   69:        cout << "emptying hash table..." << endl;
+        1:   70:        cout << "testing bucket_count() [expect 11]: " << e.bucket_count() << endl;
+        -:   71:
+        1:   72:        e.make_empty();
+        1:   73:        e.print_table(cout);
+        1:   74:        e.make_empty();
+        1:   75:        e.print_table(cout);
+        -:   76:
+        1:   77:        cout << "testing e.contains(42rtr): " << e.contains("42rtr") << endl;
+        1:   78:        cout << "testing e.contains(30xcvdfg): " << e.contains("30xcvdfg") << endl;
+        1:   79:        cout << "testing is_empty() [expect true]: " << e.is_empty() << endl;
+        1:   80:        cout << "testing size() [expect 0]: " << e.size() << endl;
+        1:   81:        cout << "testing bucket_count() [expect 11]: " << e.bucket_count() << endl;
+        -:   82:        
+        1:   83:        cout << endl << "reloading hash table..." << endl;
+       11:   84:        for(size_t i = 0; i < 10; ++i){
+       20:   85:            std::string f = std::to_string(i*i + i) + "kshdfjkhsd";
+       10:   86:            e.insert(f);
+        -:   87:        }
+        1:   88:        e.print_table(cout);
+        1:   89:        cout << "testing bucket_size() [expect 3]: " << e.bucket_size(3) << endl;
+        1:   90:        cout << "testing bucket_size() [expect 0]: " << e.bucket_size(7) << endl;
+        1:   91:        cout << "testing bucket_size() [expect 1]: " << e.bucket_size(1) << endl;
+        1:   92:        try{cout << "testing bucket_size() [expect throw]: " << e.bucket_size(1000) << endl;}
+        1:   93:        catch(std::out_of_range &e){cout << e.what() << endl;}
+        -:   94:
+        1:   95:        cout << "testing bucket() [expect 1]: " << e.bucket("90kshdfjkhsd") << endl;
+        1:   96:        cout << "testing bucket() [expect 3]: " << e.bucket("72kshdfjkhsd") << endl;
+        1:   97:        cout << "testing bucket() [expect 8]: " << e.bucket("42kshdfjkhsd") << endl;
+        -:   98:   }
+        -:   99:
+        1:  100:    cout << endl << "~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl << endl;
+        -:  101:
+        -:  102:   {//copy construct, copy assign
+        -:  103:   
+        2:  104:        HashTable<std::string, std::hash<std::string>> e(17);
+        1:  105:        e.print_table(cout);
+        -:  106:
+        -:  107:        
+       11:  108:        for(size_t i = 0; i < 10; ++i){
+       20:  109:            std::string f = std::to_string(i*i/(i+1) + i);
+       10:  110:            e.insert(f);
+        -:  111:        }
+        1:  112:        e.print_table(cout);
+        -:  113:
+        2:  114:        HashTable<std::string, std::hash<std::string>> d(e);
+        1:  115:        e.make_empty();
+        1:  116:        e.print_table(cout);
+        1:  117:        d.print_table(cout);
+        -:  118:
+      101:  119:        for(size_t i = 0; i < 100; ++i){
+      200:  120:            std::string f = std::to_string(i*i/(i+1) + i);
+      100:  121:            e.insert(f);
+        -:  122:        }
+        -:  123:        
+        1:  124:        e.print_table(cout);
+        1:  125:        cout << e.size() << " : " << e.bucket_count() << endl;
+        1:  126:        cout << e.max_load_factor() << " : " << std::to_string(e.load_factor()) << endl;
+        1:  127:        e.max_load_factor(0.5);
+        1:  128:        e.print_table(cout);
+        1:  129:        cout << e.size() << " : " << e.bucket_count() << endl;
+        1:  130:        cout << std::to_string(e.max_load_factor()) << " : " << std::to_string(e.load_factor()) << endl;
+        -:  131:
+        1:  132:        try{e.max_load_factor(-100);}
+        1:  133:        catch(std::invalid_argument &u){cout << u.what() << endl;}
+        1:  134:        e.max_load_factor(1);
+        -:  135:        //std::chrono::high_resolution_clock::time_point //start;
+        -:  136:        //std::chrono::high_resolution_clock::time_point //stop;
+        -:  137:        //std::chrono::duration<double> //delta;
+        1:  138:        cout << "insertion time in small table" << endl;
+       11:  139:        for(size_t i = 0; i < 10; ++i){
+       20:  140:            std::string f = std::to_string(i*i + i) + "kshdfjkhsd";
+        -:  141:            //start = //std::chrono::high_resolution_clock::now();
+       10:  142:            e.insert(f);
+        -:  143:            //stop = //std::chrono::high_resolution_clock::now();
+        -:  144:            //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  145:            //cout << i << ": time " << //delta.count() << "seconds" << endl;
+        -:  146:        }
+        -:  147:        //std::chrono::duration<double> SL//delta = //delta;
+        -:  148:        //start = //std::chrono::high_resolution_clock::now();
+    10001:  149:        for(size_t i = 0; i < 10000; ++i){
+    20000:  150:                std::string f = std::to_string(i*i + i) + "kshdfjkhsd";
+    10000:  151:                e.insert(f);
+        -:  152:        }
+        -:  153:        //stop = //std::chrono::high_resolution_clock::now();
+        -:  154:
+        -:  155:        //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  156:
+        -:  157:        //cout << "1M insertions took " << //delta.count() << "seconds" << endl;
+        -:  158:
+        -:  159:        //start = //std::chrono::high_resolution_clock::now();
+        1:  160:        d = e;
+        -:  161:        //stop = //std::chrono::high_resolution_clock::now();
+        -:  162:        //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  163:
+        -:  164:        //cout << "1M entry copy assign took " << //delta.count() << "seconds" << endl;
+        -:  165:
+        -:  166:        //start = //std::chrono::high_resolution_clock::now();
+        1:  167:        e.make_empty();
+        -:  168:        //stop = //std::chrono::high_resolution_clock::now();
+        -:  169:        //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  170:        //cout << "1M empty() took " << //delta.count() << "seconds" << endl;
+        -:  171:
+        -:  172:        //start = //std::chrono::high_resolution_clock::now();
+        2:  173:        HashTable<std::string, std::hash<std::string>> r(d);
+        -:  174:        //stop = //std::chrono::high_resolution_clock::now();
+        -:  175:        //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  176:        //cout << "1M entry copy construct took " << //delta.count() << "seconds" << endl;
+        -:  177:
+        2:  178:        HashTable<std::string, std::hash<std::string>> h(e);
+        -:  179:
+        1:  180:        cout << e.size() << " : " << e.bucket_count() << endl;
+        1:  181:        cout << std::to_string(e.max_load_factor()) << " : " << std::to_string(e.load_factor()) << endl;
+        1:  182:        cout << d.size() << " : " << d.bucket_count() << endl;
+        1:  183:        cout << std::to_string(d.max_load_factor()) << " : " << std::to_string(d.load_factor()) << endl;
+        1:  184:        cout << h.size() << " : " << h.bucket_count() << endl;
+        1:  185:        cout << std::to_string(h.max_load_factor()) << " : " << std::to_string(h.load_factor()) << endl;
+        1:  186:        cout << r.size() << " : " << r.bucket_count() << endl;
+        1:  187:        cout << std::to_string(r.max_load_factor()) << " : " << std::to_string(r.load_factor()) << endl;    
+        -:  188:
+        1:  189:        h = r;
+    10001:  190:        for(size_t i = 0; i < 10000; ++i){
+    20000:  191:                std::string f = std::to_string(i*i + i) + "kshdfjkhsd";
+    10000:  192:                e.insert(f);
+        -:  193:        }
+        1:  194:        h = h;
+        -:  195:
+        1:  196:        cout << h.size() << " : " << h.bucket_count() << endl;
+        1:  197:        cout << std::to_string(h.max_load_factor()) << " : " << std::to_string(h.load_factor()) << endl;
+        1:  198:        cout << r.size() << " : " << r.bucket_count() << endl;
+        1:  199:        cout << std::to_string(r.max_load_factor()) << " : " << std::to_string(r.load_factor()) << endl;   
+        1:  200:        cout << "insertion time in large table" << endl;
+       11:  201:        for(size_t i = 0; i < 10; ++i){
+       20:  202:            std::string f = std::to_string(i*i + i) + "kshdfjkhsd";
+        -:  203:            //start = //std::chrono::high_resolution_clock::now();
+       10:  204:            h.insert(f);
+        -:  205:            //stop = //std::chrono::high_resolution_clock::now();
+        -:  206:            //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  207:            //cout << i << ": time " << //delta.count() << "seconds" << endl;
+        -:  208:        }
+        -:  209:        //SL//delta -= //delta;
+        -:  210:        //cout <<"Diffence between large and small data cases: " << SL//delta.count() << "seconds" << endl;
+        -:  211:        
+        -:  212:    }
+        -:  213:
+        -:  214:    {//final test sequence: remove, memory integrity, code coverage
+        -:  215:
+        -:  216:        //std::chrono::high_resolution_clock::time_point //start;
+        -:  217:        //std::chrono::high_resolution_clock::time_point //stop;
+        -:  218:        //std::chrono::duration<double> //delta;
+        -:  219:
+        1:  220:        cout << "insertion time in small table" << endl;
+        2:  221:        HashTable<std::string, std::hash<std::string>> h;
+       11:  222:        for(size_t i = 0; i < 10; ++i){
+       20:  223:            std::string f = std::to_string(i*i + i);
+        -:  224:            //start = //std::chrono::high_resolution_clock::now();
+       10:  225:            h.insert(f);
+        -:  226:            //stop = //std::chrono::high_resolution_clock::now();
+        -:  227:            //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  228:            //cout << i << ": time " << //delta.count() << "seconds" << endl;
+        -:  229:        }
+        -:  230:        //std::chrono::duration<double> SI//delta = //delta;
+        -:  231:
+        1:  232:        h.print_table(cout);
+       11:  233:        for(size_t i = 0; i < 10; ++i){
+       20:  234:            std::string f = std::to_string(i*i + i);
+        -:  235:            //start = //std::chrono::high_resolution_clock::now();
+       10:  236:            h.insert(f);
+        -:  237:            //stop = //std::chrono::high_resolution_clock::now();
+        -:  238:            //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  239:        }
+        -:  240:        //std::chrono::duration<double> SC//delta = //delta;
+        -:  241:
+        1:  242:        h.print_table(cout);
+       11:  243:        for(size_t i = 0; i < 10; ++i){
+       20:  244:            std::string f = std::to_string(i*i + i);
+        -:  245:            //start = //std::chrono::high_resolution_clock::now();
+       10:  246:            h.remove(f);
+        -:  247:            //stop = //std::chrono::high_resolution_clock::now();
+        -:  248:            //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  249:            //cout << i << ": time " << //delta.count() << "seconds" << endl;
+        -:  250:        }
+        -:  251:        //std::chrono::duration<double> SR//delta = //delta;
+        -:  252:
+       11:  253:        for(size_t i = 0; i < 10; ++i){
+       20:  254:            std::string f = std::to_string(i*i + i);
+       10:  255:            cout << "inserting " << f << endl;
+       10:  256:            h.insert(f);
+        -:  257:        }
+        1:  258:        h.print_table(cout);
+       11:  259:        for(int i = 9; i >= 0; --i){
+       20:  260:            std::string f = std::to_string(i*i + i);
+       10:  261:            cout << "removing " << f << endl;
+       10:  262:            h.remove(f);
+       10:  263:            h.print_table(cout);
+        -:  264:        }
+        -:  265:
+       21:  266:        for(size_t i = 0; i < 20; ++i){
+       40:  267:            std::string f = std::to_string(i*i + i);
+       20:  268:            cout << "inserting " << f << endl;
+       20:  269:            h.insert(f);
+        -:  270:        }
+        1:  271:        h.print_table(cout);
+        -:  272:
+        1:  273:        h.remove("6");
+        1:  274:        h.remove("42");
+        1:  275:        h.remove("110");
+        -:  276:
+        1:  277:        h.print_table(cout);
+        -:  278:
+    10001:  279:        for(size_t i = 0; i < 10000; ++i){
+    20000:  280:            std::string f = std::to_string(i*i + i);
+    10000:  281:            h.insert(f);
+        -:  282:        }
+        -:  283:        //start = //std::chrono::high_resolution_clock::now();
+        1:  284:            h.insert("dfgdfg");
+        -:  285:            //stop = //std::chrono::high_resolution_clock::now();
+        -:  286:            //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  287:        //SI//delta -= //delta;
+        -:  288:        //cout << "large and small case difference insert " << SI//delta.count() << endl;
+    10001:  289:        for(size_t i = 0; i < 10000; ++i){
+    20000:  290:            std::string f = std::to_string(i*i + i);
+    10000:  291:            h.remove(f);
+        -:  292:        }
+    10001:  293:        for(size_t i = 0; i < 10000; ++i){
+    20000:  294:            std::string f = std::to_string(i*i + i);
+    10000:  295:            h.insert(f);
+        -:  296:        }
+        -:  297:        //start = //std::chrono::high_resolution_clock::now();
+        1:  298:            h.contains("10100");
+        -:  299:            //stop = //std::chrono::high_resolution_clock::now();
+        -:  300:            //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  301:            //SC//delta -= //delta;
+        -:  302:        //cout << "large and small case difference contains " << SC//delta.count() << endl;
+        -:  303:        
+        -:  304:        //start = //std::chrono::high_resolution_clock::now();
+        1:  305:            h.remove("10100");
+        -:  306:            //stop = //std::chrono::high_resolution_clock::now();
+        -:  307:            //delta = //std::chrono::duration_cast<//std::chrono::duration<double>>(//stop - //start);
+        -:  308:            //SR//delta -= //delta;
+        -:  309:        //cout << "large and small case difference remove " << SI//delta.count() << endl;
+    12002:  310:        for(int i = 12000; i >= 0; --i){
+    24002:  311:            std::string f = std::to_string(i*i + i);
+    12001:  312:            h.remove(f);
+        -:  313:        }
+        -:  314:    }
+        -:  315:    
+        -:  316:   
+        -:  317:    {
+        2:  318:        HashTable<std::string, std::hash<std::string>> e(2);
+        2:  319:        HashTable<std::string, std::hash<std::string>> h;
+        2:  320:        std::string f;
+        1:  321:        h = e;
+        1:  322:        e = h;
+       21:  323:        for(size_t i = 0; i < 20; ++i){
+       20:  324:            f = std::to_string(i*i + i);
+       20:  325:            cout << "inserting: " << f << endl;
+       20:  326:            e.insert(f);
+       20:  327:            e.print_table();
+       20:  328:            cout << endl;
+       20:  329:            e.table_info();
+       20:  330:            cout << "~~~~~~~~~~~~~" << endl;
+        -:  331:        }
+        1:  332:        e.make_empty();
+        1:  333:        e.insert(f);
+        1:  334:        e.print_table();
+        -:  335:
+        -:  336:        
+        -:  337:    }
+        -:  338:    
+        -:  339:
+        -:  340:   //TODO:
+        -:  341:   /*
+        -:  342:   x bucket count
+        -:  343:   x bucket size
+        -:  344:   x copy asisgnment
+        -:  345:   x copy constructor
+        -:  346:   x mimir compile
+        -:  347:   x insert
+        -:  348:   x isempty
+        -:  349:   x loadfactor
+        -:  350:   x maxloadfactor
+        -:  351:   x memory errors
+        -:  352:   x rehash
+        -:  353:   x remove
+        -:  354:   x size
+        -:  355:   */
+        -:  356:
+        -:  357:    {//bucketcount 
+        2:  358:     HashTable<std::string, std::hash<std::string>> e;
+        -:  359:        
+        1:  360:        e.table_info();
+       16:  361:        for(size_t i = 0; i < 15; ++i){
+       30:  362:            std::string f = std::to_string(i*i + i);
+       15:  363:            e.insert(f);
+        -:  364:        }
+        1:  365:        e.table_info();
+       11:  366:        for(size_t i = 15; i < 25; ++i){
+       20:  367:            std::string f = std::to_string(i*i + i);
+       10:  368:            e.insert(f);
+        -:  369:        }
+        1:  370:        e.table_info();
+        -:  371:
+        2:  372:        HashTable<std::string, std::hash<std::string>> h(1);
+        -:  373:        
+        -:  374:        
+       16:  375:        for(size_t i = 0; i < 15; ++i){
+       30:  376:            std::string f = std::to_string(i*i + i);
+       15:  377:            h.table_info();
+       15:  378:            h.insert(f);
+        -:  379:        }
+        -:  380:        
+       11:  381:        for(size_t i = 15; i < 25; ++i){
+       20:  382:            std::string f = std::to_string(i*i + i);
+       10:  383:            h.table_info();
+       10:  384:            h.insert(f);
+        -:  385:        }
+        1:  386:        e.table_info();
+        -:  387:    }
+        -:  388:
+        -:  389:    
+        -:  390:    {//bucket size 
+        2:  391:     HashTable<std::string, std::hash<std::string>> e;
+        -:  392:        
+        1:  393:        e.table_info();
+       16:  394:        for(size_t i = 0; i < 15; ++i){
+       30:  395:            std::string f = std::to_string(i*i + i);
+       15:  396:            e.insert(f);
+        -:  397:        }
+        1:  398:        e.table_info();
+       11:  399:        for(size_t i = 15; i < 25; ++i){
+       20:  400:            std::string f = std::to_string(i*i + i);
+       10:  401:            e.insert(f);
+        -:  402:        }
+        1:  403:        e.table_info();
+        1:  404:        e.print_table();
+        -:  405:
+       48:  406:        for(size_t i = 0; i < e.bucket_count(); ++i){
+       47:  407:            cout << "bucketsize " << i << ": " << e.bucket_size(i) << endl;
+        -:  408:        }
+        1:  409:        try{cout << "bucketsize 400: " << e.bucket_size(400) << endl;}
+        1:  410:        catch(std::out_of_range &l){cout << l.what() << endl;}
+        -:  411:    }
+        -:  412:
+        -:  413: 
+        -:  414:    {//copy assign
+        2:  415:        HashTable<std::string, std::hash<std::string>> e;
+        1:  416:        th(n, "LOAD");
+        1:  417:        e.table_info();
+       16:  418:        for(size_t i = 0; i < 15; ++i){
+       30:  419:            std::string f = std::to_string(i*i + i);
+       15:  420:            e.insert(f);
+        -:  421:        }
+        1:  422:        e.print_table();
+        1:  423:        e.table_info();
+        1:  424:        th(n, "COPY TO EMPTY");
+        2:  425:        HashTable<std::string, std::hash<std::string>> h;
+        1:  426:        h=e; // copy onto empty
+        1:  427:        h.print_table();
+        1:  428:        h.table_info();
+        -:  429:
+       16:  430:        for(size_t i = 0; i < 15; ++i){
+       30:  431:            std::string f = std::to_string(i*i + i);
+       15:  432:            h.insert(f);
+        -:  433:        }
+        -:  434:
+        1:  435:        h.print_table();
+        1:  436:        h.table_info();
+        1:  437:        th(n, "SELF ASSIGN");
+        1:  438:        h = h; //self assign
+        -:  439:
+        1:  440:        e.make_empty();
+        1:  441:        th(n, "EMPTY ONTO FILLED");
+        1:  442:        h = e; 
+        -:  443:
+        1:  444:        h.print_table();
+        1:  445:        h.table_info();
+        -:  446:
+        1:  447:        th(n, "RELOAD");
+       16:  448:        for(size_t i = 0; i < 15; ++i){
+       30:  449:            std::string f = std::to_string(i*i + i);
+       15:  450:            h.insert(f);
+        -:  451:        }
+        1:  452:        h.print_table();
+        1:  453:        h.table_info();
+        1:  454:        e.print_table();
+        1:  455:        e.table_info();
+        -:  456:
+        1:  457:        th(n, "OVERWRITE");
+       16:  458:        for(size_t i = 0; i < 15; ++i){
+       30:  459:            std::string f = std::to_string(i*i + i) + "ooooo";
+       15:  460:            e.insert(f);
+        -:  461:        }
+        -:  462:
+        1:  463:        h = e;
+        -:  464:
+        1:  465:        h.print_table();
+        1:  466:        h.table_info();
+        1:  467:        e.print_table();
+        1:  468:        e.table_info();
+        -:  469:
+        -:  470:    }
+        -:  471:    
+        -:  472:    
+        -:  473:    {//copy constructor
+        -:  474:
+        2:  475:        HashTable<std::string, std::hash<std::string>> e(1);
+        1:  476:        th(n, "LOAD");
+        1:  477:        e.table_info();
+       16:  478:        for(size_t i = 0; i < 15; ++i){
+       30:  479:            std::string f = std::to_string(i*i + i);
+       15:  480:            e.insert(f);
+        -:  481:        }
+        -:  482:        
+        1:  483:        e.print_table();
+        1:  484:        e.table_info();
+        1:  485:        th(n, "COPY CONSTRUCT");
+        2:  486:        HashTable<std::string, std::hash<std::string>> h(e);
+        1:  487:        e.print_table();
+        1:  488:        e.table_info();
+        -:  489:        
+        1:  490:        h.print_table();
+        1:  491:        h.table_info();
+        -:  492:
+        1:  493:        th(n, "ADJUSTING COPY");
+       16:  494:        for(size_t i = 0; i < 15; ++i){
+       30:  495:            std::string f = std::to_string(i*i + i) + "p";
+       15:  496:            h.insert(f);
+        -:  497:        }
+        1:  498:        e.print_table();
+        1:  499:        e.table_info();
+        -:  500:        
+        1:  501:        h.print_table();
+        1:  502:        h.table_info();
+        -:  503:
+        1:  504:        th(n, "COPY CONSTRUCT SELF");
+        2:  505:        HashTable<std::string, std::hash<std::string>> g(g);
+        -:  506:        
+        1:  507:        g.print_table();
+        1:  508:        g.table_info();
+        -:  509:
+        1:  510:        th(n, "ADJUSTING COPY");
+       16:  511:        for(size_t i = 0; i < 15; ++i){
+       30:  512:            std::string f = std::to_string(i*i + i);
+       15:  513:            g.insert(f);
+        -:  514:        }
+        1:  515:        g.print_table();
+        1:  516:        g.table_info();
+        -:  517:
+        1:  518:        th(n, "COPY CONSTRUCT EMPTY");
+        1:  519:        g.make_empty();
+        2:  520:        HashTable<std::string, std::hash<std::string>> p(g);
+        -:  521:        
+        1:  522:        g.print_table();
+        1:  523:        g.table_info();
+        -:  524:        
+        1:  525:        p.print_table();
+        1:  526:        p.table_info();
+        -:  527:
+        1:  528:        th(n, "ADJUSTING COPY");
+       16:  529:        for(size_t i = 0; i < 15; ++i){
+       30:  530:            std::string f = std::to_string(i*i + i) + "k";
+       15:  531:            p.insert(f);
+        -:  532:        }
+        1:  533:        g.print_table();
+        1:  534:        g.table_info();
+        1:  535:        p.print_table();
+        1:  536:        p.table_info();
+        -:  537:
+        -:  538:    }
+        -:  539:    
+        -:  540:    {//isnert, rehash
+        2:  541:        HashTable<std::string, std::hash<std::string>> e;
+        -:  542:        
+        1:  543:        th(n, "LOAD");
+        2:  544:        std::string f = "hello world";
+        -:  545:
+        1:  546:        e.print_table();
+        1:  547:        e.table_info();
+        1:  548:        e.insert(f);
+        1:  549:        e.print_table();
+        1:  550:        e.table_info();
+        1:  551:        e.insert(f);
+        1:  552:        e.print_table();
+        1:  553:        e.table_info();
+        -:  554:
+        5:  555:        for(size_t i = 0; i < 4; ++i){
+        8:  556:            std::string f = std::to_string(i*i + i);
+        4:  557:            cout << "inserting " << f << "..." << endl;
+        4:  558:            e.insert(f);
+        4:  559:            e.print_table();
+        4:  560:            e.table_info();
+        -:  561:        }
+        -:  562:        
+        1:  563:        e.print_table();
+        1:  564:        e.table_info();
+        1:  565:        th(n, "COPY CONSTRUCT");
+        -:  566:        
+        2:  567:        HashTable<std::string, std::hash<std::string>> h(e);
+        1:  568:        e.print_table();
+        1:  569:        e.table_info();
+        -:  570:        
+        1:  571:        h.print_table();
+        1:  572:        h.table_info();
+        -:  573:
+        1:  574:        th(n, "ADJUSTING COPY");
+       11:  575:        for(size_t i = 0; i < 10; ++i){
+        -:  576:            
+       10:  577:            f = std::to_string(i*i + i);
+       10:  578:            cout << "inserting " << f << "..." << endl;
+       10:  579:            h.insert(f);
+       10:  580:            h.print_table();
+       10:  581:            h.table_info();
+        -:  582:        }
+        -:  583:
+       11:  584:        for(size_t i = 0; i < 10; ++i){
+       10:  585:            f = std::to_string(i*i + i);
+       10:  586:            cout << "inserting " << f << "..." << endl;
+       10:  587:            e.insert(f);
+       10:  588:            e.print_table();
+       10:  589:            e.table_info();
+        -:  590:        }
+        -:  591:        
+        1:  592:        e.print_table();
+        1:  593:        e.table_info();
+        1:  594:        th(n, "COPY CONSTRUCT 2");
+        2:  595:        HashTable<std::string, std::hash<std::string>> g(e);
+        1:  596:        e.print_table();
+        1:  597:        e.table_info();
+        -:  598:        
+        1:  599:        g.print_table();
+        1:  600:        g.table_info();
+        -:  601:
+        1:  602:        th(n, "ADJUSTING COPY 2");
+       21:  603:        for(size_t i = 0; i < 20; ++i){
+       20:  604:            f = std::to_string(i*i + i);
+       20:  605:            cout << "inserting " << f << "..." << endl;
+       20:  606:            g.insert(f);
+        -:  607:            //g.print_table();
+        -:  608:            //g.table_info();
+        -:  609:        }
+       21:  610:        for(size_t i = 0; i < 20; ++i){
+       20:  611:            f = std::to_string(i*i + i);
+       20:  612:            cout << "inserting " << f << "..." << endl;
+       20:  613:            g.insert(f);
+        -:  614:            //g.print_table();
+        -:  615:            //g.table_info();
+        -:  616:        }
+        1:  617:        g.print_table();
+        1:  618:        g.table_info();
+        -:  619:
+        1:  620:        g.rehash(10);
+        -:  621:
+        1:  622:        g.print_table();
+        1:  623:        g.table_info();
+        -:  624:
+        1:  625:         g.rehash(5);
+        -:  626:
+        1:  627:        g.print_table();
+        1:  628:        g.table_info();
+        -:  629:
+        1:  630:        g.rehash(500);
+        -:  631:
+        1:  632:        g.print_table();
+        1:  633:        g.table_info();
+        -:  634:
+        1:  635:        g.rehash(2);
+        -:  636:
+        1:  637:        g.print_table();
+        1:  638:        g.table_info();
+        -:  639:
+        -:  640:        
+        1:  641:        g.insert(std::string("fgkjdfglkhsdflg"));
+        -:  642:
+        1:  643:        g.print_table();
+        1:  644:        g.table_info();
+        -:  645:    }
+        -:  646:      
+        -:  647:   
+        -:  648:   {//remove
+        2:  649:        HashTable<std::string, std::hash<std::string>> e;
+        2:  650:        std::string f = "rats live on no evil star";
+        1:  651:        th(n, "REMOVE FROM EMPTY");
+        1:  652:        cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+        1:  653:        th(n, "LOAD");
+        1:  654:        e.table_info();
+       16:  655:        for(size_t i = 0; i < 15; ++i){
+       30:  656:            std::string f = std::to_string(i*i + i);
+       15:  657:            e.insert(f);
+        -:  658:        }
+        1:  659:        e.rehash(10);
+        1:  660:        e.print_table();
+        1:  661:        e.table_info();
+        1:  662:        th(n, "REMOVE");
+        1:  663:        f = "56";
+        1:  664:        cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+        1:  665:        e.print_table();
+        1:  666:        e.table_info();
+        -:  667:
+        1:  668:        f = "132";
+        1:  669:        cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+        1:  670:        e.print_table();
+        1:  671:        e.table_info();
+        -:  672:
+        1:  673:        f = "0";
+        1:  674:        cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+        1:  675:        e.print_table();
+        1:  676:        e.table_info();
+        -:  677:
+        1:  678:        f = "12";
+        1:  679:        cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+        1:  680:        e.print_table();
+        1:  681:        e.table_info();
+        -:  682:
+        1:  683:        f = "56fddsf";
+        1:  684:        cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+        1:  685:        e.print_table();
+        1:  686:        e.table_info();
+        -:  687:
+        1:  688:        f = "5rerwer3456";
+        1:  689:        cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+        1:  690:        e.print_table();
+        1:  691:        e.table_info();
+        -:  692:
+        1:  693:        f = "5ryeryt45fhgb6";
+        1:  694:        cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+        1:  695:        e.print_table();
+        1:  696:        e.table_info();
+        -:  697:
+        1:  698:        th(n, "REMOVE ALL");
+        1:  699:        e.table_info();
+       16:  700:        for(size_t i = 0; i < 15; ++i){
+       30:  701:            std::string f = std::to_string(i*i + i);
+       15:  702:            cout << "removing " << f << ": " << std::boolalpha << e.remove(f) << endl;
+       15:  703:            e.print_table();
+       15:  704:            e.table_info();
+        -:  705:        }
+        -:  706:
+        1:  707:        th(n, "RELOAD");
+       16:  708:        for(size_t i = 0; i < 15; ++i){
+       30:  709:            std::string f = std::to_string(i*i + i);
+       15:  710:            e.insert(f);
+        -:  711:        }
+        1:  712:        e.print_table(cout);
+        1:  713:        e.table_info();
+        -:  714:   }
+        -:  715:   
+        -:  716:
+        -:  717:
+        -:  718:  //TODO
+        -:  719:  //bucket_size; covered by previous test
+        -:  720:  //load factor; now includes load factor as maximum
+        -:  721:  //insert; suspected problem lies within load factor and rehash
+        -:  722:  //rehash(size_t); if value is too low, picks another value
+        -:  723:  {// load factor
+        2:  724:       HashTable<std::string, std::hash<std::string>> e;
+        1:  725:        th(n, "LOAD");
+        1:  726:        e.table_info();
+       12:  727:        for(size_t i = 0; i < 11; ++i){
+       22:  728:            std::string f = std::to_string(i*i + i);
+       11:  729:            e.insert(f);
+        -:  730:        }
+        1:  731:        e.print_table();
+        1:  732:        e.table_info();
+        -:  733:
+       13:  734:        for(size_t i = 0; i < 12; ++i){
+       24:  735:            std::string f = std::to_string(i*i + i);
+       12:  736:            e.insert(f);
+        -:  737:        }
+        1:  738:        e.print_table();
+        1:  739:        e.table_info();
+        -:  740:  }
+        -:  741:
+        -:  742:  {//rehash
+        2:  743:        HashTable<std::string, std::hash<std::string>> e;
+        1:  744:        th(n, "LOAD");
+        1:  745:        e.table_info();
+      101:  746:        for(size_t i = 0; i < 100; ++i){
+      200:  747:            std::string f = std::to_string(i*i + i);
+      100:  748:            e.insert(f);
+        -:  749:        }
+        1:  750:        e.print_table();
+        1:  751:        e.table_info();
+        -:  752:
+        1:  753:        e.rehash(1);
+        -:  754:
+        1:  755:        e.print_table();
+        1:  756:        e.table_info();
+        -:  757:
+        1:  758:        e.rehash(99);
+        -:  759:
+        1:  760:        e.print_table();
+        1:  761:        e.table_info();
+        -:  762:
+        1:  763:        e.rehash(100);
+        -:  764:
+        1:  765:        e.print_table();
+        1:  766:        e.table_info();
+        -:  767:
+        2:  768:        HashTable<std::string, std::hash<std::string>> k;
+        1:  769:        k.rehash(50);
+        1:  770:        k.print_table();
+        1:  771:        k.table_info();
+        -:  772:
+      101:  773:        for(size_t i = 0; i < 100; ++i){
+      200:  774:            std::string f = std::to_string(i*i + i);
+      100:  775:            k.insert(f);
+        -:  776:        }
+        1:  777:        k.print_table();
+        1:  778:        k.table_info();
+        -:  779:  }
+        1:  780:    return 0;
+        -:  781:    
+        3:  782:}

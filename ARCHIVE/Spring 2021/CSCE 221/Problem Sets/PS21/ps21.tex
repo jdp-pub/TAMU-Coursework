@@ -1,0 +1,77 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{blindtext}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{wasysym}
+\usepackage{circuitikz}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\usetikzlibrary{arrows,shapes,calc,positioning}
+
+\newcommand{\myscope}[2]
+{\draw[thick,rotate=#2] (#1) circle (12pt)
+(#1) ++(-0.35,-0.1) --++ (0.3,0.3) --++ (0,-0.3) --++(0.3,0.3) --++(0,-0.3);}
+
+\begin{document}
+
+\title{CSCE 221 \\ Problem Set 21}
+
+\author{Jacob~Purcell,~\IEEEmember{Texas~A\&M,~Student}}
+
+\maketitle
+\section{}
+
+\subsection{}
+\subsubsection{push(x)}
+maintain a pointer data memeber to "front" of deque.
+As with a doubly linked list, x child is head, head parent is x, point head to x. 
+\subsubsection{pop()}
+maintain a pointer data memeber to "front" of deque.
+As with a doubly linked list, point a cursor to front, point 
+head to child, head parent is null, cursor child null, return cursor. 
+\subsubsection{inject(x)}
+maintain a pointer data memeber to "rear" of deque.
+As with a doubly linked list, x parent is rear, rear child is x, point tail to x.
+\subsubsection{eject()}
+    maintain a pointer data memeber to "rear" of deque.
+    As with a doubly linked list, point a cursor to rear, point 
+    tail to parent, tail child is null, cursor parent null, return cursor. 
+\subsubsection{findMin()}
+    since the deque is in heap order, 
+    find min is just dereferencing the pointer
+    that has been stored that points to the end 
+    of the  deque with the minimum value, 
+    which requires 1 operation. 
+
+\subsection{}
+As described above, the total number of operations to execute the functions(including memory allocation) are
+
+$$push(x): 4$$
+$$pop(): 5$$
+$$inject(x): 4$$
+
+As one can see, these operations do not rely on the size of the deque, so our time complexity becomes
+
+$$4O(1) + 5O(1) + 4O(1) \rightarrow \boxed{O(1)}$$
+
+\subsection{}
+In the worst possible case, we use the implementation described above but every node in the deque has a 
+member function that recursively calls all of the other node functions in the deque, and two deques to store 
+the results of the function and the desired permutation. This function bogosorts the list until the list is the exact symmetric 
+permutation and every node must have to the same list, call the opposite of whichever operation was desired 
+(push becomes inject etc.), call bogosort again for every node until the original list is found and every node agrees. 
+
+Call this function $X$ with runtime $O(X)$ and probability of occurrence $\frac{1}{O(X)}$ then, since operations are $O(1)$
+for $O(X)$ operations, amortized time remains $O(1)$.
+
+\end{document}

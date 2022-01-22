@@ -1,0 +1,112 @@
+        -:    0:Source:array_list.h
+        -:    0:Graph:array_list_tests.gcno
+        -:    0:Data:array_list_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef ARRAY_LIST_H
+        -:    2:#define ARRAY_LIST_H
+        -:    3:
+        -:    4:template <typename Object>
+        -:    5:class ArrayList {
+        -:    6:    
+        -:    7:    size_t capacity = 1;
+        -:    8:    size_t head = 0;
+        -:    9:    size_t sizel = 0;
+        4:   10:    Object* listReserve = new Object[capacity];
+        -:   11:
+    10005:   12:    void resize() {
+        -:   13:        
+    10005:   14:        if (sizel >= capacity) {
+       14:   15:            this->capacity *= 2;
+       14:   16:            Object* temp = new Object[capacity];
+    16397:   17:            for(size_t i = 0; i < sizel; ++i) {
+    16383:   18:                temp[i] = listReserve[i + head];
+        -:   19:            }
+       14:   20:            delete[] listReserve;
+       14:   21:            listReserve = temp;
+        -:   22:        }
+    10005:   23:    }
+        -:   24:
+        -:   25:    public:
+        4:   26:    ArrayList() {}
+        -:   27:    explicit ArrayList(size_t newCapacity) {
+        -:   28:        delete[] listReserve;
+        -:   29:        capacity = newCapacity;
+        -:   30:        listReserve = new Object[capacity];
+        -:   31:    }
+        -:   32:
+        -:   33:    // Rule of three
+        -:   34:    
+        -:   35:    
+        4:   36:    ArrayList(const ArrayList& other) {
+        2:   37:        delete[] listReserve;
+        2:   38:        capacity = other.capacity;
+        2:   39:        sizel = other.size();
+        2:   40:        listReserve = new Object[capacity];
+        -:   41:
+    10007:   42:        for(size_t i = 0; i < other.size(); ++i) {
+    10005:   43:            listReserve[i] = other.element(i);
+        -:   44:        }
+        2:   45:    }
+        4:   46:    ~ArrayList() { delete[] listReserve; }
+        2:   47:    ArrayList& operator=(const ArrayList& other){
+        2:   48:        delete[] listReserve;
+        2:   49:        capacity = other.capacity;
+        2:   50:        sizel = other.size();
+        2:   51:        listReserve = new Object[capacity];
+        -:   52:
+    10007:   53:        for(size_t i = 0; i < other.size(); ++i) {
+    10005:   54:            listReserve[i] = other.element(i);
+        -:   55:        }
+        2:   56:        return *this;
+        -:   57:    } //- assigns a copy of the given list
+        -:   58:
+        -:   59:
+        -:   60:    //SETTERS
+        2:   61:    Object& operator[](size_t index) { 
+        2:   62:        try { if(index >= sizel) { throw 1; }}
+        1:   63:        catch(int n) { throw std::out_of_range("Insert function call, requested index out of range..."); }
+        1:   64:        return this->listReserve[index + head]; }//- returns a reference to the element at the specified index or throws std::out_of_range if the index is out of bounds.
+    10006:   65:    void insert(size_t index, const Object& val) {
+    10006:   66:        try { if(index > sizel) { throw 1; }}
+        1:   67:        catch(int n) { throw std::out_of_range("Insert function call, requested index out of range..."); }
+        -:   68:
+    10005:   69:        ++sizel;
+    10005:   70:        this->resize();
+        -:   71:
+ 49960009:   72:        for(size_t i = sizel + head - 1; i >= 0; --i) {
+ 99910013:   73:            listReserve[i + 1] = listReserve[i];
+ 49960009:   74:            if(i == index + head) {
+    10005:   75:                listReserve[i] = val;
+    10005:   76:                break;
+        -:   77:            }
+        -:   78:        }
+        -:   79:
+    10005:   80:     }// - insert the given object at the specified index or throws std::out_of_range if the index is out of bounds
+    10006:   81:    void remove(size_t index) { 
+    10006:   82:        try{ if(index >= sizel) {throw 1; }}
+        1:   83:        catch(int n) { throw std::out_of_range("Remove function call, requested index out of range..."); }
+ 50005011:   84:        for(size_t i = index + head; i < sizel - 1; ++i) {
+ 49995006:   85:            listReserve[i] = listReserve[i+1];
+        -:   86:        }
+    10005:   87:        --sizel;
+    10005:   88:    }//- remove the object at the specified index or throws std::out_of_range if the index is out of bounds
+        -:   89:
+        -:   90:
+        -:   91:    //GETTERS
+    20035:   92:    Object element(size_t index) const { return listReserve[this->head + index]; }
+    20019:   93:    size_t size() const { return this->sizel; }
+       11:   94:    void print() const {
+       22:   95:        std::cout << "List Properties..." << std::endl
+       11:   96:             << "Capacity: " << this->capacity << std::endl
+       11:   97:             << "Size: " << this->sizel << std::endl << std::endl;
+       36:   98:        for(size_t i = 0; i < this->sizel; ++i) {
+       25:   99:            std::cout << "Element " << i << " : " << this->element(i) << std::endl;
+        -:  100:        }
+       11:  101:        std::cout << std::endl;
+       11:  102:    }
+        -:  103:
+        -:  104:
+        -:  105:};
+        -:  106:
+        -:  107:#endif  // ARRAY_LIST_H

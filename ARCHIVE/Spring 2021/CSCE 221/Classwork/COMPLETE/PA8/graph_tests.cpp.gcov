@@ -1,0 +1,651 @@
+        -:    0:Source:graph_tests.cpp
+        -:    0:Graph:graph_tests.gcno
+        -:    0:Data:graph_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "graph.h"
+        -:    2:#include <iostream>
+        -:    3:#include <cmath>
+        -:    4:#include "hashtable_open_addressing.h"
+        -:    5:#include <vector> 
+        -:    6:
+        1:    7:int main() {
+        -:    8:    // TODO(student): write many organized and effective tests
+        -:    9:/*
+        -:   10:    Constructors
+        -:   11:    Graph() - makes an empty graph.
+        -:   12:    Graph(const Graph&) - constructs a deep copy of a graph
+        -:   13:    Graph& operator=(const Graph&) - assigns a deep copy of a graph
+        -:   14:    ~Graph() - destructs a graph (frees all dynamically allocated memory)
+        -:   15:
+        -:   16:    Capacity
+        -:   17:    x size_t vertex_count() const - the number of vertices in the graph
+        -:   18:    size_t edge_count() const - the number of edges in the graph
+        -:   19:
+        -:   20:    Element Access
+        -:   21:    x bool contains_vertex(size_t id) const - return true if the graph contains a vertex with the specified identifier, false otherwise.
+        -:   22:    bool contains_edge(size_t src, size_t dest) const - return true if the graph contains an edge with the specified members (as identifiers), false otherwise.
+        -:   23:    double cost(size_t src, size_t dest) const - returns the weight of the edge between src and dest, or INFINITY if none exists.
+        -:   24:
+        -:   25:    Modifiers
+        -:   26:    x bool add_vertex(size_t id) - add a vertex with the specified identifier if it does not already exist, return true on success or false otherwise.
+        -:   27:    bool add_edge(size_t src, size_t dest, double weight=1) - add a directed edge from src to dest with the specified weight if there is no edge from src to dest, return true on success, false otherwise.
+        -:   28:    bool remove_vertex(size_t id) - remove the specified vertex from the graph, including all edges of which it is a member, return true on success, false otherwise.
+        -:   29:    bool remove_edge(size_t src, size_t dest) - remove the specified edge from the graph, but do not remove the vertices, return true on success, false otherwise.
+        -:   30:
+        -:   31:    Optional
+        -:   32:    Graph(Graph&&) - move constructs a deep copy of a graph
+        -:   33:    Graph& operator=(Graph&&) - move assigns a deep copy of a graph
+        -:   34:*/
+        -:   35:
+        -:   36:    /*
+        -:   37:    {//basic functionality
+        -:   38:        Graph g = {};
+        -:   39:        cout << "inserting 10...: " << std::boolalpha << g.add_vertex(10) << endl;
+        -:   40:        cout << "inserting 10...: " << std::boolalpha << g.add_vertex(10) << endl;
+        -:   41:        g.printGraph();
+        -:   42:        cout << "contains 10?: " << std::boolalpha << g.contains_vertex(10) << endl;
+        -:   43:
+        -:   44:        cout << "removing 10...: " << std::boolalpha << g.remove_vertex(10) << endl;
+        -:   45:        cout << "removing 10...: " << std::boolalpha << g.remove_vertex(10) << endl;
+        -:   46:        g.printGraph();
+        -:   47:
+        -:   48:        cout << "inserting 10...: " << std::boolalpha << g.add_vertex(10) << endl;
+        -:   49:        cout << "inserting 9...: " << std::boolalpha << g.add_vertex(9) << endl;
+        -:   50:        test("graph_tests.cpp", "Insert edge, 9->{3}10", true, g.add_edge(9,10,3),__LINE__);
+        -:   51:        test("graph_tests.cpp", "edge cost, 9->{3}10", 3.0, g.cost(9,10),__LINE__);
+        -:   52:        g.printGraph();
+        -:   53:    }
+        -:   54:    
+        -:   55:   
+        -:   56:   {
+        -:   57:        Graph g = {};
+        -:   58:        // INSERT
+        -:   59:        for(size_t i = 0; i < 10; ++i){
+        -:   60:            test("graph_tests.cpp", "Graph::vertex_count()", i, g.vertex_count(), __LINE__);
+        -:   61:            test("graph_tests.cpp", "Graph::add_vertex("+ std::to_string(i) + ")", true, g.add_vertex(i), __LINE__);
+        -:   62:        }
+        -:   63:        for(size_t i = 0; i < 10; ++i){
+        -:   64:            test("graph_tests.cpp", "Graph::vertex_count()", 10, (int)(g.vertex_count()), __LINE__);
+        -:   65:            test("graph_tests.cpp", "Graph::add_vertex(" + std::to_string(i) + ")", false, g.add_vertex(i), __LINE__);
+        -:   66:        }
+        -:   67:        g.printGraph();
+        -:   68:
+        -:   69:        for(size_t i = 100; i < 110; ++i){
+        -:   70:            test("graph_tests.cpp", "Graph::vertex_count()", i - 90, g.vertex_count(), __LINE__);
+        -:   71:            test("graph_tests.cpp", "Graph::add_vertex("+ std::to_string(i) + ")", true, g.add_vertex(i), __LINE__);
+        -:   72:        }
+        -:   73:        for(size_t i = 100; i < 110; ++i){
+        -:   74:            test("graph_tests.cpp", "Graph::vertex_count()", 20, (int)(g.vertex_count()), __LINE__);
+        -:   75:            test("graph_tests.cpp", "Graph::add_vertex(" + std::to_string(i) + ")", false, g.add_vertex(i), __LINE__);
+        -:   76:        }
+        -:   77:        g.printGraph();
+        -:   78:
+        -:   79:        for(size_t i = 0; i < 110; ++i){
+        -:   80:            test("graph_tests.cpp", "Graph::contains_vertex(" + std::to_string(i) + ")", ((i < 10) || (i > 99)), g.contains_vertex(i), __LINE__);
+        -:   81:        }
+        -:   82:        for(size_t i = 0; i < 110; ++i){
+        -:   83:            test("graph_tests.cpp", "Graph::remove_vertex(" + std::to_string(i) + ")", ((i < 10) || (i > 99)), g.remove_vertex(i), __LINE__);
+        -:   84:        }
+        -:   85:
+        -:   86:        g.printGraph();
+        -:   87:        for(size_t i = 0; i < 10; ++i){
+        -:   88:            test("graph_tests.cpp", "Graph::vertex_count()", i, g.vertex_count(), __LINE__);
+        -:   89:            test("graph_tests.cpp", "Graph::add_vertex(" + std::to_string(i) + ")", true, g.add_vertex(i), __LINE__);
+        -:   90:        }
+        -:   91:
+        -:   92:        g.printGraph();
+        -:   93:        test("graph_tests.cpp", "Graph::remove_vertex(" + std::to_string(5) + ")", true, g.remove_vertex(5), __LINE__);
+        -:   94:        test("graph_tests.cpp", "Graph::remove_vertex(" + std::to_string(5) + ")", false, g.remove_vertex(5), __LINE__);
+        -:   95:        g.printGraph();
+        -:   96:        test("graph_tests.cpp", "Graph::remove_vertex(" + std::to_string(0) + ")", true, g.remove_vertex(0), __LINE__);
+        -:   97:        g.printGraph();
+        -:   98:        test("graph_tests.cpp", "Graph::remove_vertex(" + std::to_string(9) + ")", true, g.remove_vertex(9), __LINE__);
+        -:   99:        g.printGraph();  
+        -:  100:    }
+        -:  101:    
+        -:  102:    {// insert edge
+        -:  103:        Graph g = {};
+        -:  104:
+        -:  105:        for(size_t i = 0; i < 10; ++i){
+        -:  106:            test("graph_tests.cpp", "Graph::vertex_count()", i, g.vertex_count(), __LINE__);
+        -:  107:            test("graph_tests.cpp", "Graph::add_vertex("+ std::to_string(i) + ")", true, g.add_vertex(i), __LINE__);
+        -:  108:        }
+        -:  109:        g.printGraph();
+        -:  110:
+        -:  111:        test("graph_tests.cpp", "Graph::add_edge(0, 5, 10)", true, g.add_edge(0, 5, 10), __LINE__);
+        -:  112:        test("graph_tests.cpp", "Graph::add_edge(0, 4, 11)", true, g.add_edge(0, 4, 11), __LINE__);
+        -:  113:        test("graph_tests.cpp", "Graph::add_edge(0, 3)", true, g.add_edge(0, 3), __LINE__);
+        -:  114:        test("graph_tests.cpp", "Graph::add_edge(5, 9, 100)", true, g.add_edge(5, 9, 100), __LINE__);
+        -:  115:        test("graph_tests.cpp", "Graph::add_edge(111, 5555, 436534)", false, g.add_edge(111, 5555, 436534), __LINE__);
+        -:  116:        test("graph_tests.cpp", "Graph::add_edge(0, 5, 44)", false, g.add_edge(0, 5, 44), __LINE__);
+        -:  117:
+        -:  118:        g.printGraph();
+        -:  119:
+        -:  120:        g = g;
+        -:  121:        g.printGraph();
+        -:  122:        Graph k(g);
+        -:  123:        k.printGraph();
+        -:  124:
+        -:  125:        test("graph_tests.cpp", "g.Graph::add_vertex(555)", true, g.add_vertex(555), __LINE__);
+        -:  126:        test("graph_tests.cpp", "g.Graph::add_edge(6, 8, 170)", true, g.add_edge(6, 8, 170), __LINE__);
+        -:  127:        test("graph_tests.cpp", "g.Graph::add_edge(3, 4, 121)", true, g.add_edge(3, 4, 121), __LINE__);
+        -:  128:        g.printGraph();
+        -:  129:        k.printGraph();
+        -:  130:
+        -:  131:        test("graph_tests.cpp", "k.Graph::add_vertex(755)", true, k.add_vertex(755), __LINE__);
+        -:  132:        test("graph_tests.cpp", "k.Graph::add_edge(6, 4, 121)", true, k.add_edge(6, 4, 121), __LINE__);
+        -:  133:        g.printGraph();
+        -:  134:        k.printGraph();
+        -:  135:
+        -:  136:        g = k;
+        -:  137:        g.printGraph();
+        -:  138:        test("graph_tests.cpp", "k.Graph::add_edge(9, 755, 123)", true, k.add_edge(9, 755, 123), __LINE__);
+        -:  139:        g.printGraph();
+        -:  140:        k.printGraph();
+        -:  141:
+        -:  142:        test("graph_tests.cpp", "k.Graph::cost(9, 755)", 123.0, k.cost(9, 755), __LINE__);
+        -:  143:        test("graph_tests.cpp", "k.Graph::cost(3, 755)", (double)(INFINITY), k.cost(3, 755), __LINE__);
+        -:  144:        test("graph_tests.cpp", "k.Graph::cost(9, 75)", (double)(INFINITY), k.cost(9, 75), __LINE__);
+        -:  145:        test("graph_tests.cpp", "k.Graph::cost(0, 4)", 11.0, k.cost(0, 4), __LINE__);
+        -:  146:
+        -:  147:        test("graph_tests.cpp", "k.Graph::remove_edge(9, 755)", true, k.remove_edge(9, 755), __LINE__);
+        -:  148:        test("graph_tests.cpp", "k.Graph::remove_edge(9, 755)", false, k.remove_edge(9, 755), __LINE__);
+        -:  149:        test("graph_tests.cpp", "k.Graph::remove_edge(0, 755)", false, k.remove_edge(0, 755), __LINE__);
+        -:  150:        test("graph_tests.cpp", "k.Graph::remove_edge(0, 4)", true, k.remove_edge(0,4), __LINE__);
+        -:  151:        k.printGraph();
+        -:  152:
+        -:  153:        test("graph_tests.cpp", "k.Graph::remove_vertex(0)", true, k.remove_vertex(0), __LINE__);
+        -:  154:        test("graph_tests.cpp", "k.Graph::remove_vertex(0)", false, k.remove_vertex(0), __LINE__);
+        -:  155:        test("graph_tests.cpp", "k.Graph::remove_vertex(1)", true, k.remove_vertex(1), __LINE__);
+        -:  156:        test("graph_tests.cpp", "k.Graph::remove_vertex(6)",true, k.remove_vertex(6), __LINE__);
+        -:  157:        test("graph_tests.cpp", "k.Graph::remove_vertex(110)", false, k.remove_vertex(110), __LINE__);
+        -:  158:        k.printGraph();
+        -:  159:
+        -:  160:        for(size_t i = 0; i < 10; ++i){
+        -:  161:           k.add_vertex(i);
+        -:  162:        }
+        -:  163:        k.printGraph();
+        -:  164:    }
+        -:  165:    
+        -:  166:    {//dijkstra
+        -:  167:        Graph g;
+        -:  168:        g.add_vertex(1);
+        -:  169:        g.add_vertex(2);
+        -:  170:        g.add_vertex(3);
+        -:  171:        g.add_vertex(4);
+        -:  172:
+        -:  173:        g.add_edge(1,2,3);
+        -:  174:        g.add_edge(1,3,1);
+        -:  175:        g.add_edge(2,3,1);
+        -:  176:        g.add_edge(3,2,1);
+        -:  177:        g.add_edge(3,4,10);
+        -:  178:
+        -:  179:        g.printGraph();
+        -:  180:
+        -:  181:        g.dijkstra(1);
+        -:  182:
+        -:  183:        test("graph_tests.cpp", "Graph::distance(2)",2.0, g.distance(2), __LINE__);
+        -:  184:        test("graph_tests.cpp", "Graph::distance(3)",1.0, g.distance(3), __LINE__);
+        -:  185:        test("graph_tests.cpp", "Graph::distance(4)",11.0, g.distance(4), __LINE__);
+        -:  186:        test("graph_tests.cpp", "Graph::distance(20)",(double)(INFINITY), g.distance(20), __LINE__);
+        -:  187:        g.print_shortest_path(2);
+        -:  188:        g.print_shortest_path(4);
+        -:  189:        g.print_shortest_path(10);
+        -:  190:        g.print_shortest_path(1);
+        -:  191:    }
+        -:  192:
+        -:  193:    {
+        -:  194:        Graph g;
+        -:  195:        g.add_vertex(1);
+        -:  196:        g.add_vertex(2);
+        -:  197:        g.add_vertex(3);
+        -:  198:        g.add_vertex(4);
+        -:  199:
+        -:  200:
+        -:  201:        test("graph_tests.cpp", "Graph::add_edge(1, 2)", true, g.add_edge(1, 2), __LINE__);
+        -:  202:        test("graph_tests.cpp", "Graph::add_edge(1, 3)", true, g.add_edge(1, 3), __LINE__);
+        -:  203:        test("graph_tests.cpp", "Graph::add_edge(2, 3)", true, g.add_edge(2, 3), __LINE__);
+        -:  204:        test("graph_tests.cpp", "Graph::add_edge(3, 2)", true, g.add_edge(3, 2), __LINE__);
+        -:  205:        test("graph_tests.cpp", "Graph::add_edge(4, 3)", true, g.add_edge(4, 3), __LINE__);
+        -:  206:        test("graph_tests.cpp", "Graph::add_edge(2, 3)", false, g.add_edge(2, 3), __LINE__);
+        -:  207:        test("graph_tests.cpp", "Graph::add_edge(3, 2)", false, g.add_edge(3, 2), __LINE__);
+        -:  208:        test("graph_tests.cpp", "Graph::add_edge(4, 3)", false, g.add_edge(4, 3), __LINE__);
+        -:  209:        test("graph_tests.cpp", "Graph::add_edge(2, 1)", true, g.add_edge(2, 1), __LINE__);
+        -:  210:        test("graph_tests.cpp", "Graph::add_edge(2, 4)", true, g.add_edge(2, 4), __LINE__);
+        -:  211:        test("graph_tests.cpp", "Graph::add_edge(1, 4)", true, g.add_edge(1, 4), __LINE__);
+        -:  212:
+        -:  213:        g.printGraph();
+        -:  214:
+        -:  215:        test("graph_tests.cpp", "Graph::add_edge(0, 5, 10)", false, g.add_edge(0, 5, 10), __LINE__);
+        -:  216:        test("graph_tests.cpp", "Graph::add_edge(0, 4, 11)", false, g.add_edge(0, 4, 11), __LINE__);
+        -:  217:        test("graph_tests.cpp", "Graph::add_edge(0, 3)", false, g.add_edge(0, 3), __LINE__);
+        -:  218:        test("graph_tests.cpp", "Graph::add_edge(5, 9, 100)", false, g.add_edge(5, 9, 100), __LINE__);
+        -:  219:        test("graph_tests.cpp", "Graph::add_edge(111, 5555, 436534)", false, g.add_edge(111, 5555, 436534), __LINE__);
+        -:  220:        test("graph_tests.cpp", "Graph::add_edge(0, 5, 44)", false, g.add_edge(0, 5, 44), __LINE__);
+        -:  221:
+        -:  222:        test("graph_tests.cpp", "Graph::add_edge(1, 5, 10)", false, g.add_edge(1, 5, 10), __LINE__);
+        -:  223:        test("graph_tests.cpp", "Graph::add_edge(5, 4, 11)", false, g.add_edge(5, 4, 11), __LINE__);
+        -:  224:        test("graph_tests.cpp", "Graph::add_edge(1, 30)", false, g.add_edge(1, 30), __LINE__);
+        -:  225:        test("graph_tests.cpp", "Graph::add_edge(3, 9, 100)", false, g.add_edge(3, 9, 100), __LINE__);
+        -:  226:        test("graph_tests.cpp", "Graph::add_edge(4, 5555, 436534)", false, g.add_edge(4, 5555, 436534), __LINE__);
+        -:  227:        test("graph_tests.cpp", "Graph::add_edge(2, 5, 44)", false, g.add_edge(2, 5, 44), __LINE__);
+        -:  228:
+        -:  229:        g.printGraph();
+        -:  230:
+        -:  231:        Graph t(g);
+        -:  232:        t.printGraph();
+        -:  233:
+        -:  234:        test("graph_tests.cpp", "Graph::add_edge(3, 4)", true, g.add_edge(3, 4), __LINE__);
+        -:  235:        test("graph_tests.cpp", "Graph::add_edge(3, 3)", true, g.add_edge(3, 3), __LINE__);
+        -:  236:        test("graph_tests.cpp", "Graph::add_edge(4, 1)", true, g.add_edge(4, 1), __LINE__);
+        -:  237:
+        -:  238:        t.printGraph();
+        -:  239:        g.printGraph();
+        -:  240:
+        -:  241:        test("graph_tests.cpp", "t.Graph::cost(1, 4)", 1.0, g.cost(1, 4), __LINE__);
+        -:  242:        test("graph_tests.cpp", "t.Graph::cost(3, 755)", (double)(INFINITY), g.cost(3, 755), __LINE__);
+        -:  243:        test("graph_tests.cpp", "t.Graph::cost(755, 3)", (double)(INFINITY), g.cost(3, 755), __LINE__);
+        -:  244:        test("graph_tests.cpp", "t.Graph::cost(9, 75)", (double)(INFINITY), g.cost(9, 75), __LINE__);
+        -:  245:        test("graph_tests.cpp", "t.Graph::cost(4, 2)", (double)(INFINITY), g.cost(4, 2), __LINE__);
+        -:  246:        test("graph_tests.cpp", "t.Graph::cost(3, 1)", (double)(INFINITY), g.cost(3, 1), __LINE__);
+        -:  247:        test("graph_tests.cpp", "t.Graph::cost(1, 3)", 1.0, g.cost(1, 3), __LINE__);
+        -:  248:        test("graph_tests.cpp", "t.Graph::remove_edge(2, 4)", true, g.remove_edge(2,4), __LINE__);
+        -:  249:        test("graph_tests.cpp", "t.Graph::cost(2, 4)", (double)(INFINITY), g.cost(2, 4), __LINE__);
+        -:  250:
+        -:  251:        g.printGraph();
+        -:  252:
+        -:  253:        Graph k;
+        -:  254:        test("graph_tests.cpp", "k.Graph::cost(3, 755)", (double)(INFINITY), k.cost(3, 755), __LINE__);
+        -:  255:        test("graph_tests.cpp", "k.Graph::remove_edge(2, 4)", false, k.remove_edge(2,4), __LINE__);
+        -:  256:        test("graph_tests.cpp", "k.Graph::add_edge(4, 1)", false, k.add_edge(4, 1), __LINE__);
+        -:  257:
+        -:  258:        
+        -:  259:    }
+        -:  260:    */
+        -:  261:
+        -:  262:    /*DIJKSTRA
+        -:  263:        floating point weights, no path
+        -:  264:        nonexistent vertex
+        -:  265:        textbook example
+        -:  266:    */
+        -:  267:    /*
+        -:  268:    {// floating point, disjoint paths
+        -:  269:        Graph g;
+        -:  270:        g.dijkstra(9);
+        -:  271:        g.printGraph();
+        -:  272:        test("graph_tests.cpp", "Graph::distance(1)", (double)(INFINITY) , g.distance(1), __LINE__);
+        -:  273:        test("graph_tests.cpp", "Graph::add_vertex(0)", true, g.add_vertex(0), __LINE__);
+        -:  274:        test("graph_tests.cpp", "Graph::add_vertex(10)", true, g.add_vertex(10), __LINE__);
+        -:  275:        test("graph_tests.cpp", "Graph::add_vertex(20)", true, g.add_vertex(20), __LINE__);
+        -:  276:        test("graph_tests.cpp", "Graph::add_vertex(110)", true, g.add_vertex(110), __LINE__);
+        -:  277:        test("graph_tests.cpp", "Graph::add_vertex(1230)", true, g.add_vertex(1230), __LINE__);
+        -:  278:        test("graph_tests.cpp", "Graph::add_vertex(13570)", true, g.add_vertex(13570), __LINE__);
+        -:  279:
+        -:  280:        g.dijkstra(0);
+        -:  281:        test("graph_tests.cpp", "Graph::distance(0)", 0.0 , g.distance(0), __LINE__);
+        -:  282:        test("graph_tests.cpp", "Graph::distance(10)", (double)(INFINITY) , g.distance(10), __LINE__);
+        -:  283:        test("graph_tests.cpp", "Graph::distance(110)", (double)(INFINITY) , g.distance(110), __LINE__);
+        -:  284:        test("graph_tests.cpp", "Graph::distance(1230)", (double)(INFINITY) , g.distance(1230), __LINE__);
+        -:  285:        test("graph_tests.cpp", "Graph::distance(13570)", (double)(INFINITY) , g.distance(13570), __LINE__);
+        -:  286:
+        -:  287:        g.dijkstra(10);
+        -:  288:        test("graph_tests.cpp", "Graph::distance(0)", (double)(INFINITY) , g.distance(0), __LINE__);
+        -:  289:        test("graph_tests.cpp", "Graph::distance(10)",0.0, g.distance(10), __LINE__);
+        -:  290:        test("graph_tests.cpp", "Graph::distance(110)", (double)(INFINITY) , g.distance(110), __LINE__);
+        -:  291:        test("graph_tests.cpp", "Graph::distance(1230)", (double)(INFINITY) , g.distance(1230), __LINE__);
+        -:  292:        test("graph_tests.cpp", "Graph::distance(13570)", (double)(INFINITY) , g.distance(13570), __LINE__);
+        -:  293:
+        -:  294:        g.dijkstra(110);
+        -:  295:        test("graph_tests.cpp", "Graph::distance(0)", (double)(INFINITY) , g.distance(0), __LINE__);
+        -:  296:        test("graph_tests.cpp", "Graph::distance(10)", (double)(INFINITY) , g.distance(10), __LINE__);
+        -:  297:        test("graph_tests.cpp", "Graph::distance(110)", 0.0 , g.distance(110), __LINE__);
+        -:  298:        test("graph_tests.cpp", "Graph::distance(1230)", (double)(INFINITY) , g.distance(1230), __LINE__);
+        -:  299:        test("graph_tests.cpp", "Graph::distance(13570)", (double)(INFINITY) , g.distance(13570), __LINE__);
+        -:  300:
+        -:  301:        test("graph_tests.cpp", "Graph::add_edge(0, 10, 1.111)", true, g.add_edge(0, 10, 1.111), __LINE__);
+        -:  302:        test("graph_tests.cpp", "Graph::add_edge(0, 110, 110.0)", true, g.add_edge(0, 110, 110.0), __LINE__);
+        -:  303:        test("graph_tests.cpp", "Graph::add_edge(0, 20, 1.0)", true, g.add_edge(0, 20, 1.0), __LINE__);
+        -:  304:        test("graph_tests.cpp", "Graph::add_edge(10, 110, 1.1711)", true, g.add_edge(10, 110, 1.1711), __LINE__);
+        -:  305:        test("graph_tests.cpp", "Graph::add_edge(1230, 10, 13.111)", true, g.add_edge(1230, 10, 13.111), __LINE__);
+        -:  306:        test("graph_tests.cpp", "Graph::add_edge(110, 13570, 31.1511)", true, g.add_edge(110, 13570, 31.1511), __LINE__);
+        -:  307:        g.printGraph();
+        -:  308:        //////////////////////////////////////////////
+        -:  309:        g.dijkstra(0);
+        -:  310:        test("graph_tests.cpp", "Graph::distance(0)", 0.0 , g.distance(0), __LINE__);
+        -:  311:        test("graph_tests.cpp", "Graph::distance(10)", 1.111 , g.distance(10), __LINE__);
+        -:  312:        test("graph_tests.cpp", "Graph::distance(20)", 1.0 , g.distance(20), __LINE__);
+        -:  313:        test("graph_tests.cpp", "Graph::distance(110)", 2.2821 , g.distance(110), __LINE__);
+        -:  314:        test("graph_tests.cpp", "Graph::distance(1230)", (double)(INFINITY) , g.distance(1230), __LINE__);
+        -:  315:        test("graph_tests.cpp", "Graph::distance(13570)", 33.4332 , g.distance(13570), __LINE__);
+        -:  316:
+        -:  317:        g.dijkstra(10);
+        -:  318:        test("graph_tests.cpp", "Graph::distance(0)", (double)(INFINITY) , g.distance(0), __LINE__);
+        -:  319:        test("graph_tests.cpp", "Graph::distance(10)",0.0, g.distance(10), __LINE__);
+        -:  320:        test("graph_tests.cpp", "Graph::distance(110)", 1.1711 , g.distance(110), __LINE__);
+        -:  321:        test("graph_tests.cpp", "Graph::distance(1230)", (double)(INFINITY) , g.distance(1230), __LINE__);
+        -:  322:        test("graph_tests.cpp", "Graph::distance(13570)", 32.3222 , g.distance(13570), __LINE__);
+        -:  323:
+        -:  324:        g.dijkstra(110);
+        -:  325:        test("graph_tests.cpp", "Graph::distance(0)", (double)(INFINITY) , g.distance(0), __LINE__);
+        -:  326:        test("graph_tests.cpp", "Graph::distance(10)", (double)(INFINITY) , g.distance(10), __LINE__);
+        -:  327:        test("graph_tests.cpp", "Graph::distance(110)", 0.0 , g.distance(110), __LINE__);
+        -:  328:        test("graph_tests.cpp", "Graph::distance(1230)", (double)(INFINITY) , g.distance(1230), __LINE__);
+        -:  329:        test("graph_tests.cpp", "Graph::distance(13570)", 31.1511 , g.distance(13570), __LINE__);
+        -:  330:
+        -:  331:        g.printGraph();
+        -:  332:
+        -:  333:    }
+        -:  334:
+        -:  335:    {// dijkstra DAG spider shape
+        -:  336:        Graph g;
+        -:  337:        test("graph_tests.cpp", "Graph::add_vertex(5)", true, g.add_vertex(5), __LINE__);//body
+        -:  338:        test("graph_tests.cpp", "Graph::add_vertex(9)", true, g.add_vertex(9), __LINE__);//head
+        -:  339:        test("graph_tests.cpp", "Graph::add_vertex(90)", true, g.add_vertex(90), __LINE__);//fisrst joints
+        -:  340:        test("graph_tests.cpp", "Graph::add_vertex(50)", true, g.add_vertex(50), __LINE__);
+        -:  341:        test("graph_tests.cpp", "Graph::add_vertex(59)", true, g.add_vertex(59), __LINE__);
+        -:  342:        test("graph_tests.cpp", "Graph::add_vertex(95)", true, g.add_vertex(95), __LINE__);
+        -:  343:        test("graph_tests.cpp", "Graph::add_vertex(1)", true, g.add_vertex(1), __LINE__);//second joints
+        -:  344:        test("graph_tests.cpp", "Graph::add_vertex(10)", true, g.add_vertex(10), __LINE__);
+        -:  345:        test("graph_tests.cpp", "Graph::add_vertex(12)", true, g.add_vertex(12), __LINE__);
+        -:  346:        test("graph_tests.cpp", "Graph::add_vertex(2)", true, g.add_vertex(2), __LINE__);
+        -:  347:        test("graph_tests.cpp", "Graph::add_vertex(11)", true, g.add_vertex(11), __LINE__);//feet
+        -:  348:        test("graph_tests.cpp", "Graph::add_vertex(101)", true, g.add_vertex(101), __LINE__);
+        -:  349:        test("graph_tests.cpp", "Graph::add_vertex(121)", true, g.add_vertex(121), __LINE__);
+        -:  350:        test("graph_tests.cpp", "Graph::add_vertex(21)", true, g.add_vertex(21), __LINE__);
+        -:  351:        //g.printGraph();
+        -:  352:
+        -:  353:        test("graph_tests.cpp", "Graph::add_edge(5, 9, 10)", true, g.add_edge(5, 9, 10), __LINE__);
+        -:  354:        test("graph_tests.cpp", "Graph::add_edge(5, 90, 10)", true, g.add_edge(5, 90, 10), __LINE__);
+        -:  355:        test("graph_tests.cpp", "Graph::add_edge(5, 50, 10)", true, g.add_edge(5, 50, 10), __LINE__);
+        -:  356:        test("graph_tests.cpp", "Graph::add_edge(5, 59, 10)", true, g.add_edge(5, 59, 10), __LINE__);
+        -:  357:        test("graph_tests.cpp", "Graph::add_edge(5, 95, 10)", true, g.add_edge(5, 95, 10), __LINE__);
+        -:  358:        test("graph_tests.cpp", "Graph::add_edge(90, 1, 10)", true, g.add_edge(90, 1, 10), __LINE__);
+        -:  359:        test("graph_tests.cpp", "Graph::add_edge(50, 10, 10)", true, g.add_edge(50, 10, 10), __LINE__);
+        -:  360:        test("graph_tests.cpp", "Graph::add_edge(59, 12, 10)", true, g.add_edge(59, 12, 10), __LINE__);
+        -:  361:        test("graph_tests.cpp", "Graph::add_edge(95, 2, 10)", true, g.add_edge(95, 2, 10), __LINE__);
+        -:  362:        test("graph_tests.cpp", "Graph::add_edge(1, 11, 10)", true, g.add_edge(1, 11, 10), __LINE__);
+        -:  363:        test("graph_tests.cpp", "Graph::add_edge(10, 101, 10)", true, g.add_edge(10, 101, 10), __LINE__);
+        -:  364:        test("graph_tests.cpp", "Graph::add_edge(12, 121, 10)", true, g.add_edge(12, 121, 10), __LINE__);
+        -:  365:        test("graph_tests.cpp", "Graph::add_edge(2, 21, 10)", true, g.add_edge(2, 21, 10), __LINE__);
+        -:  366:        //g.printGraph();
+        -:  367:
+        -:  368:        g.dijkstra(5);
+        -:  369:        test("graph_tests.cpp", "Graph::distance(5)", 0.0, g.distance(5), __LINE__);
+        -:  370:        test("graph_tests.cpp", "Graph::distance(9)", 10.0, g.distance(9), __LINE__);
+        -:  371:        test("graph_tests.cpp", "Graph::distance(90)", 10.0, g.distance(90), __LINE__);
+        -:  372:        test("graph_tests.cpp", "Graph::distance(50)", 10.0, g.distance(50), __LINE__);
+        -:  373:        test("graph_tests.cpp", "Graph::distance(59)", 10.0, g.distance(59), __LINE__);
+        -:  374:        test("graph_tests.cpp", "Graph::distance(95)", 10.0, g.distance(95), __LINE__);
+        -:  375:        test("graph_tests.cpp", "Graph::distance(1)", 20.0, g.distance(1), __LINE__);
+        -:  376:        test("graph_tests.cpp", "Graph::distance(10)", 20.0, g.distance(10), __LINE__);
+        -:  377:        test("graph_tests.cpp", "Graph::distance(12)", 20.0, g.distance(12), __LINE__);
+        -:  378:        test("graph_tests.cpp", "Graph::distance(2)", 20.0, g.distance(2), __LINE__);
+        -:  379:        test("graph_tests.cpp", "Graph::distance(11)", 30.0, g.distance(11), __LINE__);
+        -:  380:        test("graph_tests.cpp", "Graph::distance(101)", 30.0, g.distance(101), __LINE__);
+        -:  381:        test("graph_tests.cpp", "Graph::distance(121)", 30.0, g.distance(121), __LINE__);
+        -:  382:        test("graph_tests.cpp", "Graph::distance(21)", 30.0, g.distance(21), __LINE__);
+        -:  383:
+        -:  384:        g.printGraph();
+        -:  385:        g.dijkstra(90);
+        -:  386:        test("graph_tests.cpp", "Graph::distance(5)", (double)(INFINITY), g.distance(5), __LINE__);
+        -:  387:        test("graph_tests.cpp", "Graph::distance(9)", (double)(INFINITY), g.distance(9), __LINE__);
+        -:  388:        test("graph_tests.cpp", "Graph::distance(90)",0.0, g.distance(90), __LINE__);
+        -:  389:        test("graph_tests.cpp", "Graph::distance(50)", (double)(INFINITY), g.distance(50), __LINE__);
+        -:  390:        test("graph_tests.cpp", "Graph::distance(59)",(double)(INFINITY), g.distance(59), __LINE__);
+        -:  391:        test("graph_tests.cpp", "Graph::distance(95)", (double)(INFINITY), g.distance(95), __LINE__);
+        -:  392:        test("graph_tests.cpp", "Graph::distance(1)", 10.0, g.distance(1), __LINE__);
+        -:  393:        test("graph_tests.cpp", "Graph::distance(10)", (double)(INFINITY), g.distance(10), __LINE__);
+        -:  394:        test("graph_tests.cpp", "Graph::distance(12)", (double)(INFINITY), g.distance(12), __LINE__);
+        -:  395:        test("graph_tests.cpp", "Graph::distance(2)", (double)(INFINITY), g.distance(2), __LINE__);
+        -:  396:        test("graph_tests.cpp", "Graph::distance(11)", 20.0, g.distance(11), __LINE__);
+        -:  397:        test("graph_tests.cpp", "Graph::distance(101)", (double)(INFINITY), g.distance(101), __LINE__);
+        -:  398:        test("graph_tests.cpp", "Graph::distance(121)",(double)(INFINITY), g.distance(121), __LINE__);
+        -:  399:        test("graph_tests.cpp", "Graph::distance(21)", (double)(INFINITY), g.distance(21), __LINE__);
+        -:  400:    }
+        -:  401:    
+        -:  402:    {// dijkstra spider shape
+        -:  403:        Graph g;
+        -:  404:        test("graph_tests.cpp", "Graph::add_vertex(5)", true, g.add_vertex(5), __LINE__);//body
+        -:  405:        test("graph_tests.cpp", "Graph::add_vertex(9)", true, g.add_vertex(9), __LINE__);//head
+        -:  406:        test("graph_tests.cpp", "Graph::add_vertex(90)", true, g.add_vertex(90), __LINE__);//fisrst joints
+        -:  407:        test("graph_tests.cpp", "Graph::add_vertex(50)", true, g.add_vertex(50), __LINE__);
+        -:  408:        test("graph_tests.cpp", "Graph::add_vertex(59)", true, g.add_vertex(59), __LINE__);
+        -:  409:        test("graph_tests.cpp", "Graph::add_vertex(95)", true, g.add_vertex(95), __LINE__);
+        -:  410:        test("graph_tests.cpp", "Graph::add_vertex(1)", true, g.add_vertex(1), __LINE__);//second joints
+        -:  411:        test("graph_tests.cpp", "Graph::add_vertex(10)", true, g.add_vertex(10), __LINE__);
+        -:  412:        test("graph_tests.cpp", "Graph::add_vertex(12)", true, g.add_vertex(12), __LINE__);
+        -:  413:        test("graph_tests.cpp", "Graph::add_vertex(2)", true, g.add_vertex(2), __LINE__);
+        -:  414:        test("graph_tests.cpp", "Graph::add_vertex(11)", true, g.add_vertex(11), __LINE__);//feet
+        -:  415:        test("graph_tests.cpp", "Graph::add_vertex(101)", true, g.add_vertex(101), __LINE__);
+        -:  416:        test("graph_tests.cpp", "Graph::add_vertex(121)", true, g.add_vertex(121), __LINE__);
+        -:  417:        test("graph_tests.cpp", "Graph::add_vertex(21)", true, g.add_vertex(21), __LINE__);
+        -:  418:        //g.printGraph();
+        -:  419:
+        -:  420:        test("graph_tests.cpp", "Graph::add_edge(5, 9, 10)", true, g.add_edge(5, 9, 10), __LINE__);
+        -:  421:        test("graph_tests.cpp", "Graph::add_edge(5, 90, 10)", true, g.add_edge(5, 90, 10), __LINE__);
+        -:  422:        test("graph_tests.cpp", "Graph::add_edge(5, 50, 10)", true, g.add_edge(5, 50, 10), __LINE__);
+        -:  423:        test("graph_tests.cpp", "Graph::add_edge(5, 59, 10)", true, g.add_edge(5, 59, 10), __LINE__);
+        -:  424:        test("graph_tests.cpp", "Graph::add_edge(5, 95, 10)", true, g.add_edge(5, 95, 10), __LINE__);
+        -:  425:        test("graph_tests.cpp", "Graph::add_edge(90, 1, 10)", true, g.add_edge(90, 1, 10), __LINE__);
+        -:  426:        test("graph_tests.cpp", "Graph::add_edge(50, 10, 10)", true, g.add_edge(50, 10, 10), __LINE__);
+        -:  427:        test("graph_tests.cpp", "Graph::add_edge(59, 12, 10)", true, g.add_edge(59, 12, 10), __LINE__);
+        -:  428:        test("graph_tests.cpp", "Graph::add_edge(95, 2, 10)", true, g.add_edge(95, 2, 10), __LINE__);
+        -:  429:        test("graph_tests.cpp", "Graph::add_edge(1, 11, 10)", true, g.add_edge(1, 11, 10), __LINE__);
+        -:  430:        test("graph_tests.cpp", "Graph::add_edge(10, 101, 10)", true, g.add_edge(10, 101, 10), __LINE__);
+        -:  431:        test("graph_tests.cpp", "Graph::add_edge(12, 121, 10)", true, g.add_edge(12, 121, 10), __LINE__);
+        -:  432:        test("graph_tests.cpp", "Graph::add_edge(2, 21, 10)", true, g.add_edge(2, 21, 10), __LINE__);
+        -:  433:
+        -:  434:        test("graph_tests.cpp", "Graph::add_edge(9, 5, 10)", true, g.add_edge(9, 5, 10), __LINE__);
+        -:  435:        test("graph_tests.cpp", "Graph::add_edge(90, 5, 10)", true, g.add_edge(90, 5, 10), __LINE__);
+        -:  436:        test("graph_tests.cpp", "Graph::add_edge(50, 5, 10)", true, g.add_edge(50, 5, 10), __LINE__);
+        -:  437:        test("graph_tests.cpp", "Graph::add_edge(59, 5, 10)", true, g.add_edge(59, 5, 10), __LINE__);
+        -:  438:        test("graph_tests.cpp", "Graph::add_edge(95, 5, 10)", true, g.add_edge(95, 5, 10), __LINE__);
+        -:  439:        test("graph_tests.cpp", "Graph::add_edge(1, 90, 10)", true, g.add_edge(1, 90, 10), __LINE__);
+        -:  440:        test("graph_tests.cpp", "Graph::add_edge(10, 50, 10)", true, g.add_edge(10, 50, 10), __LINE__);
+        -:  441:        test("graph_tests.cpp", "Graph::add_edge(12, 59, 10)", true, g.add_edge(12, 59, 10), __LINE__);
+        -:  442:        test("graph_tests.cpp", "Graph::add_edge(2, 95, 10)", true, g.add_edge(2, 95, 10), __LINE__);
+        -:  443:        test("graph_tests.cpp", "Graph::add_edge(11, 1, 10)", true, g.add_edge(11, 1, 10), __LINE__);
+        -:  444:        test("graph_tests.cpp", "Graph::add_edge(101, 10, 10)", true, g.add_edge(101, 10, 10), __LINE__);
+        -:  445:        test("graph_tests.cpp", "Graph::add_edge(121, 12, 10)", true, g.add_edge(121, 12, 10), __LINE__);
+        -:  446:        test("graph_tests.cpp", "Graph::add_edge(21, 2, 10)", true, g.add_edge(21, 2, 10), __LINE__);
+        -:  447:        //g.printGraph();
+        -:  448:
+        -:  449:        g.dijkstra(5);
+        -:  450:        test("graph_tests.cpp", "Graph::distance(5)", 0.0, g.distance(5), __LINE__);
+        -:  451:        test("graph_tests.cpp", "Graph::distance(9)", 10.0, g.distance(9), __LINE__);
+        -:  452:        test("graph_tests.cpp", "Graph::distance(90)", 10.0, g.distance(90), __LINE__);
+        -:  453:        test("graph_tests.cpp", "Graph::distance(50)", 10.0, g.distance(50), __LINE__);
+        -:  454:        test("graph_tests.cpp", "Graph::distance(59)", 10.0, g.distance(59), __LINE__);
+        -:  455:        test("graph_tests.cpp", "Graph::distance(95)", 10.0, g.distance(95), __LINE__);
+        -:  456:        test("graph_tests.cpp", "Graph::distance(1)", 20.0, g.distance(1), __LINE__);
+        -:  457:        test("graph_tests.cpp", "Graph::distance(10)", 20.0, g.distance(10), __LINE__);
+        -:  458:        test("graph_tests.cpp", "Graph::distance(12)", 20.0, g.distance(12), __LINE__);
+        -:  459:        test("graph_tests.cpp", "Graph::distance(2)", 20.0, g.distance(2), __LINE__);
+        -:  460:        test("graph_tests.cpp", "Graph::distance(11)", 30.0, g.distance(11), __LINE__);
+        -:  461:        test("graph_tests.cpp", "Graph::distance(101)", 30.0, g.distance(101), __LINE__);
+        -:  462:        test("graph_tests.cpp", "Graph::distance(121)", 30.0, g.distance(121), __LINE__);
+        -:  463:        test("graph_tests.cpp", "Graph::distance(21)", 30.0, g.distance(21), __LINE__);
+        -:  464:
+        -:  465:        g.printGraph();
+        -:  466:        g.dijkstra(90);
+        -:  467:        test("graph_tests.cpp", "Graph::distance(5)", 10.0, g.distance(5), __LINE__);
+        -:  468:        test("graph_tests.cpp", "Graph::distance(9)", 20.0, g.distance(9), __LINE__);
+        -:  469:        test("graph_tests.cpp", "Graph::distance(90)",0.0, g.distance(90), __LINE__);
+        -:  470:        test("graph_tests.cpp", "Graph::distance(50)", 20.0, g.distance(50), __LINE__);
+        -:  471:        test("graph_tests.cpp", "Graph::distance(59)",20.0, g.distance(59), __LINE__);
+        -:  472:        test("graph_tests.cpp", "Graph::distance(95)", 20.0, g.distance(95), __LINE__);
+        -:  473:        test("graph_tests.cpp", "Graph::distance(1)", 10.0, g.distance(1), __LINE__);
+        -:  474:        test("graph_tests.cpp", "Graph::distance(10)", 30.0, g.distance(10), __LINE__);
+        -:  475:        test("graph_tests.cpp", "Graph::distance(12)", 30.0, g.distance(12), __LINE__);
+        -:  476:        test("graph_tests.cpp", "Graph::distance(2)", 30.0, g.distance(2), __LINE__);
+        -:  477:        test("graph_tests.cpp", "Graph::distance(11)", 20.0, g.distance(11), __LINE__);
+        -:  478:        test("graph_tests.cpp", "Graph::distance(101)",40.0, g.distance(101), __LINE__);
+        -:  479:        test("graph_tests.cpp", "Graph::distance(121)",40.0, g.distance(121), __LINE__);
+        -:  480:        test("graph_tests.cpp", "Graph::distance(21)", 40.0, g.distance(21), __LINE__);
+        -:  481:    }
+        -:  482:    
+        -:  483:
+        -:  484:    {//dijkstra binary tree
+        -:  485:        Graph g;
+        -:  486:        test("graph_tests.cpp", "Graph::add_vertex(5)", true, g.add_vertex(5), __LINE__);//root
+        -:  487:        test("graph_tests.cpp", "Graph::add_vertex(9)", true, g.add_vertex(9), __LINE__);
+        -:  488:        test("graph_tests.cpp", "Graph::add_vertex(90)", true, g.add_vertex(90), __LINE__);
+        -:  489:        test("graph_tests.cpp", "Graph::add_vertex(50)", true, g.add_vertex(50), __LINE__);
+        -:  490:        test("graph_tests.cpp", "Graph::add_vertex(59)", true, g.add_vertex(59), __LINE__);
+        -:  491:        test("graph_tests.cpp", "Graph::add_vertex(95)", true, g.add_vertex(95), __LINE__);
+        -:  492:        test("graph_tests.cpp", "Graph::add_vertex(1)", true, g.add_vertex(1), __LINE__);
+        -:  493:        test("graph_tests.cpp", "Graph::add_vertex(10)", true, g.add_vertex(10), __LINE__);
+        -:  494:        test("graph_tests.cpp", "Graph::add_vertex(12)", true, g.add_vertex(12), __LINE__);
+        -:  495:        test("graph_tests.cpp", "Graph::add_vertex(2)", true, g.add_vertex(2), __LINE__);
+        -:  496:        test("graph_tests.cpp", "Graph::add_vertex(11)", true, g.add_vertex(11), __LINE__);
+        -:  497:        test("graph_tests.cpp", "Graph::add_vertex(101)", true, g.add_vertex(101), __LINE__);
+        -:  498:        test("graph_tests.cpp", "Graph::add_vertex(121)", true, g.add_vertex(121), __LINE__);
+        -:  499:        test("graph_tests.cpp", "Graph::add_vertex(21)", true, g.add_vertex(21), __LINE__);
+        -:  500:        //g.printGraph();
+        -:  501:
+        -:  502:        test("graph_tests.cpp", "Graph::add_edge(5, 9, 10)", true, g.add_edge(5, 9, 10), __LINE__);//depth 0
+        -:  503:        test("graph_tests.cpp", "Graph::add_edge(5, 90, 10)", true, g.add_edge(5, 90, 10), __LINE__);
+        -:  504:        test("graph_tests.cpp", "Graph::add_edge(90, 50, 10)", true, g.add_edge(90, 50, 10), __LINE__);//depth 1
+        -:  505:        test("graph_tests.cpp", "Graph::add_edge(90, 59, 10)", true, g.add_edge(90, 59, 10), __LINE__);
+        -:  506:        test("graph_tests.cpp", "Graph::add_edge(9, 10, 10)", true, g.add_edge(9, 10, 10), __LINE__);
+        -:  507:        test("graph_tests.cpp", "Graph::add_edge(9, 95, 10)", true, g.add_edge(9, 95, 10), __LINE__);
+        -:  508:        test("graph_tests.cpp", "Graph::add_edge(59, 12, 10)", true, g.add_edge(59, 12, 10), __LINE__);//depth 2
+        -:  509:        test("graph_tests.cpp", "Graph::add_edge(59, 2, 10)", true, g.add_edge(59, 2, 10), __LINE__);
+        -:  510:        test("graph_tests.cpp", "Graph::add_edge(50, 11, 10)", true, g.add_edge(50, 11, 10), __LINE__);
+        -:  511:        test("graph_tests.cpp", "Graph::add_edge(50, 101, 10)", true, g.add_edge(50, 101, 10), __LINE__);
+        -:  512:        test("graph_tests.cpp", "Graph::add_edge(10, 121, 10)", true, g.add_edge(10, 121, 10), __LINE__);
+        -:  513:        test("graph_tests.cpp", "Graph::add_edge(10, 21, 10)", true, g.add_edge(10, 21, 10), __LINE__);
+        -:  514:        test("graph_tests.cpp", "Graph::add_edge(95, 1, 10)", true, g.add_edge(95, 1, 10), __LINE__);
+        -:  515:        g.printGraph();
+        -:  516:
+        -:  517:        g.dijkstra(5);
+        -:  518:        test("graph_tests.cpp", "Graph::distance(5)", 0.0, g.distance(5), __LINE__);
+        -:  519:        test("graph_tests.cpp", "Graph::distance(9)", 10.0, g.distance(9), __LINE__);
+        -:  520:        test("graph_tests.cpp", "Graph::distance(90)", 10.0, g.distance(90), __LINE__);
+        -:  521:        test("graph_tests.cpp", "Graph::distance(50)", 20.0, g.distance(50), __LINE__);
+        -:  522:        test("graph_tests.cpp", "Graph::distance(59)", 20.0, g.distance(59), __LINE__);
+        -:  523:        test("graph_tests.cpp", "Graph::distance(95)", 20.0, g.distance(95), __LINE__);
+        -:  524:        test("graph_tests.cpp", "Graph::distance(1)", 30.0, g.distance(1), __LINE__);
+        -:  525:        test("graph_tests.cpp", "Graph::distance(10)", 20.0, g.distance(10), __LINE__);
+        -:  526:        test("graph_tests.cpp", "Graph::distance(12)", 30.0, g.distance(12), __LINE__);
+        -:  527:        test("graph_tests.cpp", "Graph::distance(2)", 30.0, g.distance(2), __LINE__);
+        -:  528:        test("graph_tests.cpp", "Graph::distance(11)", 30.0, g.distance(11), __LINE__);
+        -:  529:        test("graph_tests.cpp", "Graph::distance(101)", 30.0, g.distance(101), __LINE__);
+        -:  530:        test("graph_tests.cpp", "Graph::distance(121)", 30.0, g.distance(121), __LINE__);
+        -:  531:        test("graph_tests.cpp", "Graph::distance(21)", 30.0, g.distance(21), __LINE__);
+        -:  532:
+        -:  533:
+        -:  534:    }
+        -:  535:    
+        -:  536:    {//graph with cycles and branches, some two way paths, some disconnected branches
+        -:  537:        Graph g;
+        -:  538:        test("graph_tests.cpp", "Graph::add_vertex(5)", true, g.add_vertex(5), __LINE__);//root
+        -:  539:        test("graph_tests.cpp", "Graph::add_vertex(9)", true, g.add_vertex(9), __LINE__);
+        -:  540:        test("graph_tests.cpp", "Graph::add_vertex(90)", true, g.add_vertex(90), __LINE__);
+        -:  541:        test("graph_tests.cpp", "Graph::add_vertex(50)", true, g.add_vertex(50), __LINE__);
+        -:  542:        test("graph_tests.cpp", "Graph::add_vertex(59)", true, g.add_vertex(59), __LINE__);
+        -:  543:        test("graph_tests.cpp", "Graph::add_vertex(95)", true, g.add_vertex(95), __LINE__);
+        -:  544:        test("graph_tests.cpp", "Graph::add_vertex(1)", true, g.add_vertex(1), __LINE__);
+        -:  545:        test("graph_tests.cpp", "Graph::add_vertex(10)", true, g.add_vertex(10), __LINE__);
+        -:  546:        test("graph_tests.cpp", "Graph::add_vertex(12)", true, g.add_vertex(12), __LINE__);
+        -:  547:        test("graph_tests.cpp", "Graph::add_vertex(2)", true, g.add_vertex(2), __LINE__);
+        -:  548:        test("graph_tests.cpp", "Graph::add_vertex(11)", true, g.add_vertex(11), __LINE__);
+        -:  549:        test("graph_tests.cpp", "Graph::add_vertex(101)", true, g.add_vertex(101), __LINE__);
+        -:  550:        test("graph_tests.cpp", "Graph::add_vertex(121)", true, g.add_vertex(121), __LINE__);
+        -:  551:        test("graph_tests.cpp", "Graph::add_vertex(21)", true, g.add_vertex(21), __LINE__);
+        -:  552:
+        -:  553:        //square
+        -:  554:        test("graph_tests.cpp", "Graph::add_edge(5, 9, 10)", true, g.add_edge(5, 9, 1), __LINE__);
+        -:  555:        test("graph_tests.cpp", "Graph::add_edge(5, 90, 10)", true, g.add_edge(5, 90, 5), __LINE__);
+        -:  556:        test("graph_tests.cpp", "Graph::add_edge(50, 90, 10)", true, g.add_edge(50, 90, 10), __LINE__);
+        -:  557:        test("graph_tests.cpp", "Graph::add_edge(9, 50, 10)", true, g.add_edge(9, 50, 40), __LINE__);
+        -:  558:        test("graph_tests.cpp", "Graph::add_edge(90, 5, 10)", true, g.add_edge(90, 5, 1), __LINE__);
+        -:  559:        test("graph_tests.cpp", "Graph::add_edge(50, 9, 10)", true, g.add_edge(50, 9, 2), __LINE__);
+        -:  560:
+        -:  561:        //square
+        -:  562:        test("graph_tests.cpp", "Graph::add_edge(59, 95, 10)", true, g.add_edge(59, 95, 20), __LINE__);
+        -:  563:        test("graph_tests.cpp", "Graph::add_edge(59, 1, 10)", true, g.add_edge(59, 1, 1), __LINE__);
+        -:  564:        test("graph_tests.cpp", "Graph::add_edge(1, 10, 10)", true, g.add_edge(1, 10, 1), __LINE__);
+        -:  565:        test("graph_tests.cpp", "Graph::add_edge(95, 10, 10)", true, g.add_edge(95, 10, 2), __LINE__);
+        -:  566:        test("graph_tests.cpp", "Graph::add_edge(1, 59, 10)", true, g.add_edge(1, 59, 5), __LINE__);
+        -:  567:        test("graph_tests.cpp", "Graph::add_edge(10, 95, 10)", true, g.add_edge(10, 95, 1), __LINE__);
+        -:  568:
+        -:  569:        //connect squares
+        -:  570:        test("graph_tests.cpp", "Graph::add_edge(1, 50, 10)", true, g.add_edge(1, 50, 2), __LINE__);
+        -:  571:        test("graph_tests.cpp", "Graph::add_edge(9, 59, 10)", true, g.add_edge(9, 59, 1), __LINE__);
+        -:  572:
+        -:  573:        //triangle
+        -:  574:        test("graph_tests.cpp", "Graph::add_edge(21, 101, 10)", true, g.add_edge(21, 101, 1), __LINE__);
+        -:  575:        test("graph_tests.cpp", "Graph::add_edge(101, 21, 10)", true, g.add_edge(101, 21, 1), __LINE__);
+        -:  576:        test("graph_tests.cpp", "Graph::add_edge(101, 121, 10)", true, g.add_edge(101, 121, 10), __LINE__);
+        -:  577:        test("graph_tests.cpp", "Graph::add_edge(121, 21, 10)", true, g.add_edge(121, 21, 1), __LINE__);
+        -:  578:
+        -:  579:        //connect trianlge
+        -:  580:        test("graph_tests.cpp", "Graph::add_edge(10, 21, 10)", true, g.add_edge(10, 21, 10), __LINE__);
+        -:  581:
+        -:  582:        //triangle (disconnected)
+        -:  583:        test("graph_tests.cpp", "Graph::add_edge(12, 11, 10)", true, g.add_edge(12, 11, 10), __LINE__);
+        -:  584:        test("graph_tests.cpp", "Graph::add_edge(12, 2, 10)", true, g.add_edge(12, 2, 10), __LINE__);
+        -:  585:        test("graph_tests.cpp", "Graph::add_edge(11, 12, 10)", true, g.add_edge(11, 12, 10), __LINE__);
+        -:  586:        test("graph_tests.cpp", "Graph::add_edge(11, 2, 10)", true, g.add_edge(11, 2, 10), __LINE__);
+        -:  587:        test("graph_tests.cpp", "Graph::add_edge(2, 12, 10)", true, g.add_edge(2, 12, 10), __LINE__);
+        -:  588:        test("graph_tests.cpp", "Graph::add_edge(2, 11, 10)", true, g.add_edge(2, 11, 10), __LINE__);
+        -:  589:
+        -:  590:
+        -:  591:        g.printGraph();
+        -:  592:
+        -:  593:        g.dijkstra(5);
+        -:  594:
+        -:  595:        test("graph_tests.cpp", "Graph::distance(5)", 0.0, g.distance(5), __LINE__);
+        -:  596:        test("graph_tests.cpp", "Graph::distance(9)", 1.0, g.distance(9), __LINE__);
+        -:  597:        test("graph_tests.cpp", "Graph::distance(90)",5.0, g.distance(90), __LINE__);
+        -:  598:        test("graph_tests.cpp", "Graph::distance(50)", 5.0, g.distance(50), __LINE__);
+        -:  599:        test("graph_tests.cpp", "Graph::distance(59)",2.0, g.distance(59), __LINE__);
+        -:  600:        test("graph_tests.cpp", "Graph::distance(95)", 5.0, g.distance(95), __LINE__);
+        -:  601:        test("graph_tests.cpp", "Graph::distance(1)", 3.0, g.distance(1), __LINE__);
+        -:  602:        test("graph_tests.cpp", "Graph::distance(10)", 4.0, g.distance(10), __LINE__);
+        -:  603:        test("graph_tests.cpp", "Graph::distance(12)", (double)(INFINITY), g.distance(12), __LINE__);
+        -:  604:        test("graph_tests.cpp", "Graph::distance(2)", (double)(INFINITY), g.distance(2), __LINE__);
+        -:  605:        test("graph_tests.cpp", "Graph::distance(11)", (double)(INFINITY), g.distance(11), __LINE__);
+        -:  606:        test("graph_tests.cpp", "Graph::distance(101)", 15.0, g.distance(101), __LINE__);
+        -:  607:        test("graph_tests.cpp", "Graph::distance(121)",25.0, g.distance(121), __LINE__);
+        -:  608:        test("graph_tests.cpp", "Graph::distance(21)", 14.0, g.distance(21), __LINE__);
+        -:  609:
+        -:  610:        g.print_shortest_path(9);
+        -:  611:        g.print_shortest_path(21);
+        -:  612:        g.print_shortest_path(11);
+        -:  613:    }
+        -:  614:    */
+        -:  615:
+        -:  616:    /*
+        -:  617:    unit test
+        -:  618:        edge_count 10 vertices, unweighted, complete
+        -:  619:        print_shortest path: empty/textbook example
+        -:  620:        remove_edge: remove and replace
+        -:  621:        remove vertex
+        -:  622:    */
+        -:  623:
+        -:  624:   {
+        1:  625:  std::cout << "a small source/sink" << std::endl;
+        2:  626:  Graph G;
+        1:  627:  G.add_vertex(0);
+        1:  628:  G.dijkstra(1);
+        1:  629:  test("graph_tests.cpp", "Graph::distance(0)", 0.0, G.distance(0), __LINE__);
+        -:  630:  
+        1:  631:  G.add_vertex(1);
+        1:  632:  G.add_edge(0, 1, 0.1);
+        1:  633:  G.dijkstra(1);
+        1:  634:  test("graph_tests.cpp", "Graph::distance(0)", (double)(INFINITY), G.distance(0), __LINE__);
+        1:  635:  test("graph_tests.cpp", "Graph::distance(1)", 0.0, G.distance(1), __LINE__);
+        -:  636:  
+        1:  637:  G.add_vertex(2);
+        1:  638:  G.add_edge(0, 2, 0.2);
+        1:  639:  G.add_edge(1, 2, 1.2);
+        1:  640:  G.dijkstra(1);
+        1:  641:  test("graph_tests.cpp", "Graph::distance(0)", (double)(INFINITY), G.distance(0), __LINE__);
+        1:  642:  test("graph_tests.cpp", "Graph::distance(1)", 0.0, G.distance(1), __LINE__);
+        1:  643:  test("graph_tests.cpp", "Graph::distance(0)", 1.2, G.distance(2), __LINE__);
+        -:  644:}
+        1:  645:    return 0;
+        3:  646:}

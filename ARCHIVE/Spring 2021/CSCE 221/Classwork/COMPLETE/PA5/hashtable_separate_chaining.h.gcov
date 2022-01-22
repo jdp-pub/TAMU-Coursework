@@ -1,0 +1,366 @@
+        -:    0:Source:hashtable_separate_chaining.h
+        -:    0:Graph:hashtable_separate_chaining_tests.gcno
+        -:    0:Data:hashtable_separate_chaining_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef HASHTABLE_SEPARATE_CHAINING_H
+        -:    2:#define HASHTABLE_SEPARATE_CHAINING_H
+        -:    3:
+        -:    4:#include <functional> 
+        -:    5:#include <iostream> 
+        -:    6:#include <list> 
+        -:    7:#include <sstream> 
+        -:    8:#include <stdexcept> 
+        -:    9:#include <vector> 
+        -:   10:
+        -:   11:using std::vector, std::list, std::cout, std::endl;
+        -:   12:
+       25:   13:void th(size_t& num, std::string test){
+       25:   14:    cout << "~~~~~~~~~~~~~~~~~~~~~" << endl;
+       25:   15:    cout << "SEQUENCE " << num << " | " << test << endl << "~~~~~~~~~~~~~~~~~~~~~" << endl;
+       25:   16:    ++num;
+       25:   17:}
+        -:   18:
+        -:   19:template <class Key, class Hash=std::hash<Key>>
+        -:   20:class HashTable {
+        -:   21:    // TODO(student): implement a separate chaining hash table
+        -:   22:    /*
+        -:   23:    Constructors
+        -:   24:    HashTable() - makes an empty table with 11 buckets
+        -:   25:    explicit HashTable(size_t) - makes an empty table with the specified number of buckets
+        -:   26:    HashTable(const HashTable&) - constructs a copy of the given table
+        -:   27:    ~HashTable() - destructs this table
+        -:   28:    HashTable& operator=(const HashTable&) - assigns a copy of the given table
+        -:   29:
+        -:   30:    Iterators
+        -:   31:    Optional
+        -:   32:
+        -:   33:    Capacity
+        -:   34:    bool is_empty() const - returns true if the table is empty
+        -:   35:    size_t size() const - returns the number of values in the table
+        -:   36:
+        -:   37:    Modifiers
+        -:   38:    void make_empty() - remove all values from the table
+        -:   39:    bool insert(const Key&) - insert the given lvalue reference into the table, rehashing if the maximum load factor is exceeded, return true if insert was successful (false if item already exists)
+        -:   40:    size_t remove(const Key&) - remove the specified value from the table, return number of elements removed (0 or 1).
+        -:   41:
+        -:   42:    Lookup
+        -:   43:    bool contains(const Key&) const - returns Boolean true if the specified value is in the table
+        -:   44:
+        -:   45:    Bucket Interface
+        -:   46:    size_t bucket_count() const - return the number of buckets in the table
+        -:   47:    size_t bucket_size(size_t) const - return the number of values in the specified bucket; throw std::out_of_range if the bucket index is out of bounds of the table.
+        -:   48:    size_t bucket(const key_type&) const - return the index of the bucket that contains the specified value
+        -:   49:
+        -:   50:    Hash Policy
+        -:   51:    float load_factor() const - return the current load factor of the table
+        -:   52:    float max_load_factor() const - return the current maximum load factor of the table 
+        -:   53:    void max_load_factor(float) - set the maximum load factor of the table, forces a rehash if the new maximum is less than the current load factor, throws std::invalid_argument if the input is invalid
+        -:   54:    void rehash(size_t) - set the number of buckets to the specified value and rehash the table if the total number of buckets has changed. If the new number of buckets would cause the load factor to exceed the maximum load factor, then the new number of buckets is at least size() / max_load_factor(). 
+        -:   55:    Visualization
+        -:   56:    void print_table(std::ostream&=std::cout) const - pretty print the table.  Required to exist and produce reasonable output, the empty table should print “<empty>\n”, but the format of the output is not graded
+        -:   57:    
+        -:   58:    Optional
+        -:   59:    HashTable(HashTable&&) - move constructs a copy of the given (rvalue) table
+        -:   60:    HashTable& operator=(HashTable&&) - move assigns a copy of the given (rvalue) table
+        -:   61:    void insert(Key&&) - insert the given rvalue reference into the table using move semantics
+        -:   62:    */
+   286443:   63:   struct Node {// a little exra overhead than just a list of keys but allows for keyed objects with multiple data members
+        -:   64:       Key Keyval = {};
+        -:   65:       bool keyed = false;
+        -:   66:
+        -:   67:       Node(){}
+    95481:   68:       Node(const Key& other) {
+    95481:   69:           Keyval = other;
+    95481:   70:           keyed = true;
+    95481:   71:       }
+   131262:   72:       Key getKey() const { return Keyval; }
+        -:   73:       bool hasKey() const {return keyed;}
+        -:   74:   };
+        -:   75:
+        -:   76:   list<Node>* bucketList = nullptr;
+        -:   77:   size_t bucketCap = 11;
+        -:   78:   size_t elements = 0;
+        -:   79:   float lambda = 1.0f;
+        -:   80:
+        -:   81:   public:
+        -:   82:    //Constructors
+       12:   83:    HashTable(){
+       12:   84:        bucketList = new list<Node>[bucketCap];
+       12:   85:    } //- makes an empty table with 11 buckets
+        4:   86:    explicit HashTable(size_t size) {
+        4:   87:        bucketCap = size;
+        4:   88:        bucketList = new list<Node>[bucketCap];
+        4:   89:    }//- makes an empty table with the specified number of buckets
+        8:   90:    HashTable(const HashTable& other) {
+        8:   91:        if(other.root() != root()){
+        7:   92:            bucketCap = other.bucket_count();
+        7:   93:            elements = other.size();
+        7:   94:            lambda = other.max_load_factor();
+        -:   95:            
+        7:   96:            bucketList = new list<Node>[bucketCap];
+        7:   97:            typename list<Node>::iterator it;
+        -:   98:            
+    21990:   99:            for(size_t i = 0; i < bucketCap; ++i){
+        -:  100:                
+        -:  101:
+    32124:  102:                for(size_t j = 0; j < other.bucket_size(i); ++j){  
+    10141:  103:                    it = other.iterateFrom(i);
+    10141:  104:                    std::advance(it, j);
+    20282:  105:                    Node temp(it->getKey());
+    10141:  106:                    bucketList[i].push_back(temp); 
+        -:  107:                }
+        -:  108:            }
+        -:  109:        }
+        1:  110:        else{ bucketList = new list<Node>[bucketCap]; }
+        8:  111:    }//- constructs a copy of the given table
+       24:  112:    ~HashTable(){delete[] bucketList;}// - destructs this table
+        9:  113:    HashTable& operator=(const HashTable& other) {
+        -:  114:        
+        9:  115:        if(other.root() != root()){
+        7:  116:            if(other.size() == 0){ 
+        3:  117:                delete[] bucketList;
+        3:  118:                bucketCap = other.bucket_count();
+        3:  119:                elements = other.size();
+        3:  120:                lambda = other.max_load_factor();
+        3:  121:                bucketList = new list<Node>[bucketCap];
+        3:  122:                return *this;
+        -:  123:            }
+        4:  124:            bucketCap = other.bucket_count();
+        4:  125:            elements = other.size();
+        4:  126:            lambda = other.max_load_factor();
+        -:  127:            
+        -:  128:            
+        -:  129:
+        4:  130:            delete[] bucketList;
+        -:  131:            
+        4:  132:            bucketList = new list<Node>[bucketCap];
+        4:  133:            typename list<Node>::iterator it;
+        -:  134:            
+    21948:  135:            for(size_t i = 0; i < bucketCap; ++i){
+    21944:  136:                it = other.iterateFrom(i);
+        -:  137:                
+    42174:  138:                for(size_t j = 0; j < other.bucket_size(i); ++j){
+    40460:  139:                    Node temp(it->getKey());
+    20230:  140:                    bucketList[i].push_back(temp); 
+    20230:  141:                    std::advance(it, 1);
+        -:  142:                }
+        -:  143:            }
+        -:  144:        }
+        6:  145:        return *this;
+        -:  146:    }//- assigns a copy of the given table
+        -:  147:
+        -:  148:    //Iterators
+        -:  149:    //Optional
+        -:  150:
+        -:  151:    //Capacity
+      287:  152:    bool is_empty() const{ return !(elements); }// - returns true if the table is empty
+      179:  153:    size_t size() const { return elements; }//- returns the number of values in the table
+    56570:  154:    typename list<Node>::iterator iterateFrom (size_t i) const {
+    56570:  155:        typename list<Node>::iterator it = bucketList[i].begin();
+    56570:  156:        return it;
+        -:  157:        }
+        -:  158:    //Modifiers
+        7:  159:    void make_empty() { 
+        7:  160:        if(elements != 0){
+        6:  161:            elements = 0; 
+        6:  162:            delete[] bucketList; 
+        6:  163:            bucketList = new list<Node>[bucketCap];
+        -:  164:        }
+        7:  165:    }//- remove all values from the table
+    40737:  166:    bool insert(const Key& query) {
+    40737:  167:        size_t index = bucket(query);
+        -:  168:        
+    40737:  169:        typename list<Node>::iterator it;
+    40737:  170:        it = bucketList[index].begin();
+        -:  171:
+    64295:  172:        for(size_t i = 0; i < bucketList[index].size(); ++i) {
+    23670:  173:            if(query == it->getKey()) {return false;}
+    23558:  174:            std::advance(it, 1);
+        -:  175:        }
+        -:  176:        
+    81250:  177:        Node temp(query);
+    40625:  178:        bucketList[index].push_back(temp);
+        -:  179:
+    40625:  180:        ++elements;
+        -:  181:
+    40670:  182:        while(load_factor() > max_load_factor()){rehash();}
+        -:  183:
+    40625:  184:        return true;
+        -:  185:    }//- insert the given lvalue reference into the table, rehashing if the maximum load factor is exceeded, return true if insert was successful (false if item already exists)
+    22048:  186:    size_t remove(const Key& query){
+    22048:  187:        size_t index = bucket(query);
+        -:  188:        
+    22048:  189:        typename list<Node>::iterator it;
+    22048:  190:        it = bucketList[index].begin();
+        -:  191:
+    28398:  192:        for(size_t i = 0; i < bucketList[index].size(); ++i) {
+    26388:  193:            if(query == it->getKey()) {
+    20038:  194:                bucketList[index].erase(it);
+    20038:  195:                --elements;
+    20038:  196:                return 1;
+        -:  197:            }
+     6350:  198:            std::advance(it, 1);
+        -:  199:        }
+        -:  200:
+     2010:  201:        return 0;
+        -:  202:    } //- remove the specified value from the table, return number of elements removed (0 or 1).
+        -:  203:
+        -:  204:    //Lookup
+       11:  205:    bool contains(const Key& query) const {
+       11:  206:        size_t index = bucket(query);
+        -:  207:        
+       11:  208:        typename list<Node>::iterator it;
+       11:  209:        it = bucketList[index].begin();
+        -:  210:
+       18:  211:        for(size_t i = 0; i < bucketList[index].size(); ++i) {
+       12:  212:            if(query == it->getKey()) {return true;}
+        7:  213:            std::advance(it, 1);
+        -:  214:        }
+        6:  215:        return false;
+        -:  216:    }//- returns Boolean true if the specified value is in the table
+        -:  217:
+        -:  218:    //Bucket Interface
+   124355:  219:    size_t bucket_count() const {return bucketCap; }//- return the number of buckets in the table
+   124135:  220:    size_t bucket_size(size_t query) const {
+   124135:  221:        try{ if(query >= bucket_count()){throw 1;} }
+        2:  222:        catch(int n){throw std::out_of_range("Bucket query not in range.");}
+   124133:  223:        return bucketList[query].size();
+        -:  224:    }//- return the number of values in the specified bucket; throw std::out_of_range if the bucket index is out of bounds of the table.
+    62799:  225:    size_t bucket(const Key query) const {
+    62799:  226:        size_t index = Hash{}(query);
+    62799:  227:        index = index % bucketCap;
+    62799:  228:        return index;
+        -:  229:    }//- return the index of the bucket that contains the specified value
+        -:  230:
+        -:  231:    //Hash Policy
+    40828:  232:    float load_factor() const { float load = (float)(elements) / (float)(bucketCap); return load;}//- return the current load factor of the table
+    40842:  233:    float max_load_factor() const { return lambda; }//- return the current maximum load factor of the table 
+        3:  234:    void max_load_factor(float newLambda) {
+        3:  235:        try{if(newLambda <= 0){throw 1;}}
+        1:  236:        catch(int n){throw std::invalid_argument("New max load factor outside of possible values.");}
+        2:  237:        if(lambda == newLambda){return;}
+        2:  238:        lambda = newLambda;
+        -:  239:        
+        2:  240:        if(load_factor() > max_load_factor()) {rehash();}
+        -:  241:    }//- set the maximum load factor of the table, forces a rehash if the new maximum is less than the current load factor, throws std::invalid_argument if the input is invalid
+       46:  242:    void rehash() {
+       46:  243:        size_t tempCap = bucketCap * 2;
+      198:  244:        while(!is_prime(tempCap)){++tempCap;}
+        -:  245:
+       46:  246:        while(((float)(elements) / (float)(tempCap)) > lambda) {
+    #####:  247:            tempCap = tempCap * 2;
+    #####:  248:            while(!is_prime(tempCap)){++tempCap;}
+        -:  249:        }
+        -:  250:        list<Node>* temp;
+       46:  251:        temp = new list<Node>[tempCap];
+        -:  252:
+       46:  253:        typename list<Node>::iterator it;
+        -:  254:
+    24150:  255:        for(size_t i = 0; i < bucketCap; ++i){
+    48190:  256:            for(size_t j = 0; j < bucket_size(i); ++j){
+        -:  257:
+    24086:  258:                it = iterateFrom(i);
+    24086:  259:                std::advance(it, j);
+        -:  260:
+    24086:  261:                size_t index = Hash{}(it->getKey());
+    24086:  262:                index = index % tempCap;
+        -:  263:
+    48172:  264:                Node temp2(it->getKey());
+    24086:  265:                temp[index].push_back(temp2);
+        -:  266:                
+        -:  267:            }
+        -:  268:        }
+        -:  269:
+       46:  270:        delete[] bucketList;
+       46:  271:        bucketCap = tempCap;
+       46:  272:        bucketList = temp;
+       46:  273:    }//- set the number of buckets to the specified value and rehash the table if the total number of buckets has changed. If the new number of buckets would cause the load factor to exceed the maximum load factor, then the new number of buckets is at least size() / max_load_factor(). 
+       24:  274:    void rehash(size_t newSize) {
+       39:  275:        while(((float)(elements) / (float)(newSize)) > lambda) {
+       15:  276:            newSize = newSize * 2;
+       37:  277:            while(!is_prime(newSize)){++newSize;}
+        -:  278:        }
+        -:  279:        list<Node>* temp;
+        9:  280:        temp = new list<Node>[newSize];
+        -:  281:
+        9:  282:        typename list<Node>::iterator it;
+        -:  283:
+     1205:  284:        for(size_t i = 0; i < bucketCap; ++i){
+     1595:  285:            for(size_t j = 0; j < bucket_size(i); ++j){
+        -:  286:
+      399:  287:                it = iterateFrom(i);
+      399:  288:                std::advance(it, j);
+        -:  289:
+      399:  290:                size_t index = Hash{}(it->getKey());
+      399:  291:                index = index % newSize;
+      798:  292:                Node temp2(it->getKey());
+      399:  293:                temp[index].push_back(temp2);
+        -:  294:                
+        -:  295:            }
+        -:  296:        }
+        -:  297:
+        9:  298:        delete[] bucketList;
+        9:  299:        bucketCap = newSize;
+        9:  300:        bucketList = temp;
+        9:  301:    }
+      235:  302:    bool is_prime(size_t i){
+        -:  303:        //if(i = 1){ return true; }
+      235:  304:      size_t count = 2;
+    49939:  305:      while(count != i){
+    25084:  306:        if(i % count == 0){ return false;}
+    24910:  307:        if(count == i / 2){break;}
+    24852:  308:        count++;
+        -:  309:      }
+       61:  310:      return true;
+        -:  311:    }
+        -:  312:    //Visualization
+       26:  313:    void print_table(std::ostream& os) const {
+       26:  314:        typename list<Node>::iterator it;
+       26:  315:        if(is_empty()){os << "<empty>\n"; return;}
+      772:  316:        for(size_t i = 0; i < bucketCap; ++i){
+      751:  317:            if(bucketList[i].size() > 0){os << i << ": ";}
+     1118:  318:            for(size_t j = 0; j < bucketList[i].size(); ++j){
+      367:  319:                it = bucketList[i].begin();
+      367:  320:                std::advance(it, j);
+        -:  321:
+      367:  322:                os << "[";
+      367:  323:                os << it->getKey() << "]";
+      367:  324:                if(j < bucketList[i].size() - 1){os << "->"; }
+        -:  325:            }
+      751:  326:            if(bucketList[i].size() > 0){os << endl;}
+        -:  327:        }
+        -:  328:    }//- pretty print the table.  Required to exist and produce reasonable output, the empty table should print “<empty>\n”, but the format of the output is not graded
+      111:  329:    void print_table() const {
+      111:  330:        typename list<Node>::iterator it;
+      111:  331:        if(is_empty()){cout << "<empty>\n"; return;}
+     3088:  332:        for(size_t i = 0; i < bucketCap; ++i){
+     2986:  333:            if(bucketList[i].size() > 0){cout << i << ": ";}
+     4470:  334:            for(size_t j = 0; j < bucketList[i].size(); ++j){
+     1484:  335:                it = bucketList[i].begin();
+     1484:  336:                std::advance(it, j);
+        -:  337:
+     1484:  338:                cout << "[";
+     1484:  339:                cout << it->getKey() << "]";
+     1484:  340:                if(j < bucketList[i].size() - 1){cout << "->"; }
+        -:  341:            }
+     2986:  342:            if(bucketList[i].size() > 0){cout << endl;}
+        -:  343:        }
+        -:  344:    }
+      148:  345:    void table_info() {
+      296:  346:        cout << "Elements: " << size() << endl
+      296:  347:             << "Load Factor: " << std::to_string(load_factor()) << endl
+      296:  348:             << "Max Load: " << std::to_string(max_load_factor()) << endl
+      148:  349:             << "Buckets: " << bucket_count() << endl
+      148:  350:             << "Empty? " << std::boolalpha << is_empty() << endl
+      148:  351:             << "~~~~~~~~~~~~~~~~~~~~~" << endl;
+      148:  352:    }
+        -:  353:    //Optional
+        -:  354:    HashTable(HashTable&&) {}//- move constructs a copy of the given (rvalue) table
+        -:  355:    HashTable& operator=(HashTable&&) {}//- move assigns a copy of the given (rvalue) table
+        2:  356:    void insert(Key&& other) {Key temp = other; insert(temp);}//- insert the given rvalue reference into the table using move semantics
+       34:  357:    list<Node>* root() const {return bucketList;}
+        -:  358:    //vector<vector<Node>> getBucketList() const {return bucketList;}
+        -:  359:};
+        -:  360:
+        -:  361:#endif  // HASHTABLE_SEPARATE_CHAINING_H

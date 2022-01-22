@@ -1,0 +1,295 @@
+        -:    0:Source:binary_search_tree.h
+        -:    0:Graph:binary_search_tree_tests.gcno
+        -:    0:Data:binary_search_tree_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef BINARY_SEARCH_TREE_H
+        -:    2:#define BINARY_SEARCH_TREE_H
+        -:    3:
+        -:    4:#include <iostream>
+        -:    5:
+        -:    6:using std::cout, std::endl;
+        -:    7:
+        6:    8:void nl() {cout << endl; }
+      203:    9:void ss() {cout << "~~~~~~~~~~~~~~~" << endl;}
+        3:   10:void TestHeader(std::string name, size_t& number){
+        3:   11:    cout << "~~~BEGIN TEST SEQUENCE " << number << " : " << name << "~~~" << endl;
+        3:   12:    ++number;
+        3:   13:    nl();
+        3:   14:}
+        3:   15:void TestFooter(){ cout << "~~~SEQUENCE COMPLETE~~~" << endl; }
+        -:   16:
+        -:   17:template<typename Comparable>
+        -:   18:void test(Comparable expected, Comparable testing, std::string name, std::string file, size_t line) {
+        -:   19:    std::string RESULT;
+        -:   20:    if(expected == testing) { RESULT = "PASS"; }
+        -:   21:    else{ RESULT = "FAIL"; }
+        -:   22:    cout << name << " : " << file << " line " << line << " : " << RESULT << endl
+        -:   23:         << "EXPECTED " << expected << " : ACTUAL " << testing << endl;
+        -:   24:         nl();
+        -:   25:
+        -:   26:}
+        -:   27:
+        -:   28:template <typename Comparable>
+        -:   29:class Node {
+        -:   30:    Comparable datum = {};
+        -:   31:
+        -:   32:    Node* leftChild = nullptr;
+        -:   33:    Node* rightChild = nullptr;
+        -:   34:
+        -:   35:    public:
+      396:   36:    Node() {}
+        -:   37:    Node(Comparable x) {datum = x;}
+        -:   38:    Node(Comparable& x) {datum = x;}
+        -:   39:    Node(Comparable&& x) {datum = x;}
+        -:   40:    Node(const Node& x) {datum = x.getDatum();}
+      396:   41:    ~Node(){}
+        -:   42:
+        -:   43:    Node& operator=(const Node& x){datum = x.getDatum; return *this;}
+        -:   44:
+      260:   45:    void setRight(Node* right){ rightChild = right; }
+      243:   46:    void setLeft(Node* left){ leftChild = left; }
+      449:   47:    void setDatum(const Comparable x){ datum = x; }
+        -:   48:
+    12303:   49:    Node* getRight() {return rightChild;}
+     4907:   50:    Node* getLeft() {return leftChild;}
+        -:   51:    Comparable getDatum() const {return datum;}
+    19220:   52:    Comparable& getDatum() {return datum;}
+      260:   53:    std::string children() {
+      260:   54:        std::string num = "none";
+      260:   55:        if(leftChild != nullptr && rightChild == nullptr){num = "left";}
+      260:   56:        if(leftChild == nullptr && rightChild != nullptr){num = "right";}
+      260:   57:        if(leftChild != nullptr && rightChild != nullptr){num = "both";}
+        -:   58:
+      260:   59:        return num;
+        -:   60:    }
+        -:   61:};
+        -:   62:
+        -:   63:template <typename Comparable>
+        -:   64:class BinarySearchTree {
+        -:   65:    // TODO(student): implement BinarySearchTree
+        -:   66:    Node<Comparable>* root = nullptr;
+        -:   67:
+        -:   68:    public:
+        -:   69:    BinarySearchTree();// C- makes an empty tree
+        -:   70:    BinarySearchTree(const BinarySearchTree&);//C - constructs a copy of the given tree
+        -:   71:    ~BinarySearchTree();// C- destructs this tree
+        -:   72:    BinarySearchTree& operator=(const BinarySearchTree&);//C - assigns a copy of the given tree
+        -:   73:    bool contains(const Comparable&) const;//C - returns Boolean true if the specified value is in the tree
+        -:   74:    void insert(const Comparable&);//C - insert the given value into the tree
+        -:   75:    void remove(const Comparable&);//C - remove the specified value from the tree (use minimum of right child tree when value has two children)
+        -:   76:    const Comparable& find_min() const;//C - return the minimum value in the tree or throw std::invalid_argument if the tree is empty
+        -:   77:    const Comparable& find_max() const;//C - return the maximum value in the tree or throw std::invalid_argument if the tree is empty
+        -:   78:    void print_tree(std::ostream&);//C const - pretty print the tree (rotated 90 degrees to the left, two spaces per level; see example below) to the specified output stream (default std::cout). Print “<empty>\n” if the tree is empty.
+        -:   79:    void print_tree();
+        -:   80:
+        -:   81:    //Optional
+        -:   82:    //BinarySearchTree(BinarySearchTree&&);// - move constructs a copy of the given (rvalue) tree
+        -:   83:    //BinarySearchTree& operator=(BinarySearchTree&&);// - move assigns a copy of the given (rvalue) tree
+        -:   84:    bool is_empty() const;//C - returns Boolean true if the tree is empty
+        -:   85:    void insert(Comparable&&);//C- insert the given rvalue into the tree using move semantics
+        -:   86:    void make_empty();//C - remove all values from the tree
+        -:   87:
+        -:   88:    //helpers
+        -:   89:    Node<Comparable>* getRoot() const; //returns tree location
+        -:   90:    Node<Comparable>* find(const Comparable&) const; //finds a value or the closest thing to it
+        -:   91:    void reverse_inorder(std::ostream&, Node<Comparable>*, size_t) const; //recursive reverse inorder node traversal
+        -:   92:    void empty(Node<Comparable>*); //recursive node deletion
+        -:   93:    void init_copy(Node<Comparable>*, Node<Comparable>*); //recursive initialization
+        -:   94:};
+        -:   95:    template <typename Comparable>
+        7:   96:    BinarySearchTree<Comparable>::BinarySearchTree(){}
+        -:   97:    template <typename Comparable>
+        3:   98:    BinarySearchTree<Comparable>::BinarySearchTree(const BinarySearchTree& other){
+        3:   99:        if(other.getRoot() == nullptr){ make_empty();}
+        -:  100:        else{
+        2:  101:            make_empty();
+        2:  102:            root = new Node<Comparable>;
+        2:  103:            root->setDatum(other.getRoot()->getDatum());
+        2:  104:            init_copy(root, other.getRoot());
+        -:  105:        }
+        3:  106:    }
+        -:  107:    template <typename Comparable>
+       10:  108:    BinarySearchTree<Comparable>::~BinarySearchTree(){ if(root != nullptr) {empty(root);}}
+        -:  109:    template <typename Comparable>
+      339:  110:    bool BinarySearchTree<Comparable>::contains(const Comparable& val) const{
+      339:  111:        if(root == nullptr){return false;}
+      332:  112:        Comparable test = find(val)->getDatum();
+      332:  113:        return (val == test);
+        -:  114:    }
+        -:  115:    template <typename Comparable>
+        5:  116:    BinarySearchTree<Comparable>& BinarySearchTree<Comparable>::operator=(const BinarySearchTree& other){
+        5:  117:        if(other.getRoot() == root){ return *this;}
+        3:  118:        if(!is_empty()){empty(root);}
+        3:  119:        if(other.is_empty()){empty(root); return *this;}
+        2:  120:        this->root = new Node<Comparable>;
+        2:  121:        root->setDatum(other.getRoot()->getDatum());
+        2:  122:        init_copy(root, other.getRoot());
+        2:  123:        return *this;
+        -:  124:    }
+        -:  125:    template <typename Comparable>
+      203:  126:    void BinarySearchTree<Comparable>::insert(const Comparable& val){
+      203:  127:        if(contains(val)){return; }
+        -:  128:        
+      180:  129:        Node<Comparable>* newNodeA = new Node<Comparable>;
+      180:  130:        newNodeA->setDatum(val);
+      180:  131:        if(root == nullptr) {root = newNodeA; return;}
+        -:  132:        
+      173:  133:        Node<Comparable>* cursor = find(val);
+      173:  134:        if(cursor->getDatum() < val) { cursor->setRight(newNodeA); }
+       67:  135:        else if(cursor->getDatum() > val) { cursor->setLeft(newNodeA); }
+      173:  136:        return;
+        -:  137:    }
+        -:  138:    template <typename Comparable>
+      132:  139:    void BinarySearchTree<Comparable>::remove(const Comparable& val){
+      132:  140:        if(!contains(val)){return;}
+      122:  141:        Node<Comparable>* cursor = root;
+      122:  142:        Node<Comparable>* parent = root;
+      122:  143:        Node<Comparable>* pin = find(val);
+        -:  144:
+      122:  145:        cursor = find(val);
+        -:  146:        
+      122:  147:        if(cursor->children() == "both") {
+       53:  148:            cursor = bottomLeft(cursor->getRight());
+       53:  149:            parent = findParent(cursor, root);
+       53:  150:            if(parent->getLeft() == cursor){parent->setLeft(cursor->getRight());}
+       53:  151:            if(parent->getRight() == cursor){parent->setRight(cursor->getRight());}
+        -:  152:
+       53:  153:            pin->setDatum(cursor->getDatum());
+       53:  154:            delete cursor;
+        -:  155:
+       53:  156:            return;
+        -:  157:        }
+       69:  158:        else if(cursor->children() == "none") { 
+        -:  159:            
+       23:  160:            if(val == root->getDatum()) { empty(root); return;}
+       22:  161:            parent = findParent(cursor, root);
+       22:  162:            if(parent != nullptr) {
+       22:  163:                if(parent->getLeft() == cursor){parent->setLeft(cursor->getLeft());}
+       22:  164:                if(parent->getRight() == cursor){parent->setRight(cursor->getLeft());}
+        -:  165:            }
+       22:  166:            delete cursor;
+       22:  167:            return;
+        -:  168:        }
+       46:  169:        else if(cursor->children() == "left") {
+       23:  170:            if(cursor == root) {root = cursor->getLeft(); delete cursor; return;}
+       22:  171:            parent = findParent(cursor, root);
+       22:  172:            if(parent != nullptr) {
+       22:  173:                if(parent->getLeft() == cursor){parent->setLeft(cursor->getLeft());}
+       22:  174:                if(parent->getRight() == cursor){parent->setRight(cursor->getLeft());}
+        -:  175:            }
+       22:  176:            delete cursor;
+       22:  177:            return;
+        -:  178:        }
+       23:  179:        else if(cursor->children() == "right") {
+       23:  180:            if(cursor == root) {root = cursor->getRight(); delete cursor; return;}
+       21:  181:            parent = findParent(cursor, root);
+       21:  182:            if(parent != nullptr) {
+       21:  183:                if(parent->getLeft() == cursor){parent->setLeft(cursor->getRight());}
+       21:  184:                if(parent->getRight() == cursor){parent->setRight(cursor->getRight());}
+        -:  185:            }
+       21:  186:            delete cursor;
+       21:  187:            return;
+        -:  188:        }
+        -:  189:    }
+        -:  190:    template <typename Comparable>
+        3:  191:    const Comparable& BinarySearchTree<Comparable>::find_min() const{
+        3:  192:        try{if(is_empty()){throw 1;}}
+        1:  193:        catch(int n){throw std::invalid_argument("find_min() of empty tree.");}
+        2:  194:        Node<Comparable>* cursor = root;
+        4:  195:        while(cursor->getLeft() != nullptr){cursor = cursor->getLeft();}
+        2:  196:        return cursor->getDatum();
+        -:  197:    }
+        -:  198:    template <typename Comparable>
+        3:  199:    const Comparable& BinarySearchTree<Comparable>::find_max() const{
+        3:  200:        try{if(is_empty()){throw 1;}}
+        1:  201:        catch(int n){throw std::invalid_argument("find_max() of empty tree.");}
+        2:  202:        Node<Comparable>* cursor = root;
+       17:  203:        while(cursor->getRight() != nullptr){cursor = cursor->getRight();}
+        2:  204:        return cursor->getDatum();
+        -:  205:    }
+        -:  206:    template <typename Comparable>
+       70:  207:    void BinarySearchTree<Comparable>::print_tree(std:: ostream& os) {
+       70:  208:        if(root == nullptr) {os << "<empty>\n"; return;}
+       65:  209:        reverse_inorder(os, root, 0);
+        -:  210:    }
+        -:  211:    template <typename Comparable>
+        2:  212:    void BinarySearchTree<Comparable>::print_tree() {
+        2:  213:        if(root == nullptr) {cout << "<empty>\n"; return;}
+        1:  214:        reverse_inorder(cout, root, 0);
+        -:  215:    }
+        -:  216:    template <typename Comparable>
+      288:  217:    bool BinarySearchTree<Comparable>::is_empty() const{return !(root);}
+        -:  218:    template <typename Comparable>
+       33:  219:    void BinarySearchTree<Comparable>::insert(Comparable&& val){ Comparable temp = val; insert(temp);}
+        -:  220:    template <typename Comparable>
+        5:  221:    void BinarySearchTree<Comparable>::make_empty() {if(root != nullptr) {empty(root);}}
+        -:  222:    template <typename Comparable>
+       16:  223:    Node<Comparable>* BinarySearchTree<Comparable>::getRoot() const{return root;}
+        -:  224:    template <typename Comparable>
+      749:  225:    Node<Comparable>* BinarySearchTree<Comparable>::find(const Comparable& val) const{
+      749:  226:        Node<Comparable>* cursor = root;
+     6217:  227:        while(cursor != nullptr) {
+     3483:  228:        if((cursor->getDatum() < val) && (cursor->getRight() != nullptr)) {cursor = cursor->getRight();}
+     3483:  229:        if((cursor->getDatum() > val) && (cursor->getLeft() != nullptr)) {cursor = cursor->getLeft();}
+     3483:  230:        if(cursor->getDatum() == val) {return cursor;}
+        -:  231:        
+     3092:  232:        if((cursor->getDatum() < val) && (cursor->getRight() == nullptr)) {return cursor;}
+     2870:  233:        if((cursor->getDatum() > val) && (cursor->getLeft() == nullptr)) {return cursor;}
+        -:  234:        }
+        -:  235:
+    #####:  236:        return cursor;
+        -:  237:    }
+        -:  238:    template <typename Comparable>
+      899:  239:    void BinarySearchTree<Comparable>::reverse_inorder(std::ostream& os, Node<Comparable>* cursor, size_t indent) const{
+      899:  240:        if(cursor->getRight() != nullptr) {reverse_inorder(os, cursor->getRight(), indent + 2);}
+        -:  241:
+      899:  242:        for(size_t i = 0; i < indent; ++i) { os << " "; }
+      899:  243:        os << cursor->getDatum() << endl;
+        -:  244:
+      899:  245:        if(cursor->getLeft() != nullptr) {reverse_inorder(os, cursor->getLeft(), indent + 2);}
+      899:  246:    }
+        -:  247:    template <typename Comparable>
+      276:  248:    void BinarySearchTree<Comparable>::empty(Node<Comparable>* cursor){
+      276:  249:        if(!is_empty()){
+      275:  250:            if(cursor->getLeft() != nullptr){empty(cursor->getLeft());}
+      275:  251:            if(cursor->getRight() != nullptr){empty(cursor->getRight());}
+      275:  252:            if(cursor == root){root = nullptr;}
+      275:  253:            delete cursor;
+        -:  254:        }
+        -:  255:        
+      276:  256:    }
+        -:  257:    template <typename Comparable>
+      216:  258:    void BinarySearchTree<Comparable>::init_copy(Node<Comparable>* CursorSelf, Node<Comparable>* CursorOther) {
+      216:  259:        if(CursorOther->getLeft() != nullptr) { 
+      106:  260:            Node<Comparable>* temp = new Node<Comparable>;
+      106:  261:            temp->setDatum(CursorOther->getLeft()->getDatum());
+      106:  262:            CursorSelf->setLeft(temp);
+      106:  263:            init_copy(temp, CursorOther->getLeft());
+        -:  264:        }
+      216:  265:        if(CursorOther->getRight() != nullptr) { 
+      106:  266:            Node<Comparable>* temp = new Node<Comparable>;
+      106:  267:            temp->setDatum(CursorOther->getRight()->getDatum());
+      106:  268:            CursorSelf->setRight(temp);
+      106:  269:            init_copy(temp, CursorOther->getRight());
+        -:  270:        }
+        -:  271:
+      216:  272:    }
+        -:  273:    template <typename Comparable>
+      118:  274:    Node<Comparable>* findParent(Node<Comparable>* pin, Node<Comparable>* head) {
+      118:  275:        Node<Comparable>* parent = head;
+      118:  276:        if(parent != pin){
+      962:  277:            while((parent->getLeft() != pin) && (parent->getRight() != pin)){
+      422:  278:                if(pin->getDatum() > parent->getDatum()) {parent = parent->getRight();}
+       99:  279:                else if(pin->getDatum() < parent->getDatum()) {parent = parent->getLeft();}
+        -:  280:            }
+        -:  281:        }
+      118:  282:        return parent;
+        -:  283:    }
+        -:  284:    template <typename Comparable>
+      124:  285:    Node<Comparable>* bottomLeft(Node<Comparable>* subtree) {
+      124:  286:        while(subtree->getLeft() != nullptr) { subtree = subtree->getLeft();}
+       53:  287:        return subtree;
+        -:  288:    }
+        -:  289:
+        -:  290:#endif

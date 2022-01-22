@@ -1,0 +1,559 @@
+        -:    0:Source:avl_tree_tests.cpp
+        -:    0:Graph:avl_tree_tests.gcno
+        -:    0:Data:avl_tree_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <iostream>
+        -:    2:#include "avl_tree.h"
+        -:    3:
+        -:    4:using std::cout, std::endl;
+        -:    5:
+        1:    6:int main() {
+        -:    7:    // TODO(student): write tests
+        -:    8:
+        1:    9:    size_t num = 0;
+        -:   10:
+        -:   11:    
+        1:   12:    TestHeaderA("CONSTRUCTION",num);
+        2:   13:    AVLTree<int> a;
+        1:   14:    a.print_tree(cout);
+        -:   15:
+        1:   16:    a.insert(10);
+        1:   17:    a.print_tree();
+        1:   18:    ssa();
+        -:   19:
+        1:   20:    a.insert(12);
+        1:   21:    a.print_tree();
+        1:   22:    ssa();
+        -:   23:
+        1:   24:    a.insert(17);
+        1:   25:    a.print_tree();
+        1:   26:    ssa();
+        -:   27:
+        1:   28:    cout << "balance of " << a.getRoot()->getDatum()  << " "<< a.getBalance(a.getRoot()) << endl;
+        1:   29:    cout << "height of " << a.getRoot()->getDatum()  << " "<< a.getRoot()->getHeight() << endl;
+        -:   30:    
+        1:   31:    a.insert(7);
+        1:   32:    a.print_tree();
+        1:   33:    ssa();
+        1:   34:    a.insert(3);
+        1:   35:    a.print_tree();
+        1:   36:    ssa();
+        -:   37:
+        1:   38:    a.insert(1);
+        1:   39:    a.print_tree();
+        1:   40:    ssa();
+        -:   41:
+        1:   42:    a.insert(11);
+        1:   43:    a.print_tree();
+        1:   44:    ssa();
+        -:   45:
+        1:   46:    a.insert(4);
+        1:   47:    a.print_tree();
+        1:   48:    ssa();
+        1:   49:    a.insert(2);
+        1:   50:    a.print_tree();
+        1:   51:    ssa();
+        1:   52:    a.insert(6);
+        1:   53:    a.print_tree();
+        1:   54:    ssa();
+        -:   55:    
+        -:   56:
+        -:   57:    
+        -:   58:
+        -:   59:    
+        1:   60:    int y = 0;
+    20001:   61:    for(int i = 0; i < 20000; ++i) {
+    20000:   62:        y = (y * i + 37) % 20000;
+    20000:   63:        cout << __LINE__ << ": inserting " << y << " iteration " << i << endl;
+    20000:   64:        a.insert(y);
+        -:   65:    }
+    20001:   66:    for(int i = 0; i < 20000; ++i) {
+    20000:   67:        y = (y * i + 37) % 20000;
+    20000:   68:        cout << __LINE__ << ": inserting " << y << " iteration " << i << endl;
+    20000:   69:        a.insert(y);
+        -:   70:    }
+    20001:   71:    for(int i = 0; i < 20000; ++i) {
+    20000:   72:        y = (y * i + 37) % 20000;
+    20000:   73:        testA(true, a.contains(y), "contains", "main.cpp", __LINE__);
+    20000:   74:        if(!a.contains(y)){break;}
+        -:   75:    }
+        -:   76:    
+        1:   77:    a.print_tree(cout);
+        -:   78:    
+        2:   79:    AVLTree<int> fh = a;
+        1:   80:    a.make_empty();
+        1:   81:    a.remove(3);
+        1:   82:    ssa();
+        -:   83:
+        1:   84:    fh.print_tree(cout);
+        -:   85:    //remove cases
+        -:   86:    // root
+        1:   87:    cout << "root: " << fh.getRoot()->getDatum() << endl;
+        1:   88:    ssa();
+        1:   89:    fh.remove(fh.getRoot()->getDatum());
+        1:   90:    fh.print_tree(cout);
+        1:   91:    cout << "root: " << fh.getRoot()->getDatum() << endl;
+        1:   92:    ssa();
+        -:   93:
+        -:   94:    //left leaf
+        1:   95:    fh.remove(0);
+        1:   96:    fh.print_tree(cout);
+        1:   97:    ssa();
+        -:   98:
+        -:   99:    //right leaf
+        1:  100:    fh.remove(10);
+        1:  101:    fh.print_tree(cout);
+        1:  102:    ssa();
+        -:  103:
+        -:  104:    
+        -:  105:    //left w/right subtree
+        1:  106:    fh.remove(9);
+        1:  107:    fh.print_tree(cout);
+        1:  108:    ssa();
+        -:  109:
+        -:  110:
+        -:  111:    
+        -:  112:    //right w/ right subtree
+        1:  113:    fh.remove(132);
+        1:  114:    fh.print_tree(cout);
+        1:  115:    ssa();
+        -:  116:
+        -:  117:    //right w/ left subtree
+        1:  118:    fh.remove(150);
+        1:  119:    fh.print_tree(cout);
+        1:  120:    ssa();
+        -:  121:    
+        -:  122:
+        -:  123:   
+        -:  124:
+        -:  125:    //right w/ two subtrees
+        1:  126:    fh.remove(117);
+        1:  127:    fh.print_tree(cout);
+        1:  128:    ssa();
+        -:  129:
+        -:  130:     //left w/ two subtrees
+        1:  131:     fh.remove(117);
+        1:  132:    fh.print_tree(cout);
+        1:  133:    ssa();
+        -:  134:    
+        -:  135:    //left w/left subtree
+        1:  136:    y = 0;
+      101:  137:    for(int i = 0; i < 100; ++i) {
+      100:  138:        y = (y * i + 37) % 200;
+      100:  139:        cout << __LINE__ << ": removing " << y << " iteration " << i << endl;
+      100:  140:        fh.remove(y);
+        -:  141:    }
+        -:  142:
+        1:  143:    fh.insert(10);
+        1:  144:    fh.insert(11);
+        1:  145:    fh.insert(5);
+        1:  146:    fh.insert(2);
+        -:  147:
+        1:  148:    fh.print_tree(cout);
+        -:  149:
+        1:  150:    fh.remove(5);
+        1:  151:    ssa();
+        1:  152:    fh.print_tree(cout);
+        -:  153:    
+        -:  154:
+        -:  155:
+        1:  156:    a.insert(11);
+        1:  157:    a.insert(10);
+        1:  158:    a.insert(6);
+        1:  159:    a.insert(12);
+        -:  160:
+        1:  161:    a.print_tree(cout);
+        1:  162:    ssa();
+        -:  163:    
+        1:  164:    a.remove(7);
+        1:  165:    a.remove(8);
+        1:  166:    a.remove(9);
+        1:  167:    a.remove(10);
+        1:  168:    a.remove(11);
+        1:  169:    a.remove(12);
+        -:  170:
+        1:  171:    a.print_tree(cout);
+        -:  172:
+        -:  173:    
+       11:  174:    for(int i = 0; i < 10; ++i) {
+       10:  175:        a.insert(i);
+       10:  176:        a.print_tree(cout);
+       10:  177:    cout << "Node balance: " << endl << a.getBalance(a.getRoot()) << endl;
+       10:  178:    ssa();
+        -:  179:    }
+        -:  180:
+        1:  181:    a.remove(7);
+        1:  182:    a.print_tree(cout);
+        1:  183:    ssa();
+        -:  184:
+        1:  185:    a = a;
+        -:  186:
+        1:  187:    a.remove(2);
+        1:  188:    a.print_tree(cout);
+        1:  189:    ssa();
+        -:  190:
+        1:  191:    a.remove(1);
+        1:  192:    a.print_tree(cout);
+        1:  193:    ssa();
+        -:  194:
+        1:  195:    a.remove(6);
+        1:  196:    a.print_tree(cout);
+        1:  197:    ssa();
+        -:  198:
+        1:  199:    a.remove(8);
+        1:  200:    a.print_tree(cout);
+        1:  201:    ssa();
+        -:  202:    
+        2:  203:    AVLTree<int> k;
+        1:  204:    k.insert(1);
+        1:  205:    k.insert(3);
+        1:  206:    k.insert(2);
+        1:  207:    k.print_tree(cout);
+        1:  208:    cout << "Node balance: " << endl << k.getBalance(k.getRoot()) << endl;
+        -:  209:
+        2:  210:    AVLTree<int> f;
+        1:  211:    f.insert(3);
+        1:  212:    f.insert(2);
+        1:  213:    f.insert(1);
+        1:  214:    f.print_tree(cout);
+        1:  215:    cout << "Node balance: " << endl << f.getBalance(f.getRoot()) << endl;
+        -:  216:
+        2:  217:    AVLTree<int> q;
+        1:  218:    q.insert(3);
+        1:  219:    q.insert(1);
+        1:  220:    q.insert(2);
+        1:  221:    q.print_tree(cout);
+        1:  222:    cout << "Node balance: " << endl << q.getBalance(q.getRoot()) << endl;
+        -:  223:    
+        -:  224:    
+        1:  225:    a.insert(10);
+        1:  226:    a.insert(17);
+        1:  227:    a.insert(5);
+        1:  228:    cout << "Node balance: " << endl << a.getBalance(a.getRoot()) << endl;
+        1:  229:    nla();
+        -:  230:
+        1:  231:    a.print_tree(cout);
+        -:  232:
+        1:  233:    ssa();
+        -:  234:    
+        1:  235:    int j = 1;
+       11:  236:    for(int i = 0; i < 10; ++i) {
+       10:  237:        j = (j*i + 3) % 23;
+       10:  238:        cout << "inserting : " << j << endl;
+       10:  239:        a.insert(j);
+       10:  240:        a.print_tree(cout);
+       10:  241:        cout << "Is the tree balanced?: " << a.getBalance(a.getRoot()) << endl;
+        -:  242:        
+       10:  243:        ssa();
+        -:  244:    }
+        1:  245:    cout << "{10, 17, 5 | 3, 6, 15, 2, 11, 12, /6, 22, 19, 4}" << endl;
+        -:  246:    //a.print_tree(cout);
+        1:  247:    nla();
+        -:  248:    
+        -:  249:    
+        -:  250:    
+        -:  251:    
+        1:  252:    cout << "Max: " << a.find_max() << endl;
+        1:  253:    cout << "Min: " << a.find_min() << endl;
+        1:  254:    cout << "Contains 22: " << a.contains(22) << endl;
+        1:  255:    cout << "Contains 34564: " << a.contains(34564) << endl;
+        2:  256:    AVLTree<int> b(a);
+        1:  257:    a.make_empty();
+        1:  258:    a.print_tree(cout);
+        1:  259:    ssa();
+        1:  260:    try{a.find_max();}
+        1:  261:    catch(std::invalid_argument& e){cout << e.what()<< endl;}
+        1:  262:    try{a.find_min();}
+        1:  263:    catch(std::invalid_argument& e){cout << e.what()<< endl;}
+        -:  264:    
+        -:  265:    
+        -:  266: 
+        1:  267:    ssa();
+        1:  268:    b.print_tree(cout);
+        1:  269:    ssa();
+        2:  270:    AVLTree<int> c;
+        2:  271:    AVLTree<int> d;
+        -:  272:    
+        1:  273:    a=b;//initialize new tree
+        -:  274:    
+        1:  275:    b=c;//erase full tree
+        -:  276:    
+        1:  277:    d=c;//copy empty tree to empty tree
+        -:  278:    /////////////////////////////////////////////////////////
+        -:  279:
+        1:  280:    a.print_tree(cout);
+        1:  281:    cout << "Is the tree balanced?: " << a.getBalance(a.getRoot()) << endl;
+        1:  282:    ssa();
+        1:  283:    b.print_tree(cout);
+        1:  284:    cout << "Is the tree balanced?: " << b.getBalance(b.getRoot()) << endl;
+        1:  285:    ssa();
+        1:  286:    c.print_tree(cout);
+        1:  287:    cout << "Is the tree balanced?: " << c.getBalance(c.getRoot()) << endl;
+        1:  288:    ssa();
+        1:  289:    d.print_tree(cout);
+        1:  290:    cout << "Is the tree balanced?: " << d.getBalance(d.getRoot()) << endl;
+        -:  291:
+        1:  292:    TestFooterA();
+        1:  293:    TestHeaderA("DESTRUCTION",num);
+        -:  294:    
+        1:  295:    a.print_tree(cout);
+        1:  296:    nla();
+        1:  297:    ssa();
+        1:  298:    cout << "{10, 17, 5 | 3, 6, 15, 2, 11, 12, /6, 22, 19, 4}" << endl;
+        1:  299:    j = 1;
+       11:  300:    for(int i = 0; i < 10; ++i) {
+       10:  301:        j = (j*i + 3) % 23;
+       10:  302:        cout << "Removing " << j << "..." << endl;
+       10:  303:        a.remove(j);
+        -:  304:        
+       10:  305:        a.print_tree(cout);
+       10:  306:        cout << "Is the tree balanced?: " << a.getBalance(a.getRoot()) << endl;
+       10:  307:        ssa();
+        -:  308:
+        -:  309:    }
+        -:  310:    
+        1:  311:    a.print_tree(cout);
+        1:  312:    ssa();
+        -:  313:
+        1:  314:    a.remove(10);
+        1:  315:    a.print_tree(cout);
+        -:  316:
+        1:  317:    ssa();
+        -:  318:
+        1:  319:    a.remove(5);
+        1:  320:    a.print_tree(cout);
+        -:  321:
+        1:  322:    ssa();
+        -:  323:
+        1:  324:    a.remove(17);
+        1:  325:    a.print_tree(cout);
+        -:  326:    
+        -:  327:    
+        1:  328:    j = 1;
+       11:  329:    for(int i = 0; i < 10; ++i) {
+       10:  330:        j = (j*i + 5) % 13;
+       10:  331:        a.insert(j);
+        -:  332:    }
+        -:  333:
+        1:  334:    ssa();
+        -:  335:
+        1:  336:    a.print_tree(cout);
+        -:  337:
+        1:  338:    ssa();
+        -:  339:
+        1:  340:    a.remove(10);
+        1:  341:    a.print_tree(cout);
+        -:  342:
+        1:  343:    ssa();
+        -:  344:
+        1:  345:    a.remove(0);
+        1:  346:    a.print_tree(cout);
+        -:  347:
+        1:  348:    ssa();
+        -:  349:
+        1:  350:    a.remove(3);
+        1:  351:    a.print_tree(cout);
+        -:  352:
+        1:  353:    ssa();
+        -:  354:
+        1:  355:    a.remove(12);
+        1:  356:    a.print_tree(cout);
+        -:  357:
+        1:  358:    a.insert(1);
+        -:  359:
+        1:  360:    ssa();
+        -:  361:
+        1:  362:    a.remove(2);
+        1:  363:    a.print_tree(cout);
+        1:  364:    TestFooterA();
+        -:  365:
+        1:  366:    TestHeaderA("BALANCING", num);
+        -:  367:
+        1:  368:    j = 1;
+       11:  369:    for(int i = 0; i < 10; ++i) {
+       10:  370:        j = (j*i + 5) % 13;
+       10:  371:        a.insert(j);
+        -:  372:    }
+        -:  373:    
+        1:  374:    ssa();
+        1:  375:    a.print_tree(cout);
+        1:  376:    ssa();
+        -:  377:
+        1:  378:    cout << a.getRoot()->getHeight() << endl;
+        1:  379:    ssa();
+        5:  380:    for(int i = 20; i < 30; i+=3) {
+        4:  381:        cout << "Inserting " << i << "..." << endl;
+        4:  382:        a.insert(i);
+        4:  383:        a.print_tree(cout);
+        4:  384:        ssa();
+        -:  385:    }
+        5:  386:    for(int i = 19; i < 29; i+=3) {
+        4:  387:        cout << "Inserting " << i << "..." << endl;
+        4:  388:        a.insert(i);
+        4:  389:        a.print_tree(cout);
+        4:  390:        ssa();
+        -:  391:    }
+        -:  392:    
+        5:  393:    for(int i = 18; i < 28; i+=3) {
+        4:  394:        cout << "Inserting " << i << "..." << endl;
+        4:  395:        a.insert(i);
+        4:  396:        a.print_tree(cout);
+        4:  397:        ssa();
+        -:  398:    }
+        -:  399:
+        1:  400:    ssa();
+        1:  401:    a.print_tree(cout);
+        1:  402:    ssa();
+        -:  403:    
+        1:  404:    ssa();
+        1:  405:    TestFooterA();
+        1:  406:    TestHeaderA("LARGE DATA CASE", num);
+        2:  407:    AVLTree<int> r;
+        1:  408:    r.insert(4);
+        1:  409:    r.insert(5);
+        1:  410:    r.insert(6);
+        1:  411:    cout << "Is the tree balanced?: " << a.getBalance(a.getRoot()) << endl;
+        1:  412:    r.print_tree(cout);
+        -:  413:
+        1:  414:    ssa();
+        1:  415:    r.insert(3);
+        1:  416:    r.print_tree(cout);
+        1:  417:    ssa();
+        -:  418:    
+        1:  419:    r.insert(2);
+        1:  420:    r.print_tree(cout);
+        1:  421:    ssa();
+        -:  422:    
+        1:  423:    r.insert(1);
+        1:  424:    r.print_tree(cout);
+        -:  425:
+       21:  426:    for(int i = 30; i < 50; i+=1) {
+       20:  427:        cout << "Inserting " << i << "..." << endl;
+       20:  428:        r.insert(i);
+       20:  429:        ssa();
+        -:  430:    }
+        -:  431:    
+        1:  432:    r.print_tree(cout);
+        1:  433:    cout << "Is the tree balanced?: "<< endl << r.getBalance(r.getRoot()) << endl;
+       21:  434:    for(int i = 10; i < 30; i+=1) {
+       20:  435:        cout << "Inserting " << i << "..." << endl;
+       20:  436:        r.insert(i);
+       20:  437:        ssa();
+        -:  438:    }
+        -:  439:    
+        -:  440:    //r.print_tree(cout);
+        2:  441:    AVLTree<int> h;
+        -:  442:    //cout << "Is the tree balanced?: "<< endl << r.getBalance(r.getRoot()) << endl;
+        1:  443:     j = 1;
+      201:  444:    for(int i = 0; i < 200; i+=1) {
+      200:  445:        j = (i * j + 97) % 100 ;
+      200:  446:        cout << "Iteration " << i + 1 << " of 200" << endl;
+      200:  447:        cout << "Inserting " << j << "..." << endl;
+      200:  448:        h.insert(j);
+      200:  449:        ssa();
+        -:  450:    }
+        1:  451:    h.print_tree(cout);
+        1:  452:    cout << "Is the tree balanced?: "<< endl << h.getBalance(h.getRoot()) << endl;
+        1:  453:    ssa();
+        -:  454:    
+        -:  455:    //a=k;
+        -:  456:    
+        2:  457:    AVLTree<int> p(a);
+        1:  458:    cout << "Max: " << p.find_max() << endl;
+        1:  459:    cout << "Min: " << p.find_min() << endl;
+        1:  460:    cout << "Contains 485: " << p.contains(485) << endl;
+        1:  461:    cout << "Contains 34564: " << p.contains(34564) << endl;
+        1:  462:    a.make_empty();
+        -:  463:    
+        2:  464:    AVLTree<int> t(h);
+        -:  465:    //t.insert(8);
+        -:  466:    //a.insert(8);
+        -:  467:    //a.print_tree(cout);
+        1:  468:    t.print_tree(cout);
+        1:  469:    ssa();
+        -:  470:    //p.print_tree(cout);
+        -:  471:    //ssa();
+        -:  472:
+        1:  473:    j = 1;
+      101:  474:    for(int i = 0; i < 100; i+=1) {
+      100:  475:        j = (i * j + 97) % 100 ;
+      100:  476:        cout << "Iteration " << i + 1 << " of 100" << endl;
+      100:  477:        cout << "removing " << j << "..." << endl;
+      100:  478:        h.remove(j);
+      100:  479:        ssa();
+        -:  480:    }
+        -:  481:
+        1:  482:    j = 1;
+      201:  483:    for(int i = 0; i < 200; i+=1) {
+      200:  484:        j = (i * j + 97) % 100 ;
+      200:  485:        if(i < 100) {continue;}
+      100:  486:        cout << "Iteration " << i << " of 100" << endl;
+      100:  487:        cout << "removing " << j << "..." << endl;
+      100:  488:        t.remove(j);
+      100:  489:        ssa();
+        -:  490:    }
+        -:  491:
+        1:  492:    h = t;
+        -:  493:    
+        1:  494:    j = 1;
+      101:  495:    for(int i = 100; i < 200; i+=1) {
+      100:  496:        j = (i * j + 97) % 100 ;
+      100:  497:        cout << "Iteration " << i - 100 << " of 100" << endl;
+      100:  498:        cout << "Inserting " << j << "..." << endl;
+      100:  499:        t.insert(j);
+      100:  500:        ssa();
+        -:  501:    }
+        1:  502:    j=1;
+      101:  503:    for(int i = 101; i < 201; i+=1) {
+      100:  504:        j = (i * j + 97) % 100 ;
+      100:  505:        cout << "Iteration " << i - 101 << " of 100" << endl;
+      100:  506:        cout << "Inserting " << j << "..." << endl;
+      100:  507:        h.insert(j);
+      100:  508:        ssa();
+        -:  509:    }
+        -:  510:
+        1:  511:    h=h;
+        -:  512:
+        1:  513:    j=1;
+      101:  514:    for(int i = 150; i < 250; i+=1) {
+      100:  515:        j = (i * j + 97) % 100 ;
+      100:  516:        cout << "Iteration " << i - 100 << " of 100" << endl;
+      100:  517:        cout << "Inserting " << j << "..." << endl;
+      100:  518:        h.insert(j);
+      100:  519:        ssa();
+        -:  520:    }
+        1:  521:    j=1;
+      101:  522:    for(int i = 150; i < 250; i+=1) {
+      100:  523:        j = (i * j + 97) % 100 ;
+      100:  524:        cout << "Iteration " << i - 100 << " of 100" << endl;
+      100:  525:        cout << "removing " << j << "..." << endl;
+      100:  526:        h.remove(j);
+      100:  527:        ssa();
+        -:  528:    }
+        -:  529:
+        1:  530:    h.print_tree(cout);
+        1:  531:    ssa();
+        -:  532:    
+        -:  533:    
+        1:  534:    j = 1;
+        1:  535:    k.remove(1);
+        1:  536:    k.remove(3);
+        -:  537:    
+        1:  538:    k.remove(2);
+        1:  539:    k.print_tree();
+      101:  540:    for(int i = 0; i < 100; i+=1) {
+      100:  541:        j = (i * j + 97) % 100 ;
+      100:  542:        cout << "Iteration " << i + 1 << " of 100" << endl;
+      100:  543:        cout << "Removing " << j << "..." << endl;
+      100:  544:        k.remove(j);
+        -:  545:    }
+        1:  546:    k.print_tree(cout);
+        1:  547:    cout << "Is the tree balanced?: "<< endl << k.getBalance(k.getRoot()) << endl;
+        1:  548:    ssa();
+        1:  549:    k.print_tree();
+        -:  550:    
+        1:  551:    TestFooterA();
+        -:  552:    
+        -:  553:    
+        4:  554:}

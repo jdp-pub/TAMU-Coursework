@@ -1,0 +1,117 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{blindtext}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{wasysym}
+\usepackage{circuitikz}
+\usepackage{float}
+\usetikzlibrary{arrows,shapes,calc,positioning}
+
+\newcommand{\myscope}[2]
+{\draw[thick,rotate=#2] (#1) circle (12pt)
+(#1) ++(-0.35,-0.1) --++ (0.3,0.3) --++ (0,-0.3) --++(0.3,0.3) --++(0,-0.3);}
+
+\begin{document}
+
+\title{CSCE 221 \\ Problem Set 8}
+
+\author{Jacob~Purcell,~\IEEEmember{Texas~A\&M,~Student}}
+
+\maketitle
+\section{}
+For O(N), a linear search will be sufficient. Have an iterator store its starting pointer, 
+then follow each subsequent pointer until it finds a match. This will iterate through every 
+value and requires O(N) time to compute. With O(1) extra space, another iterator may be added but 
+traverses 2 nodes instead of one, eventually the fast iterator will catch up to the slow iterator. 
+While the slow iterator is still testing against whether it makes a circle, the fast iterator can 
+test whether it has caught up to the slow iterator. 
+
+\begin{algorithm}
+\caption{Check for Circular List}
+\begin{algorithmic}
+	\REQUIRE $N~is~an~element~of~\mathbb{N}$
+	\STATE $slow = head, fast = head$
+	\WHILE{$slow != nullptr \wedge fast != nullptr$}
+	\STATE $slow \rightarrow next(O(N))$
+	\STATE $fast \rightarrow next \rightarrow next (one~extra~calculation)$
+	\IF{$slow == head || fast == slow$}
+	\STATE $Return~true$
+	\ENDIF
+	\ENDWHILE
+	\RETURN $false$
+\end{algorithmic}
+\end{algorithm}
+
+
+\section{}
+\subsection{}
+\begin{algorithm}
+\caption{Selfadjusting List}
+\begin{algorithmic}
+	\REQUIRE $Array$
+	\STATE $temporary~storage = requested~value~O(1)$
+	\STATE $iterator = requested~index~O(N)$
+	\WHILE {$iterator~is~greater~than~zero$}
+	\STATE $copy~previous~array~element~to~current$
+	\STATE $~~~~location~O(1)$
+	\STATE $decrement~iterator~O(1)$ 
+	\STATE $(removes~requested~value~from~array~and~$ \\ $~~~~creates~a~free~slot~at~front)$
+	\ENDWHILE $O(N)$
+	\STATE $assign~temporary~storage~to~Array~position~zero~O(1)$
+	\RETURN $temporary~storage$
+\end{algorithmic}
+\end{algorithm}
+
+~\\\\
+~\\\\
+~\\\\
+
+\subsection{}
+\begin{algorithm}
+\caption{Selfadjusting List}
+\begin{algorithmic}
+	\REQUIRE $Doubly~Linked~List$
+	\STATE $cursor = head~O(1)$
+	\WHILE {$cursor~is~not~nullptr~and~cursor~data~is~not$ \\ $requested~data$}
+	\STATE $cursor \rightarrow next~O(1)$ \\ $(finds~desired~value~)~O(N)$
+	\ENDWHILE 
+	\STATE $cursor~data = temporary~storage~O(1)$
+	\STATE $cursor~previous~next \rightarrow cursor~next~O(1)$
+	\STATE $cursor~next~previous~\rightarrow~cursor~previous~O(1)$ \\ $(links~list~around~the~desired~ptr)$
+	\STATE $cursor~next \rightarrow head~O(1)$
+	\STATE $cursor~previous \rightarrow nullptr~O(1)$
+	\STATE $head = cursor~O(1)$ \\ $(reorder~list~so~last~accessed~ptr~is~at~front)$
+	\RETURN $temprorary~storage$
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{}
+The time complexity for both implementations is the same at the asymptote (O(N)), however, the array implementation 
+would be noticably slower for small datasets with a time complexity of O(2N). For each, the time complexity will 
+drop to O(1) if the same element is requested more than once in a row.
+
+\subsection{}
+Every element has a certain probability ($p_i$) of being accessed. After being accessed, it is $100\%$ likely that 
+the value will be at the front of the list the next iteration with a probability $p_i$ of being accessed again.
+ Introducing $\hat{e_k}$, the index of the element, the last accessed element is always $\hat{e_0}$. After $N$ accesses, 
+ the probability of being accessed $n_i$ times is $Np_i$. $k$ therefore holds the form $\frac{\hat{i}}{n_i}$, where the index
+ of the element is inversely related to it's probability, $\hat{i}$ is a normalized position and holds the numerical 
+ value of 1. Finally, this means that the chance of finding any specific value in any position is ordered 
+ by $\boxed{\Sigma_{i = 1}^{Elements} n_i \hat{e_k}}$.
+
+
+
+
+
+\end{document}

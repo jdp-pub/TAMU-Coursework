@@ -1,0 +1,111 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{blindtext}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{wasysym}
+\usepackage{circuitikz}
+\usepackage{float}
+\usetikzlibrary{arrows,shapes,calc,positioning}
+
+\newcommand{\myscope}[2]
+{\draw[thick,rotate=#2] (#1) circle (12pt)
+(#1) ++(-0.35,-0.1) --++ (0.3,0.3) --++ (0,-0.3) --++(0.3,0.3) --++(0,-0.3);}
+
+\begin{document}
+
+\title{hw name}
+
+\author{Jacob~Purcell,~\IEEEmember{Texas~A\&M,~Student}}
+
+\maketitle
+\section*{Problem 1}
+Assuming a doubly linked list with a head and tail pointer. To dequeue, \\\\
+\begin{equation}
+    have~a~cursor~point~to~previous~node~(O(1))
+\end{equation} 
+\begin{equation}
+    delete~information~in~head~pointer~(O(1))
+\end{equation} 
+\begin{equation}
+    set~next~pointer~for~cursor~to~the~nullptr~(O(1))
+\end{equation} 
+\begin{equation}
+    make~head~point~to~cursor~(O(1))
+\end{equation} 
+
+To enqueue,\\\\
+\begin{equation}
+    create~a~new~node~with~queued~information~(O(1))
+\end{equation} 
+\begin{equation}
+    have~the~next~pointer~for~new~node~point~to~tail~of~queue~(O(1))
+\end{equation} 
+\begin{equation}
+    have~tail~point~to~new~node~(O(1))
+\end{equation} 
+
+Runtime for dequeue is $4O(1)$ while runtime for enqueue is $3O(1)$, 
+both operate in constant time as $O(1)$ does not depend on the size of the list.
+
+
+\section*{Problem 2}
+Both methods would be $O(1) $since it is understood when the queue is made that the next 
+node at the head is the rear and the previous node at the rear is the head. \\\\
+
+Enqueue for head iterator;
+\begin{equation}
+    have~new~node~next~point~to~iterator~next~(O(1))
+\end{equation} 
+\begin{equation}
+    have~iterator~next~point~to~new~node~(O(1))
+\end{equation} 
+
+Dequeue for head iterator;
+\begin{equation}
+    have~iterator~point~to~it's~previous~node~(O(1))
+\end{equation}
+\begin{equation}
+    set~iterator~next~to~be~the~tail~(next~next)~(O(1))
+\end{equation} 
+\begin{equation}
+    delete~the~tails~previous~node~(O(1))
+\end{equation} 
+\begin{equation}
+    set~tails~previous~node~to~be~the~iterator~(O(1))
+\end{equation} 
+
+
+Enqueue for tail iterator;
+\begin{equation}
+    have~a~new~node~point~to~the~iterator~(O(1))
+\end{equation} 
+\begin{equation}
+    set~new~node~previous~to~iterator~previous~(O(1))
+\end{equation} 
+\begin{equation}
+    have~iterator~point~to~new~node~(O(1))
+\end{equation} 
+
+Dequeue for tail iterator;
+\begin{equation}
+    have~iterator~point~to~it's~next~node~(O(1)) 
+\end{equation}
+\begin{equation}
+    set~iterator~previous~to~be~the~head~(previous~previous)~(O(1))
+\end{equation} 
+\begin{equation}
+    delete~the~head's~next~node~(O(1))
+\end{equation} 
+\begin{equation}
+    set~head's~next~node~to~be~the~iterator~(O(1))
+\end{equation} 
+
+\end{document}

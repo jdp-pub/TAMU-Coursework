@@ -1,0 +1,94 @@
+        -:    0:Source:doubly_linked_list_tests.cpp
+        -:    0:Graph:doubly_linked_list_tests.gcno
+        -:    0:Data:doubly_linked_list_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <iostream>
+        -:    2:#include "doubly_linked_list.h"
+        -:    3:
+        -:    4:using std::cout, std::endl;
+        -:    5:
+        1:    6:int main() {
+        -:    7:    // TODO(student): test your code
+        2:    8:    DoublyLinkedList<int> A;
+        -:    9:    {
+        1:   10:        cout << "Insert test..." << endl;
+        -:   11:
+        -:   12:        
+        1:   13:        A.insert(0, 1);
+        1:   14:        A.print();
+        1:   15:        A.insert(1, 2);
+        1:   16:        A.print();
+        1:   17:        A.insert(0, 3);
+        1:   18:        A.print();
+        1:   19:        A.insert(1, 4);
+        1:   20:        A.print();
+        1:   21:        A.insert(4, 5);
+        1:   22:        A.print();
+        1:   23:        A.insert(3, 6);
+        1:   24:        A.print();
+        -:   25:
+        2:   26:        try{ A.insert(10000, 5); }
+        1:   27:        catch(std::out_of_range e) { cout << e.what() << endl;}
+        -:   28:    } // TEST INSERT
+        -:   29:
+        -:   30:    {
+        1:   31:        cout << "Copy constructor test..." << endl;
+        -:   32:        
+        2:   33:        DoublyLinkedList<int> B(A);
+        -:   34:
+        1:   35:        B.insert(0, 7);
+        1:   36:        B.print();
+        1:   37:        A.print();
+        -:   38:    } //TEST COPY CONSTRUCTOR
+        -:   39:
+        -:   40:    {
+        1:   41:        cout << "testing operator[]..." << endl;
+        -:   42:
+        1:   43:        cout << A.size() << endl;
+        -:   44:        
+        1:   45:        for(size_t i = 0; i < A.size(); ++i) { cout <<"Element at position " << i << " : " <<  A[i] << endl; }
+        1:   46:        try{ cout << A[100] << endl; }
+        1:   47:        catch(std::out_of_range e) { cout << e.what() << endl; }
+        -:   48:
+        7:   49:        for(size_t i = 0; i < A.size(); ++i) { 
+       12:   50:            Node<int> newnode;
+        6:   51:            newnode.setDatum(A[i]);
+        6:   52:            cout <<"Element at position " << i << " : " << newnode.getDatum() << endl; 
+        -:   53:        }
+        -:   54:    }//operator[] tests
+        -:   55:
+        -:   56:    {
+        1:   57:        cout << "testing remove..." << endl;
+        -:   58:
+        1:   59:        A.remove(0);
+        1:   60:        A.print();
+        1:   61:        A.remove(1);
+        1:   62:        A.print();
+        1:   63:        A.remove(2);
+        1:   64:        A.print();
+        1:   65:        A.remove(2);
+        1:   66:        A.print();
+        1:   67:        A.remove(0);
+        1:   68:        A.print();
+        1:   69:        A.remove(0);
+        -:   70:
+        1:   71:        try{A.remove(0); }
+        1:   72:        catch(std::out_of_range e) {cout << e.what() << endl; }
+        -:   73:    } //remove() tests
+        -:   74:
+        -:   75:    {
+        1:   76:        cout << "testing operator=..." << endl;
+        2:   77:        DoublyLinkedList<int> B;
+        1:   78:        B.insert(0, 3);
+        1:   79:        B.insert(0, 2);
+        1:   80:        B.insert(0, 1);
+        -:   81:
+        1:   82:        B.print();
+        -:   83:
+        1:   84:        A = B;
+        -:   85:
+        1:   86:        A.print();
+        -:   87:
+        -:   88:    }
+        4:   89:}

@@ -1,0 +1,200 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{blindtext}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{wasysym}
+\usepackage{circuitikz}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\usetikzlibrary{arrows,shapes,calc,positioning}
+
+\newcommand{\myscope}[2]
+{\draw[thick,rotate=#2] (#1) circle (12pt)
+(#1) ++(-0.35,-0.1) --++ (0.3,0.3) --++ (0,-0.3) --++(0.3,0.3) --++(0,-0.3);}
+
+\begin{document}
+
+\title{CSCE 221 \\ Problem Set 11}
+
+\author{Jacob~Purcell,~\IEEEmember{Texas~A\&M,~Student}}
+
+\maketitle
+\section{}
+
+Set class is a list of unique values, an AVL tree will be used to store the data.
+
+\begin{algorithm}
+    \caption{Void Add: X}
+    \begin{algorithmic}
+        \REQUIRE $AVL~Tree~Data~Member$
+        \STATE $temp = Contains~X$
+        \IF{$temp$}
+        \IF{$temp~is~greater~than~X$}
+        \STATE $Assign~X~to~temp~right~child$
+        \ENDIF
+        \IF{$temp~is~less~than~X$}
+        \STATE $Assign~X~to~temp~left~child$
+        \ENDIF
+        \ENDIF
+        \STATE $Increment~size$
+        \STATE $Rebalance~tree$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{Void Clear}
+    \begin{algorithmic}
+        \REQUIRE $AVL~Tree~Data~Member$
+        \FOR{$iterator = 0~\TO~Size$}
+        \STATE $Delete~Root~Node~of~AVL~tree$
+        \STATE $Rebalance~tree$
+        \ENDFOR
+        \STATE $set~size~to~zero$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{Node pointer Contains: X}
+    \begin{algorithmic}
+        \REQUIRE $AVL~Tree~Data~Member$
+        \STATE $Increment~size$
+        \STATE $Pointer~C~to~root$
+        \WHILE{$not~null$}
+        \IF{$X~is~greater~than~current~node$}
+        \IF{$right~child~of~C~is~the~null~pointer$}
+        \RETURN $C$
+        \STATE $Break~while~loop$
+        \ENDIF
+        \STATE $assign~C~to~point~to~its~right~child$
+        \ENDIF
+
+        \IF{$X~is~less~than~current~node$}
+        \IF{$left~child~of~C~is~the~null~pointer$}
+        \RETURN $C$
+        \STATE $Break~while~loop$
+        \ENDIF
+        \STATE $assign~C~to~point~to~its~left~child$
+        \ENDIF
+
+        \IF{$X = dereferenced~C$}
+        \RETURN $nullptr$
+        \ENDIF
+
+        \ENDWHILE
+
+        \RETURN $C$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{Node pointer Find: X}
+    \begin{algorithmic}
+        \REQUIRE $AVL~Tree~Data~Member$
+        \STATE $Increment~size$
+        \STATE $Pointer~C~to~root$
+        \WHILE{$not~null$}
+        \IF{$X~is~greater~than~current~node$}
+        \IF{$right~child~of~C~is~the~null~pointer$}
+        \RETURN $nullprt$
+        \STATE $Break~while~loop$
+        \ENDIF
+        \STATE $assign~C~to~point~to~its~right~child$
+        \ENDIF
+
+        \IF{$X~is~less~than~current~node$}
+        \IF{$left~child~of~C~is~the~null~pointer$}
+        \RETURN $nullptr$
+        \STATE $Break~while~loop$
+        \ENDIF
+        \STATE $assign~C~to~point~to~its~left~child$
+        \ENDIF
+
+        \IF{$X = dereferenced~C$}
+        \RETURN $C$
+        \ENDIF
+
+        \ENDWHILE
+
+        \RETURN $C$
+
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{Void Delete: X}
+    \begin{algorithmic}
+        \REQUIRE $AVL~Tree~Data~Member$
+        \STATE $Pointer~C~=~Find~X$
+        \IF{$both~of~C~children~are~nullptr$}
+        \STATE $Delete C$
+        \ENDIF
+
+
+        \STATE $Pointer~B~=~C~left~child$
+        \WHILE{$B~right~child~is~not~nullptr$}
+        \STATE $Assign~B~to~be~its~right~child$
+        \ENDWHILE
+        \STATE $set~value~at~C~to~be~B$
+        \STATE $C~takes~over~right~subtree~of~B~if~needed$
+        \STATE $delete~B$
+        \STATE $Rebalance~tree$
+    \end{algorithmic}
+
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{boolean IsEmpty}
+    \begin{algorithmic}
+        \REQUIRE $size~data~member$
+        \RETURN $size$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{unsigned number Size}
+    \begin{algorithmic}
+        \REQUIRE $size~data~member$
+        \RETURN $size$
+    \end{algorithmic}
+\end{algorithm}
+
+\section{}
+
+A map binds a value set to a key set. A single set using the AVL ADT can do both jobs by holding the information in both in a single node.
+Done this way, the map can just be an extension of the set class to include multiple data storage inside nodes.
+
+\begin{algorithm}
+    \caption{Void Add: key, value}
+    \begin{algorithmic}
+        \REQUIRE $AVL~tree~Set$
+        \STATE $Add(key,~value)~to~set$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{Void Remove: key}
+    \begin{algorithmic}
+        \REQUIRE $AVL~tree~Set$
+        \STATE $Delete(key)~from~set$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{Node Object Find: key}
+    \begin{algorithmic}
+        \REQUIRE $AVL~tree~Set$
+        \RETURN $Find(key)~in~set$
+    \end{algorithmic}
+\end{algorithm}
+
+\end{document}

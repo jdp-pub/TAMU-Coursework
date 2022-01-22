@@ -1,0 +1,543 @@
+        -:    0:Source:hashtable_open_addressing_tests.cpp
+        -:    0:Graph:hashtable_open_addressing_tests.gcno
+        -:    0:Data:hashtable_open_addressing_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "hashtable_open_addressing.h"
+        -:    2:
+        1:    3:int main() {
+        -:    4:    // TODO(student): write at least 1000 lines of test
+        1:    5:    size_t n = 0;
+        -:    6:    /*
+        -:    7:    Constructors
+        -:    8:    x HashTable() - makes an empty table with 11 cells
+        -:    9:    x explicit HashTable(size_t) - makes an empty table with the specified number of cells
+        -:   10:    x HashTable(const HashTable&) - constructs a copy of the given table
+        -:   11:    x ~HashTable() - destructs this table
+        -:   12:    x HashTable& operator=(const HashTable&) - assigns a copy of the given table
+        -:   13:
+        -:   14:    Iterators
+        -:   15:    Optional
+        -:   16:
+        -:   17:    Capacity
+        -:   18:    x bool is_empty() const - returns true if the table is empty
+        -:   19:    x size_t size() const - returns the number of active values in the table
+        -:   20:    x size_t table_size() const - return the number of cells in the table
+        -:   21:
+        -:   22:    Modifiers
+        -:   23:    x void make_empty() - remove all values from the table
+        -:   24:    x bool insert(const Key&) - insert the given lvalue reference into the table, rehashing if the maximum load factor is exceeded, return true if insert was successful (false if item already exists)
+        -:   25:    x size_t remove(const Key&) - remove the specified value from the table, return number of elements removed (0 or 1).
+        -:   26:
+        -:   27:    Lookup
+        -:   28:    x bool contains(const Key&) const - returns Boolean true if the specified value is in the table
+        -:   29:
+        -:   30:    Position
+        -:   31:    x size_t position(const Key&) const - return the index of the cell that would contain the specified value.  This method handles collision resolution.
+        -:   32:
+        -:   33:    Visualization
+        -:   34:    x void print_table(std::ostream&=std::cout) const - pretty print the table.  Required to exist and produce reasonable output, the empty table should print “<empty>\n”, but the format of the output is not graded
+        -:   35:    
+        -:   36:    Optional
+        -:   37:    HashTable(HashTable&&) - move constructs a copy of the given (rvalue) table
+        -:   38:    HashTable& operator=(HashTable&&) - move assigns a copy of the given (rvalue) table
+        -:   39:    void insert(Key&&) - insert the given rvalue reference into the table using move semantics
+        -:   40:    */
+        -:   41:   
+        -:   42:    {
+        2:   43:        HashTable<std::string, std::hash<std::string>> e;
+        1:   44:        e.print_table();
+        1:   45:        e.table_info();
+        2:   46:        std::string f = "l";
+        1:   47:        e.insert(f);
+        1:   48:        e.print_table();
+        1:   49:        e.table_info();
+        -:   50:
+        2:   51:        HashTable<std::string, std::hash<std::string>> h(100);
+        1:   52:        h.print_table();
+        1:   53:        h.table_info();
+        1:   54:        h.insert(f);
+        1:   55:        h.print_table();
+        1:   56:        h.table_info();
+        -:   57:
+        -:   58:
+        6:   59:        for(int i = 0; i < 5; ++i){
+        5:   60:            f = std::to_string(2*i * i);
+        5:   61:            e.insert(f);
+        -:   62:        }
+        1:   63:        e.print_table();
+        6:   64:        for(int i = 0; i < 5; ++i){
+        5:   65:            f = std::to_string(2*i * i);
+        5:   66:            e.insert(f);
+        -:   67:        }
+        1:   68:        e.print_table();
+        -:   69:
+       11:   70:        for(int i = 0; i < 10; ++i){
+       10:   71:            f = std::to_string(2*i * i);
+       10:   72:            e.insert(f);
+        -:   73:        }
+        1:   74:        e.print_table();
+        1:   75:        e.table_info();
+        -:   76:
+        1:   77:        e.remove("50");
+        1:   78:        e.print_table();
+        1:   79:        e.table_info();
+        -:   80:
+        1:   81:        f = "50";
+        1:   82:        e.insert(f);
+        1:   83:        e.print_table();
+        1:   84:        e.table_info();
+        -:   85:
+        -:   86:
+        -:   87:        
+        1:   88:        cout << "e.position(8): " << e.position("8") << endl;
+        1:   89:        cout << "e.position(0): " << e.position("0") << endl;
+        1:   90:        cout << "e.position(128): " << e.position("128") << endl;
+        1:   91:        cout << "e.position(l): " << e.position("l") << endl;
+        1:   92:        cout << "e.position(32): " << e.position("32") << endl;
+        1:   93:        cout << "e.position(lddd): " << e.position("lddd") << endl;
+        1:   94:        cout << "e.position(32ddd): " << e.position("32ddd") << endl;
+        1:   95:        e.make_empty();
+        -:   96:
+        1:   97:        e.print_table();
+        1:   98:        e.table_info();
+        -:   99:
+        1:  100:        e.make_empty();
+        -:  101:
+        1:  102:        e.print_table();
+        1:  103:        e.table_info();
+        -:  104:
+      101:  105:        for(int i = 0; i < 100; ++i){
+      100:  106:            f = std::to_string(2*i * i);
+      100:  107:            e.insert(f);
+        -:  108:        }
+        1:  109:        e.print_table();
+        1:  110:        e.table_info();
+        -:  111:
+      101:  112:        for(int i = 0; i < 100; ++i){
+      100:  113:            f = std::to_string(2*i * i);
+      100:  114:            cout << "e.contains(" <<  f << ")" << ": " << e.contains(f) << endl ;
+        -:  115:        }
+        1:  116:        e.print_table();
+        1:  117:        e.table_info();
+      101:  118:        for(int i = 0; i < 100; ++i){
+      100:  119:            f = std::to_string(2*i * i % 50);
+      100:  120:            cout << "e.contains(" <<  f << ")" << ": " << e.contains(f) << endl ;
+        -:  121:        }
+        1:  122:        e.print_table();
+        1:  123:        e.table_info();
+        -:  124:
+        1:  125:        e.remove("8");
+        1:  126:        e.print_table();
+        1:  127:        e.table_info();
+        -:  128:
+        1:  129:        e.remove("0");
+        1:  130:        e.print_table();
+        1:  131:        e.table_info();
+        -:  132:
+        1:  133:        e.remove("2");
+        1:  134:        e.print_table();
+        1:  135:        e.table_info();
+        -:  136:
+        1:  137:        e.remove("392");
+        1:  138:        e.print_table();
+        1:  139:        e.table_info();
+        -:  140:
+        1:  141:        e.remove("882");
+        1:  142:        e.print_table();
+        1:  143:        e.table_info();
+        -:  144:
+        1:  145:        e.remove("578");
+        1:  146:        e.print_table();
+        1:  147:        e.table_info();
+        -:  148:
+        1:  149:        e.remove("2888");
+        1:  150:        e.print_table();
+        1:  151:        e.table_info();
+        -:  152:
+        1:  153:        e.remove("72");
+        1:  154:        e.print_table();
+        1:  155:        e.table_info();
+        -:  156:
+        1:  157:        e.remove("1152");
+        1:  158:        e.print_table();
+        1:  159:        e.table_info();
+        -:  160:
+        1:  161:        e.insert("1152");
+        1:  162:        e.print_table();
+        1:  163:        e.table_info();
+        -:  164:        
+       76:  165:        for(int i = 0; i < 75; ++i){
+       75:  166:            f = std::to_string(2*i * i);
+       75:  167:            cout << "e.remove(" <<  f << ")" << ": " << e.remove(f) << endl ;
+        -:  168:        }
+        1:  169:        e.print_table();
+        1:  170:        e.table_info();
+        -:  171:
+       51:  172:        for(int i = 200; i < 250; ++i){
+       50:  173:            f = std::to_string(2*i * i);
+       50:  174:            e.insert(f);
+        -:  175:        }
+        1:  176:        e.print_table();
+        1:  177:        e.table_info();
+        -:  178:
+       51:  179:        for(int i = 250; i < 300; ++i){
+       50:  180:            f = std::to_string(2*i * i);
+       50:  181:            e.insert(f);
+        -:  182:        }
+        1:  183:        e.print_table();
+        1:  184:        e.table_info();
+        -:  185:
+      251:  186:        for(int i = 0; i < 250; ++i){
+      250:  187:            f = std::to_string(2*i * i);
+      250:  188:            cout << "e.remove(" <<  f << ")" << ": " << e.remove(f) << endl ;
+        -:  189:        }
+        1:  190:        e.print_table();
+        1:  191:        e.table_info();
+        -:  192:
+      401:  193:        for(int i = 0; i < 400; ++i){
+      400:  194:            f = std::to_string(2*i * i);
+      400:  195:            e.insert(f);
+        -:  196:        }
+        1:  197:        cout << "~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        1:  198:        e.table_info();
+      351:  199:        for(int i = 0; i < 350; ++i){
+      350:  200:            f = std::to_string(2*i * i);
+      350:  201:            e.remove(f);
+        -:  202:        }
+        1:  203:        cout << "~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        1:  204:        e.table_info();
+      801:  205:        for(int i = 0; i < 800; ++i){
+      800:  206:            f = std::to_string(2*i * i);
+      800:  207:            e.insert(f);
+        -:  208:        }
+        1:  209:        cout << "~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        1:  210:        e.table_info();
+      351:  211:        for(int i = 0; i < 350; ++i){
+      350:  212:            f = std::to_string(2*i * i);
+      350:  213:            e.remove(f);
+        -:  214:        }
+        1:  215:        cout << "~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        1:  216:        e.table_info();
+        -:  217:        
+    10001:  218:        for(int i = 0; i < 10000; ++i){
+    10000:  219:            f = std::to_string(2*i * i);
+    10000:  220:            e.insert(f);
+        -:  221:        }
+        1:  222:        cout << "~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        1:  223:        e.table_info();
+    10001:  224:        for(int i = 0; i < 10000; ++i){
+    10000:  225:            f = std::to_string(2*i * i);
+    10000:  226:            e.remove(f);
+        -:  227:        }
+        1:  228:        cout << "~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        1:  229:        e.table_info();
+        -:  230:        
+        -:  231:
+        -:  232:    }
+        -:  233:    
+        -:  234:   
+        -:  235:   {
+        2:  236:       HashTable<std::string, std::hash<std::string>> e;
+        2:  237:        std::string f;
+       11:  238:       for(int i = 0; i < 10; ++i){
+       10:  239:            f = std::to_string(2*i * i);
+       10:  240:            e.insert(f);
+        -:  241:        }
+        6:  242:        for(int i = 0; i < 5; ++i){
+        5:  243:            f = std::to_string(2*i * i);
+        5:  244:            e.remove(f);
+        -:  245:        }
+        1:  246:        e.print_table();
+        1:  247:        e.table_info();
+        -:  248:
+        2:  249:        HashTable<std::string, std::hash<std::string>> k(e);
+        1:  250:        k.print_table();
+        1:  251:        k.table_info();
+        -:  252:
+       11:  253:        for(int i = 10; i < 20; ++i){
+       10:  254:            f = std::to_string(2*i * i);
+       10:  255:            k.insert(f);
+        -:  256:        }
+        1:  257:        k.print_table();
+        1:  258:        k.table_info();
+        1:  259:        e.print_table();
+        1:  260:        e.table_info();
+        -:  261:
+        1:  262:        k.make_empty();
+        1:  263:        k.print_table();
+        1:  264:        k.table_info();
+        1:  265:        e.print_table();
+        1:  266:        e.table_info();
+        -:  267:
+        1:  268:        k = e;
+        1:  269:        e.make_empty();
+        1:  270:        k.print_table();
+        1:  271:        k.table_info();
+        1:  272:        e.print_table();
+        1:  273:        e.table_info();
+        -:  274:        
+        1:  275:        k = k;
+        1:  276:        k.print_table();
+        1:  277:        k.table_info();
+        -:  278:
+        1:  279:        k = e;
+        1:  280:        k.print_table();
+        1:  281:        k.table_info();
+        -:  282:   }
+        -:  283:   
+        -:  284: 
+        -:  285:  //TODO: 
+        -:  286:  /*
+        -:  287:  x contains
+        -:  288:  x copy assignment
+        -:  289:  x copy constructor
+        -:  290:  x code coverage
+        -:  291:  ~ mimir exaple complie
+        -:  292:  x position
+        -:  293:  x remove
+        -:  294:  x size
+        -:  295:  x table_size
+        -:  296:  x insert
+        -:  297:  x isempty
+        -:  298:  */
+        -:  299:
+        -:  300:    {//contains
+        2:  301:        HashTable<std::string, std::hash<std::string>> e;
+        1:  302:        e.print_table(cout);
+        1:  303:        e.table_info();
+        2:  304:        std::string f;
+        -:  305:
+        6:  306:        for(int i = 0; i < 5; ++i){
+        5:  307:            f = std::to_string(2*i * i);
+        5:  308:            e.insert(f);
+        -:  309:        }
+        1:  310:        e.print_table(cout);
+        1:  311:        e.table_info();
+        -:  312:
+       11:  313:        for(int i = 0; i < 10; ++i){
+       10:  314:            f = std::to_string(2*i * i);
+       10:  315:            cout << "Contains " << f << "?: " << std::boolalpha << e.contains(f) << endl;
+        -:  316:        }
+        -:  317:
+        -:  318:    }
+        -:  319:
+        -:  320:
+        -:  321:    {//copy construct
+        2:  322:        HashTable<std::string, std::hash<std::string>> e(1);
+        1:  323:        e.print_table(cout);
+        1:  324:        e.table_info();
+        2:  325:        std::string f;
+        1:  326:        th(n, "LOAD");
+        6:  327:        for(int i = 0; i < 5; ++i){
+        5:  328:            f = std::to_string(2*i * i);
+        5:  329:            e.insert(f);
+        -:  330:        }
+        1:  331:        e.print_table(cout);
+        1:  332:        e.table_info();
+        -:  333:
+        1:  334:        th(n, "COPY CONSTRUCT");
+        2:  335:        HashTable<std::string, std::hash<std::string>> h(e);
+        1:  336:        e.print_table(cout);
+        1:  337:        e.table_info();
+        1:  338:        h.print_table(cout);
+        1:  339:        h.table_info();
+        -:  340:
+        1:  341:        th(n, "ADJUSTING COPY");
+       11:  342:        for(int i = 0; i < 10; ++i){
+       10:  343:            f = std::to_string(2*i * i);
+       10:  344:            h.insert(f);
+        -:  345:        }
+        -:  346:
+        1:  347:        e.print_table(cout);
+        1:  348:        e.table_info();
+        1:  349:        h.print_table(cout);
+        1:  350:        h.table_info();
+        -:  351:
+        1:  352:        e.make_empty();
+        1:  353:        th(n, "COPY CONSTRUCT FROM EMPTY");
+        2:  354:        HashTable<std::string, std::hash<std::string>> g(e);
+        1:  355:        e.print_table(cout);
+        1:  356:        e.table_info();
+        1:  357:        g.print_table();
+        1:  358:        g.table_info();
+        -:  359:        
+        1:  360:        th(n, "ADJUSTING COPY");
+       11:  361:        for(int i = 0; i < 10; ++i){
+       10:  362:            f = std::to_string(2*i * i);
+       10:  363:            g.insert(f);
+        -:  364:        }
+        1:  365:        g.print_table();
+        1:  366:        g.table_info();
+        -:  367:
+        1:  368:        th(n, "COPY CONSTRUCT FROM SELF");
+        2:  369:        HashTable<std::string, std::hash<std::string>> q(q);
+        1:  370:        q.print_table();
+        1:  371:        q.table_info();
+        -:  372:
+        1:  373:        th(n, "ADJUSTING COPY");
+       11:  374:        for(int i = 0; i < 10; ++i){
+       10:  375:            f = std::to_string(2*i * i);
+       10:  376:            q.insert(f);
+        -:  377:        }
+        1:  378:        q.print_table();
+        1:  379:        q.table_info();
+        -:  380:    }
+        -:  381:    
+        -:  382:   {//copy assign
+        2:  383:        HashTable<std::string, std::hash<std::string>> e;
+        1:  384:        e.print_table(cout);
+        1:  385:        e.table_info();
+        2:  386:        std::string f;
+        1:  387:        th(n, "LOAD");
+        6:  388:        for(int i = 0; i < 5; ++i){
+        5:  389:            f = std::to_string(2*i * i);
+        5:  390:            e.insert(f);
+        -:  391:        }
+        1:  392:        e.print_table(cout);
+        1:  393:        e.table_info();
+        -:  394:
+        1:  395:        th(n, "COPY ASSIGN: INITIALIZE EMPTY");
+        2:  396:        HashTable<std::string, std::hash<std::string>> g;
+        1:  397:        g.print_table(cout);
+        1:  398:        g.table_info();
+        -:  399:
+        1:  400:        g = e;
+        -:  401:
+        1:  402:        e.print_table(cout);
+        1:  403:        e.table_info();
+        1:  404:        g.print_table(cout);
+        1:  405:        g.table_info();
+        -:  406:
+        1:  407:        th(n, "ADJUSTING COPY");
+       11:  408:        for(int i = 0; i < 10; ++i){
+       10:  409:            f = std::to_string(2*i * i);
+       10:  410:            g.insert(f);
+        -:  411:        }
+        1:  412:        e.print_table(cout);
+        1:  413:        e.table_info();
+        1:  414:        g.print_table();
+        1:  415:        g.table_info();
+        -:  416:
+        1:  417:        th(n, "COPY ASSIGN: OVERWRITE");
+        1:  418:        g = e;
+        1:  419:        e.print_table(cout);
+        1:  420:        e.table_info();
+        1:  421:        g.print_table();
+        1:  422:        g.table_info();
+        -:  423:
+        1:  424:        th(n, "ADJUSTING COPY");
+       11:  425:        for(int i = 0; i < 10; ++i){
+       10:  426:            f = std::to_string(2*i * i);
+       10:  427:            g.insert(f);
+        -:  428:        }
+        1:  429:        e.print_table(cout);
+        1:  430:        e.table_info();
+        1:  431:        g.print_table();
+        1:  432:        g.table_info();
+        -:  433:
+        1:  434:        th(n, "COPY ASSIGN: SELF ASSIGN");
+        1:  435:        g = g;
+        1:  436:        g.print_table();
+        1:  437:        g.table_info();
+        -:  438:
+        1:  439:        th(n, "ADJUSTING COPY");
+       16:  440:        for(int i = 0; i < 15; ++i){
+       15:  441:            f = std::to_string(2*i * i);
+       15:  442:            g.insert(f);
+        -:  443:        }
+        1:  444:        e.print_table(cout);
+        1:  445:        e.table_info();
+        1:  446:        g.print_table();
+        1:  447:        g.table_info();
+        -:  448:
+        1:  449:        th(n, "COPY ASSIGN: COPY FROM EMPTY");
+        1:  450:        e.make_empty();
+        1:  451:        g = e;
+        1:  452:        e.print_table(cout);
+        1:  453:        e.table_info();
+        1:  454:        g.print_table();
+        1:  455:        g.table_info();
+        -:  456:   }
+        -:  457:   
+        -:  458:    
+        -:  459:    {//position
+        2:  460:        HashTable<std::string, std::hash<std::string>> e;
+        1:  461:        e.print_table(cout);
+        1:  462:        e.table_info();
+        2:  463:        std::string f;
+        -:  464:        
+        1:  465:        th(n, "LOAD");
+        -:  466:
+       21:  467:        for(int i = 0; i < 20; ++i){
+       20:  468:            f = std::to_string(2*i * i);
+       20:  469:            e.insert(f);
+        -:  470:        }
+        1:  471:        e.print_table(cout);
+        1:  472:        e.table_info();
+        -:  473:
+        1:  474:        th(n, "POSITION");
+       31:  475:        for(int i = 0; i < 30; ++i){
+       30:  476:            f = std::to_string(2*i * i);
+       30:  477:            cout << e.position(f) << ": [" << f << "] ";
+       30:  478:            if(i%4 == 0 && i != 0){cout <<  endl;}
+        -:  479:        }
+        1:  480:        cout << endl;
+        -:  481:        
+        -:  482:    }
+        -:  483:    
+        -:  484:   {//insert rehash
+        2:  485:        HashTable<std::string, std::hash<std::string>> e(1);
+        1:  486:        e.print_table(cout);
+        1:  487:        e.table_info();
+        2:  488:        std::string f;
+        -:  489:        
+        1:  490:        th(n, "LOAD");
+        -:  491:
+       21:  492:        for(int i = 0; i < 20; ++i){
+       20:  493:            f = std::to_string(2*i * i);
+       20:  494:            cout << e.position(f) << ": [" << f << "] " << endl;
+       20:  495:            e.insert(f);
+       20:  496:            e.print_table(cout);
+       20:  497:            e.table_info();
+        -:  498:        } 
+        -:  499:   }
+        -:  500:   {//remove
+        2:  501:       HashTable<std::string, std::hash<std::string>> e(1);
+        1:  502:        e.print_table(cout);
+        1:  503:        e.table_info();
+        2:  504:        std::string f;
+        -:  505:        
+        1:  506:        th(n, "LOAD");
+        -:  507:
+       21:  508:        for(int i = 0; i < 20; ++i){
+       20:  509:            f = std::to_string(2*i * i);
+       20:  510:            e.insert(f);
+        -:  511:            
+        -:  512:        } 
+        1:  513:        e.print_table(cout);
+        1:  514:        e.table_info();
+       31:  515:        for(int i = 0; i < 30; ++i){
+       30:  516:            f = std::to_string(2*i * i);
+       30:  517:            if(i%2 == 0){cout << "removing "<< f << ": " << e.remove(f) << endl;}
+        -:  518:        } 
+        1:  519:        e.print_table(cout);
+        1:  520:        e.table_info();  
+       21:  521:        for(int i = 0; i < 20; ++i){
+       20:  522:            f = std::to_string(2*i * i);
+       20:  523:            e.insert(f);
+        -:  524:            
+        -:  525:        } 
+        1:  526:        e.print_table(cout);
+        1:  527:        e.table_info();  
+        6:  528:        for(int i = 20; i < 25; ++i){
+        5:  529:            f = std::to_string(2*i * i);
+        5:  530:            e.insert(f);
+        -:  531:            
+        -:  532:        } 
+        1:  533:        e.print_table(cout);
+        1:  534:        e.table_info();
+        -:  535:   }
+        -:  536:   
+        1:  537:    return 0;
+        3:  538:}

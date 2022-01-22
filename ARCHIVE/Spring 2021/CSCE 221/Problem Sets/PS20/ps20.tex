@@ -1,0 +1,70 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{blindtext}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{wasysym}
+\usepackage{circuitikz}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\usetikzlibrary{arrows,shapes,calc,positioning}
+
+\newcommand{\myscope}[2]
+{\draw[thick,rotate=#2] (#1) circle (12pt)
+(#1) ++(-0.35,-0.1) --++ (0.3,0.3) --++ (0,-0.3) --++(0.3,0.3) --++(0,-0.3);}
+
+\begin{document}
+
+\title{CSCE 221 \\ Problem Set 20}
+
+\author{Jacob~Purcell,~\IEEEmember{Texas~A\&M,~Student}}
+
+\maketitle
+\section{}
+$$Compute~XY$$
+$$X = 117937, Y = 404783$$
+
+$$X = 117 \times 10^{3} + 937, Y = 404 \times 10^{3} + 783$$
+$$Z = (0117)(0404)10^3 + (0937)(0783) +...$$
+$$...+ (0937)(0404 \times 10^{3}) + (0783)(0117 \times 10^{3})$$
+\\\\
+$$Z = (01 \times 10^ 2 + 17)(04 \times 10^ 2 + 04)\times 10^3 +...$$
+$$...+ (09\times 10^ 2 + 37)(07 \times 10^ 2 + 83) +...$$
+$$...+ (09\times 10^ 2 + 37)(04\times 10^ 5 + 04\times 10^{3}) +...$$
+$$...+ (07\times 10^ 2 + 83)(01 \times 10^ 2 + 17 \times 10^{3})$$
+\\\\
+$$Z = (04 \times 10^ 4 + 68 \times 10^ 2 + 4 \times 10^2 + 68)\times 10^3 +...$$
+$$...+ (63\times 10^ 4 + 259 \times 10^ 2 + 747\times 10^ 2 + 3071) +...$$
+$$...+ (36\times 10^ 7 + 148\times 10^ 5 + 36\times 10^ 5 + 148\times 10^ 3) +...$$
+$$...+ (07\times 10^ 4 + 83\times 10^ 2 + 1119 \times 10^{5})$$
+\\\\
+$$Z = (40 \times 10^ 7 + 1475 \times 10^5 + 216 \times 10^3) +...$$
+$$...+ (70\times 10^ 4 + 1089\times 10^2 + 3071)$$
+\\\\
+$$Z = (400000000+ 147500000 + 216000 +...$$
+$$...+ 700000 + 108900 + 3071)$$
+\\\\
+$$Z = \boxed{5478027971}$$
+
+\section{}
+Where n is the number of digits, a multiplication of n = 4 will be,
+$$Z = (A_1 \times 10^2 + A_2)(A_1 \times 10^2 + A_2)$$
+$$Z = ((A_3 + A_4) \times 10^2 + A_2)((A_3 + A_4) \times 10^2 + A_2)$$
+which requires 9 miltiplications and k recursive breakdowns. 
+$$4^k = 9$$
+solving for k
+$$k log_2(4) = log_2(9)$$
+$$2k = log_2(9)$$
+$$k = log_2(9^{\frac{1}{2}})$$
+so
+$$\boxed{O(n^{log_2(3)})}$$
+\end{document}

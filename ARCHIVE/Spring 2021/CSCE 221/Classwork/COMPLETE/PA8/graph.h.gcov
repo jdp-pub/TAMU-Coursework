@@ -1,0 +1,189 @@
+        -:    0:Source:graph.h
+        -:    0:Graph:graph_tests.gcno
+        -:    0:Data:graph_tests.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef GRAPH_H
+        -:    2:#define GRAPH_H
+        -:    3:
+        -:    4:#include <iostream>
+        -:    5:#include <cmath>
+        -:    6:#include "hashtable_open_addressing.h"
+        -:    7:
+        -:    8:class Graph {
+        -:    9: // TODO(student): implement Graph
+        -:   10:
+        -:   11:    HashTable<size_t, std::hash<size_t>> body = {};
+        -:   12:    HashTable<size_t, std::hash<size_t>> dijkstraPaths = {};
+        -:   13:
+        -:   14:    size_t dSource = {};
+        -:   15:    size_t numEdges = 0;
+        -:   16:
+        -:   17:    public:
+        -:   18:    //Constructors
+        1:   19:    Graph(){}// - makes an empty graph.
+        -:   20:    Graph(const Graph& other) : body(other.getBody()), numEdges(other.edge_count()) {}// - constructs a deep copy of a graph
+        -:   21:    Graph& operator=(const Graph& other){ 
+        -:   22:        if(&other == this) { return *this;}
+        -:   23:        numEdges = other.edge_count(); 
+        -:   24:        body = other.getBody(); 
+        -:   25:        return *this;
+        -:   26:    }// - assigns a deep copy of a graph
+        1:   27:    ~Graph(){}// - destructs a graph (frees all dynamically allocated memory)
+        -:   28:
+        -:   29:    //Capacity
+        -:   30:    size_t vertex_count() const{ return body.size(); }// - the number of vertices in the graph
+        -:   31:    size_t edge_count() const{ return numEdges; }// - the number of edges in the graph
+        -:   32:
+        -:   33:    //Element Access
+        -:   34:    bool contains_vertex(size_t id) const{ return body.contains(id); }// - return true if the graph contains a vertex with the specified identifier, false otherwise.
+        -:   35:    bool contains_edge(size_t src, size_t dest) const{ 
+        -:   36:        if(!body.contains(src) || !body.contains(dest)){return false;}
+        -:   37:        return (body.findNode(src).getEdgeList().size() > body.findNode(src).findEdge(dest)); }// - return true if the graph contains an edge with the specified members (as identifiers), false otherwise.
+        -:   38:    double cost(size_t src, size_t dest) const{ 
+        -:   39:        if(!body.contains(src) || !contains_edge(src, dest)) {  return INFINITY; }
+        -:   40:
+        -:   41:        double edgeCost = body.findNode(src).getEdgeList().at(body.findNode(src).findEdge(dest)).second;
+        -:   42:        return edgeCost;
+        -:   43:    }// - returns the weight of the edge between src and dest, or INFINITY if none exists.
+        -:   44:
+        -:   45:    //Modifiers
+        3:   46:    bool add_vertex(size_t id){ return body.insert(id); }// - add a vertex with the specified identifier if it does not already exist, return true on success or false otherwise.
+        3:   47:    bool add_edge(size_t src, size_t dest, double weight=1){
+        3:   48:        if(!body.contains(src) || !body.contains(dest)){ return false; }
+        3:   49:        if(body.findNode(src).addEdge(dest, weight)){
+        3:   50:            ++numEdges;
+        3:   51:            return true;
+        -:   52:        }
+    #####:   53:        return false;
+        -:   54:    }// - add a directed edge from src to dest with the specified weight if there is no edge from src to dest, return true on success, false otherwise.
+        -:   55:    bool remove_vertex(size_t id){
+        -:   56:        if(!contains_vertex(id)){ return false; } 
+        -:   57:
+        -:   58:        numEdges -= body.findNode(id).getEdgeList().size();
+        -:   59:        body.findNode(id).clearEdges();
+        -:   60:        body.remove(id);
+        -:   61:        return true;
+        -:   62:    }// - remove the specified vertex from the graph, including all edges of which it is a member, return true on success, false otherwise.
+        -:   63:    bool remove_edge(size_t src, size_t dest) {
+        -:   64:        if(!body.contains(src)){ return false; }
+        -:   65:        if(body.findNode(src).removeEdge(dest)){
+        -:   66:            --numEdges;
+        -:   67:            return true;
+        -:   68:        }
+        -:   69:        return false;
+        -:   70:    }//- remove the specified edge from the graph, but do not remove the vertices, return true on success, false otherwise.
+        -:   71:
+        -:   72:    //Optional
+        -:   73:    //Graph(Graph&&){}// - move constructs a deep copy of a graph
+        -:   74:    //Graph& operator=(Graph&&){}// - move assigns a deep copy of a graph
+        -:   75:    HashTable<size_t, std::hash<size_t>> getBody() const {return body;}
+        -:   76:
+        -:   77:    //~~~~~~~~~~~~~~~~~~~~~//
+        -:   78:    //TASK 2
+        3:   79:    void dijkstra(size_t source_id){
+        3:   80:        if(!body.contains(source_id)){return;}
+        -:   81:
+        4:   82:        HashTable<size_t, std::hash<size_t>> visited;
+        4:   83:        std::vector<std::pair<size_t, double>> unvisited = {};
+        -:   84:
+        2:   85:        dSource = source_id;
+        2:   86:        double dist = 0;
+        2:   87:        double distTemp = 0;
+        -:   88:
+        2:   89:        dijkstraPaths.make_empty();
+        -:   90:        
+        -:   91:        
+        -:   92:
+        2:   93:        HashTable<size_t, std::hash<size_t>>::Node* cursor = &body.findNode(source_id);
+        2:   94:        if(!dijkstraPaths.contains(cursor->getKey())){dijkstraPaths.insert(cursor->getKey());}// if the node is not in the path table, add it to the table
+        -:   95:
+        2:   96:        int fb = 10;
+        4:   97:        while(cursor != nullptr) {
+        3:   98:            visited.insert(cursor->getKey());
+        -:   99:            
+        4:  100:            for(size_t i = 0; i < cursor->getEdgeList().size(); ++i) {// compare all paths from current node
+        -:  101:                //if the compared vertex doesnt exist in the path table, add it to the table
+        2:  102:                if(!dijkstraPaths.contains(cursor->getEdgeList().at(i).first)){
+        1:  103:                    dijkstraPaths.insert(cursor->getEdgeList().at(i).first);
+        1:  104:                    dijkstraPaths.findNode(cursor->getEdgeList().at(i).first).addEdge(cursor->getKey(), cursor->getEdgeList().at(i).second + dist);
+        1:  105:                    unvisited.push_back(std::make_pair(cursor->getEdgeList().at(i).first, dist + cursor->getEdgeList().at(i).second));
+        1:  106:                    continue;
+        -:  107:                }
+        -:  108:                
+        -:  109:                //sets comparison distance
+    #####:  110:                distTemp = dist + cursor->getEdgeList().at(i).second;
+        -:  111:
+        -:  112:                //replace compared edge with total distance from origin and last visited node
+        -:  113:                
+    #####:  114:                if(dijkstraPaths.findNode(cursor->getEdgeList().at(i).first).getEdgeList().empty()) {
+    #####:  115:                    dijkstraPaths.findNode(cursor->getEdgeList().at(i).first).addEdge(cursor->getKey(), distTemp);
+        -:  116:                }
+    #####:  117:                else if(dijkstraPaths.findNode(cursor->getEdgeList().at(i).first).getEdgeList().at(0).second > distTemp) {
+    #####:  118:                    dijkstraPaths.findNode(cursor->getEdgeList().at(i).first).addBegin(cursor->getKey(), distTemp);
+        -:  119:                }
+        -:  120:            }
+        -:  121:            //advance cursor, update distance from origin
+        3:  122:            HashTable<size_t, std::hash<size_t>>::Node* test = cursor;
+        3:  123:            for(size_t j = 0; j < cursor->getEdgeList().size(); ++j ){
+        1:  124:                if(!visited.contains(cursor->getEdgeList().at(j).first)){
+        1:  125:                    dist += cursor->getEdgeList().at(j).second;
+        1:  126:                    cursor = &body.findNode(cursor->getEdgeList().at(j).first);
+        1:  127:                    break;
+        -:  128:                }
+        -:  129:            }
+        -:  130:            
+        3:  131:            if(test == cursor){//once minimum wieght path is establied from source, visits unvisited nodes and finds minimum path in a sort of heirarchy of minimum paths
+        3:  132:                for(size_t j = 0; j < unvisited.size(); j = j ){
+        1:  133:                    if(visited.contains(unvisited.at(0).first)){
+        1:  134:                        unvisited.erase(unvisited.begin());
+        -:  135:                    }
+        -:  136:                    else{
+    #####:  137:                        dist = unvisited.at(0).second;
+    #####:  138:                        cursor = &body.findNode(unvisited.at(0).first);
+    #####:  139:                        break;
+        -:  140:                    }
+        -:  141:                }
+        2:  142:                if(test == cursor){break;}
+        -:  143:            }
+        1:  144:            --fb;
+        -:  145:        }
+        -:  146:
+        -:  147:    }//  - compute the shortest path from the specified source vertex to all other vertices in the graph using Dijkstra’s algorithm.
+        6:  148:    double distance(size_t id) const{
+        -:  149:
+        6:  150:        if((!dijkstraPaths.contains(id)) || (dijkstraPaths.findNode(id).getEdgeList().empty())){
+        5:  151:            return INFINITY;
+        -:  152:        }
+        1:  153:        return dijkstraPaths.findNode(id).getEdgeList().at(0).second;
+        -:  154:    }//  - assumes Dijkstra has been run, returns the cost of the shortest path from the Dijkstra-source vertex to the specified destination vertex, or INFINITY if the vertex or path does not exist.
+        -:  155:
+        -:  156:    //Visualization
+        -:  157:    void print_shortest_path(size_t dest_id, std::ostream& os=std::cout) const{
+        -:  158:        if(distance(dest_id) == INFINITY){ os << "<no path>\n"; return;}
+        -:  159:
+        -:  160:        HashTable<size_t, std::hash<size_t>>::Node* cursor = &dijkstraPaths.findNode(dest_id);
+        -:  161:        std::vector<size_t> pathList = {};
+        -:  162:        while(cursor->getKey() != dSource){
+        -:  163:            pathList.push_back(cursor->getKey());
+        -:  164:            cursor = &dijkstraPaths.findNode(cursor->getEdgeList().at(0).first);
+        -:  165:        }
+        -:  166:        pathList.push_back(dSource);
+        -:  167:
+        -:  168:        for(size_t i = 0; i  < pathList.size(); ++i){
+        -:  169:            os << pathList.at(pathList.size() - 1 - i);
+        -:  170:            if(i != pathList.size() - 1) {
+        -:  171:                os << " --> ";
+        -:  172:            }
+        -:  173:        }
+        -:  174:
+        -:  175:        os << " distance: " << distance(dest_id) << endl;
+        -:  176:    }//  - assumes Dijkstra has been run, pretty prints the shortest path from the Dijkstra source vertex to the specified destination vertex in a “ → “- separated list with “ distance: <distance>” at the end, where <distance> is the minimum cost of a path from source to destination, or prints “<no path>\n” if the vertex is unreachable.
+        -:  177:    void printGraph() {
+        -:  178:        cout << "Edges: " << edge_count() << endl;
+        -:  179:        cout << "vertices: " << vertex_count() << endl;
+        -:  180:        body.print_table(); 
+        -:  181:        body.table_info();}
+        -:  182:};
+        -:  183:
+        -:  184:#endif  // GRAPH_H
